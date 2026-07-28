@@ -90,25 +90,27 @@ MAIN_SVG = '\n'.join(svg)
 fam_names = {'trend_momentum':'趨勢動能','volatility':'波動率','credit_breadth':'信用廣度','volume':'量價','monthly_pillars':'月度支柱'}
 rows_meta = [r for r in league.get('rows', []) if r['indicator'] in PICKED] if PICKED else []
 RH = 26
+RPAD = 268
 RW, RHtot = 1180, 60 + RH * max(1, len(rows_meta))
 rs = [f'<svg viewBox="0 0 {RW} {RHtot}" style="width:100%;height:auto;display:block">']
 for r in tpM.itertuples():
-    xx = X(r.date, RW)
+    xx = X(r.date, RW, pad_l=RPAD)
     cls = 'vlT' if r.type == 'TOP' else 'vlB'
     rs.append(f'<line x1="{xx:.1f}" x2="{xx:.1f}" y1="34" y2="{RHtot-20}" class="{cls}"/>')
-for yr in range(2000, 2027, 2):
-    xx = X(pd.Timestamp(f'{yr}-01-01'), RW)
+for yr in range(2000, 2027, 3):
+    xx = X(pd.Timestamp(f'{yr}-01-01'), RW, pad_l=RPAD)
     rs.append(f'<text x="{xx:.1f}" y="{RHtot-4}" class="tick" text-anchor="middle">{yr}</text>')
-rs.append(f'<text x="64" y="14" class="lblB">領先訊號時間對比 (紅虛線=主要頂, 綠虛線=主要底; 每列一個指標, 刻度=該指標訊號日)</text>')
+rs.append(f'<text x="{RPAD}" y="14" class="lblB">領先訊號時間對比 (紅虛線=主要頂, 綠虛線=主要底; 每列一個指標, 刻度=該指標訊號日)</text>')
 for k, rm in enumerate(rows_meta):
     y0 = 42 + k * RH
     nm = rm['indicator']; fam = rm['family']
     ss = SIG[SIG['indicator'] == nm]
     lead = rm.get('median_lead')
-    rs.append(f'<text x="60" y="{y0+5}" class="rowlbl" text-anchor="end">{htmllib.escape(nm[:20])} <tspan class="famchip">[{fam_names.get(fam,fam)}] 中位{lead:+.0f}d</tspan></text>')
+    unit = '月' if rm['family'] == 'monthly_pillars' else 'd'
+    rs.append(f'<text x="{RPAD-8}" y="{y0+5}" class="rowlbl" text-anchor="end">{htmllib.escape(nm[:26])} <tspan class="famchip">[{fam_names.get(fam,fam)}] 中位{lead:+.0f}{unit}</tspan></text>')
     for s in ss.itertuples():
         if pd.isna(s.date): continue
-        xx = X(s.date, RW)
+        xx = X(s.date, RW, pad_l=RPAD)
         cls = 'tkT' if s.warn_type == 'TOP' else 'tkB'
         rs.append(f'<line x1="{xx:.1f}" x2="{xx:.1f}" y1="{y0-8}" y2="{y0+8}" class="{cls}"><title>{nm} | {s.date.date()} | {"頂部警訊" if s.warn_type=="TOP" else "底部警訊"}</title></line>')
 rs.append('</svg>')
@@ -151,11 +153,13 @@ def inset(t0, t1, title, w=560, h=240):
     def Xi(dt): return 46 + (dt - dd['date'].iloc[0]).days / span * (w-58)
     def Yi(p): return 12 + (hi-p)/(hi-lo)*(h-46)
     s = [f'<svg viewBox="0 0 {w} {h}" style="width:100%;height:auto;display:block">']
+    lbl_k = 0
     for r in tpM.itertuples():
         if t0 <= r.date <= t1:
             xx = Xi(r.date)
             s.append(f'<line x1="{xx:.1f}" x2="{xx:.1f}" y1="12" y2="{h-34}" class="{ "vlT" if r.type=="TOP" else "vlB"}"/>')
-            s.append(f'<text x="{xx:.1f}" y="{h-22}" class="tick" text-anchor="middle">{r.date.date()}</text>')
+            s.append(f'<text x="{xx:.1f}" y="{h-22+(lbl_k%2)*11}" class="tick" text-anchor="middle">{r.date.date()}</text>')
+            lbl_k += 1
     pts = ' '.join(f"{Xi(dd['date'].iloc[i]):.1f},{Yi(dd['ndx'].iloc[i]):.1f}" for i in range(len(dd)))
     s.append(f'<polyline points="{pts}" class="price" fill="none"/>')
     p50 = ' '.join(f"{Xi(dd['date'].iloc[i]):.1f},{Yi(dd['sma50'].iloc[i]):.1f}" for i in range(len(dd)) if pd.notna(dd['sma50'].iloc[i]) and lo < dd['sma50'].iloc[i] < hi)

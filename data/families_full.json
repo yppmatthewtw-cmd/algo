@@ -1,0 +1,4022 @@
+{
+ "families": [
+  {
+   "family": "trend_momentum",
+   "summary": "趨勢/動能家族(純價格, 1999-2026, NDX拼接日線): 8個指標、共1044個訊號日已寫入 /home/user/algo/data/signals_trend_momentum.csv。評估44個MAJOR轉折(22頂22底, 略過1999-01-04種子), 配對窗[turn-90,turn+5]取窗內最早訊號, FP=訊號後90td內無同型MAJOR∪INTER轉折(嚴格[s,s+90]; 資料尾端不足90td的訊號不列入FP分母)。核心結論: (1) RSI14底背離是本家族唯一真正高質量的領先指標 — 18/22底命中(82%), FP=0/73, 中位領先-32td, 密度僅2.7訊號/年; 唯一顯著漏訊是2020-03 COVID(價與RSI同創新低,無背離), 2025-04-08底提前3td捕捉。(2) RSI14頂背離命中64%、中位-73td, 但密度高(12訊號/年、常連日成串)使負lead部分是90td窗緣效應, FP 34% — 可用但需去重/組合。(3) 趨勢類(週MACD柱、200SMA穿越、200SMA斜率、10/40週死叉、5/10日叉、-6%回撤線)全部不是領先指標: 以『轉折後首個同型訊號』量測其真實滯後 — 5/10日叉+5td、-6%回撤+9td(最快TOP確認)、週MACD+26td、200SMA穿越+31td、10/40週叉+65td、200斜率+83td。其中close_x_sma200/sma5_10/dd6在協定下名義判LEADING, 但負lead幾乎全由築頂築底期的鞭打穿越貢獻(FP率0.42-0.53), 誠實定位是帶雜訊的確認器; macd_wk_hist(29.5%命中)、sma200_slope_neg(18%)、wk10_40_cross(6.8%)依協定為WEAK。實務建議: 本家族取 rsi14_bot_div 作底部領先訊號 + dd52w_cross_6/sma5_10金叉作快速確認, 其餘僅作regime過濾。無前視: 背離錨定用≥10td前已確認之63日極值, 週線用W-FRI當週最後交易日收盤, 所有滾動窗僅用≤t資料。",
+   "verified": "CONFIRMED",
+   "issues": "All 8 indicators' signal series reproduce exactly; all 8 median leads and all 16 hit counts match claims with zero error; lookahead and coverage checks clean. Minor notes only: (1) rsi14 divergence anchor wording is ambiguous — under the strict reading (most recent 63d-high/low day >=10td earlier must itself have lower/higher price) the CSV matches exactly; under a looser reading counts would be +12.9%/+34%, though verdicts (LEADING) and stats barely change, so no material impact. (2) FP rates for 4 indicators differ by 0.007-0.027 (1-3 signals) from claims, attributable to the FP-window boundary convention (I used turn in [sig, sig+90]); rsi14_bot_div FP=0, macd 0.490 and sma200_slope 0.571 match exactly. (3) Honest-reporting caveat, not an error: rsi14_top_div's 325 signals over 27 years are dense, so its -73d median lead partly reflects signal density; FP rates ~0.43-0.57 on several indicators are as claimed (labeled WEAK where appropriate). Nothing rises to refutation.",
+   "indicators": [
+    {
+     "name": "rsi14_top_div",
+     "rule": "price makes 63d new high (close>max of prior 63 closes, excl today) AND RSI14[t] <= RSI14[anchor]-2, anchor=most recent confirmed 63d-high day >=10 trading days earlier with lower price; Wilder RSI (ewm alpha=1/14)",
+     "warn_type": "TOP",
+     "coverage": "1999-04-27..2026-07-10",
+     "verdict": "LEADING",
+     "median_lead": -73,
+     "mean_lead": -61.1,
+     "hits": "T14/22 B0/0",
+     "fp_rate": 0.34,
+     "n_signals": 325,
+     "per_turn": [
+      {
+       "turn_date": "2000-03-10",
+       "turn_type": "TOP",
+       "signal_date": "1999-12-02",
+       "lead_days": -68
+      },
+      {
+       "turn_date": "2000-05-01",
+       "turn_type": "TOP",
+       "signal_date": "2000-01-19",
+       "lead_days": -71
+      },
+      {
+       "turn_date": "2000-07-17",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-12-11",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-01-24",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-05-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-01-04",
+       "turn_type": "TOP",
+       "signal_date": "2001-12-04",
+       "lead_days": -21
+      },
+      {
+       "turn_date": "2002-08-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2004-01-26",
+       "turn_type": "TOP",
+       "signal_date": "2003-09-18",
+       "lead_days": -88
+      },
+      {
+       "turn_date": "2007-10-31",
+       "turn_type": "TOP",
+       "signal_date": "2007-10-29",
+       "lead_days": -2
+      },
+      {
+       "turn_date": "2008-06-05",
+       "turn_type": "TOP",
+       "signal_date": "2008-06-05",
+       "lead_days": 0
+      },
+      {
+       "turn_date": "2008-11-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2009-01-06",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2010-04-23",
+       "turn_type": "TOP",
+       "signal_date": "2009-12-14",
+       "lead_days": -89
+      },
+      {
+       "turn_date": "2011-04-29",
+       "turn_type": "TOP",
+       "signal_date": "2011-02-04",
+       "lead_days": -58
+      },
+      {
+       "turn_date": "2015-07-20",
+       "turn_type": "TOP",
+       "signal_date": "2015-03-20",
+       "lead_days": -83
+      },
+      {
+       "turn_date": "2018-08-29",
+       "turn_type": "TOP",
+       "signal_date": "2018-06-20",
+       "lead_days": -49
+      },
+      {
+       "turn_date": "2020-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2019-10-25",
+       "lead_days": -78
+      },
+      {
+       "turn_date": "2021-11-19",
+       "turn_type": "TOP",
+       "signal_date": "2021-07-22",
+       "lead_days": -85
+      },
+      {
+       "turn_date": "2022-03-29",
+       "turn_type": "TOP",
+       "signal_date": "2021-11-18",
+       "lead_days": -89
+      },
+      {
+       "turn_date": "2022-08-15",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2025-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2024-10-29",
+       "lead_days": -75
+      }
+     ],
+     "notes": "高密度指標(~12訊號/年, 常連日成串; 配對窗內中位2個訊號), 故『窗內最早』常貼近-90窗緣, median lead -73 部分是窗緣效應, 非精確擇時. FP率0.34(嚴格: 同型MAJOR∪INTER轉折需落在[s,s+90]). 漏掉8/22頂(多為熊市反彈頂如2000-07,2000-12,2001,2008-11,2009-01 — 未創63日新高故規則不適用). 錨點=至少10交易日前已確認之63日高, 無前視. [hit=0.636, FP=109/321可評估訊號(尾端4筆未滿90td不計), 密度12.0/年]"
+    },
+    {
+     "name": "rsi14_bot_div",
+     "rule": "price makes 63d new low (close<min of prior 63 closes, excl today) AND RSI14[t] >= RSI14[anchor]+2, anchor=most recent confirmed 63d-low day >=10 trading days earlier with higher price",
+     "warn_type": "BOTTOM",
+     "coverage": "1999-04-27..2026-07-10",
+     "verdict": "LEADING",
+     "median_lead": -32,
+     "mean_lead": -40.1,
+     "hits": "T0/0 B18/22",
+     "fp_rate": 0,
+     "n_signals": 73,
+     "per_turn": [
+      {
+       "turn_date": "2000-04-14",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-05-23",
+       "turn_type": "BOTTOM",
+       "signal_date": "2000-05-23",
+       "lead_days": 0
+      },
+      {
+       "turn_date": "2000-11-30",
+       "turn_type": "BOTTOM",
+       "signal_date": "2000-11-10",
+       "lead_days": -13
+      },
+      {
+       "turn_date": "2001-01-02",
+       "turn_type": "BOTTOM",
+       "signal_date": "2000-11-10",
+       "lead_days": -34
+      },
+      {
+       "turn_date": "2001-04-04",
+       "turn_type": "BOTTOM",
+       "signal_date": "2000-11-22",
+       "lead_days": -90
+      },
+      {
+       "turn_date": "2001-09-21",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-08-05",
+       "turn_type": "BOTTOM",
+       "signal_date": "2002-04-24",
+       "lead_days": -71
+      },
+      {
+       "turn_date": "2002-10-09",
+       "turn_type": "BOTTOM",
+       "signal_date": "2002-06-03",
+       "lead_days": -90
+      },
+      {
+       "turn_date": "2004-08-12",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-03-10",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-02-06",
+       "lead_days": -22
+      },
+      {
+       "turn_date": "2008-10-27",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-10-02",
+       "lead_days": -17
+      },
+      {
+       "turn_date": "2008-11-20",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-10-02",
+       "lead_days": -35
+      },
+      {
+       "turn_date": "2009-03-09",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-10-27",
+       "lead_days": -90
+      },
+      {
+       "turn_date": "2010-07-02",
+       "turn_type": "BOTTOM",
+       "signal_date": "2010-06-07",
+       "lead_days": -19
+      },
+      {
+       "turn_date": "2011-10-03",
+       "turn_type": "BOTTOM",
+       "signal_date": "2011-08-19",
+       "lead_days": -30
+      },
+      {
+       "turn_date": "2016-02-11",
+       "turn_type": "BOTTOM",
+       "signal_date": "2016-01-15",
+       "lead_days": -18
+      },
+      {
+       "turn_date": "2018-12-24",
+       "turn_type": "BOTTOM",
+       "signal_date": "2018-10-24",
+       "lead_days": -41
+      },
+      {
+       "turn_date": "2020-03-20",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-03-14",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-02-22",
+       "lead_days": -14
+      },
+      {
+       "turn_date": "2022-06-16",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-02-22",
+       "lead_days": -80
+      },
+      {
+       "turn_date": "2022-12-28",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-10-10",
+       "lead_days": -55
+      },
+      {
+       "turn_date": "2025-04-08",
+       "turn_type": "BOTTOM",
+       "signal_date": "2025-04-03",
+       "lead_days": -3
+      }
+     ],
+     "notes": "全家族最佳: 18/22底命中, FP=0/73(每個訊號其後90td內必有MAJOR/INTER底). 2020-03 COVID未命中 — 跌速太快, 價與RSI同創新低無背離(誠實漏訊); 2025-04-08底於2025-04-03提前3td發出; 2022-10-10領先2022-12-28底55td. 密度僅2.7訊號/年, 訊號質量高; median lead -32為真領先而非窗緣效應. [hit=0.818, FP=0/73, 密度2.7/年]"
+    },
+    {
+     "name": "macd_wk_hist",
+     "rule": "W-FRI weekly close MACD(12,26,9) histogram: flip from >=0 to <0 AND daily close>0.92*rolling252max => TOP; flip from <=0 to >0 AND close<1.15*rolling252min => BOTTOM; signal date=last trading day of that week; 40-week EMA warmup",
+     "warn_type": "BOTH",
+     "coverage": "2000-01-03..2026-07-10",
+     "verdict": "WEAK",
+     "median_lead": -55,
+     "mean_lead": -51.7,
+     "hits": "T8/22 B5/22",
+     "fp_rate": 0.49,
+     "n_signals": 49,
+     "per_turn": [
+      {
+       "turn_date": "2000-03-10",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-04-14",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-05-01",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-05-23",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-07-17",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-11-30",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-12-11",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-01-02",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-01-24",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-04-04",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-05-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-09-21",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-01-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-08-05",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-08-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-10-09",
+       "turn_type": "BOTTOM",
+       "signal_date": "2002-09-13",
+       "lead_days": -18
+      },
+      {
+       "turn_date": "2004-01-26",
+       "turn_type": "TOP",
+       "signal_date": "2003-11-21",
+       "lead_days": -42
+      },
+      {
+       "turn_date": "2004-08-12",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2007-10-31",
+       "turn_type": "TOP",
+       "signal_date": "2007-07-27",
+       "lead_days": -67
+      },
+      {
+       "turn_date": "2008-03-10",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-06-05",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-10-27",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-08-08",
+       "lead_days": -55
+      },
+      {
+       "turn_date": "2008-11-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-11-20",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-08-08",
+       "lead_days": -73
+      },
+      {
+       "turn_date": "2009-01-06",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2009-03-09",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2010-04-23",
+       "turn_type": "TOP",
+       "signal_date": "2010-01-22",
+       "lead_days": -63
+      },
+      {
+       "turn_date": "2010-07-02",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2011-04-29",
+       "turn_type": "TOP",
+       "signal_date": "2011-03-11",
+       "lead_days": -34
+      },
+      {
+       "turn_date": "2011-10-03",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2015-07-20",
+       "turn_type": "TOP",
+       "signal_date": "2015-04-02",
+       "lead_days": -74
+      },
+      {
+       "turn_date": "2016-02-11",
+       "turn_type": "BOTTOM",
+       "signal_date": "2015-10-30",
+       "lead_days": -70
+      },
+      {
+       "turn_date": "2018-08-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2018-12-24",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2020-02-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2020-03-20",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2021-11-19",
+       "turn_type": "TOP",
+       "signal_date": "2021-09-24",
+       "lead_days": -40
+      },
+      {
+       "turn_date": "2022-03-14",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-03-29",
+       "turn_type": "TOP",
+       "signal_date": "2021-12-03",
+       "lead_days": -79
+      },
+      {
+       "turn_date": "2022-06-16",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-08-15",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-12-28",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-11-11",
+       "lead_days": -31
+      },
+      {
+       "turn_date": "2025-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2025-01-10",
+       "lead_days": -26
+      },
+      {
+       "turn_date": "2025-04-08",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      }
+     ],
+     "notes": "命中率僅29.5%(13/44), FP率0.49 → 依協定判WEAK. 主因: 柱狀圖翻負多發生在頂後數週, 超出turn+5窗; 補充診斷: 轉折後首個同型訊號中位滯後+26td(n=13). 實質上是遲到的確認器而非領先指標. 2020兩個轉折皆漏(週線太慢跟不上V型). [hit=0.295, FP=24/49, 密度1.9/年]"
+    },
+    {
+     "name": "sma5_10_cross",
+     "rule": "SMA5 crosses below SMA10 (prev day >=) AND close>=0.95*rolling252max => TOP; SMA5 crosses above SMA10 AND close<=1.12*rolling252min => BOTTOM",
+     "warn_type": "BOTH",
+     "coverage": "2000-01-03..2026-07-10",
+     "verdict": "LEADING",
+     "median_lead": -60,
+     "mean_lead": -47,
+     "hits": "T10/22 B16/22",
+     "fp_rate": 0.432,
+     "n_signals": 248,
+     "per_turn": [
+      {
+       "turn_date": "2000-03-10",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-04-14",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-05-01",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-05-23",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-07-17",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-11-30",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-12-11",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-01-02",
+       "turn_type": "BOTTOM",
+       "signal_date": "2000-12-29",
+       "lead_days": -1
+      },
+      {
+       "turn_date": "2001-01-24",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-04-04",
+       "turn_type": "BOTTOM",
+       "signal_date": "2000-12-29",
+       "lead_days": -65
+      },
+      {
+       "turn_date": "2001-05-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-09-21",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-01-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-08-05",
+       "turn_type": "BOTTOM",
+       "signal_date": "2002-07-31",
+       "lead_days": -3
+      },
+      {
+       "turn_date": "2002-08-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-10-09",
+       "turn_type": "BOTTOM",
+       "signal_date": "2002-07-31",
+       "lead_days": -49
+      },
+      {
+       "turn_date": "2004-01-26",
+       "turn_type": "TOP",
+       "signal_date": "2003-09-25",
+       "lead_days": -83
+      },
+      {
+       "turn_date": "2004-08-12",
+       "turn_type": "BOTTOM",
+       "signal_date": "2004-08-19",
+       "lead_days": 5
+      },
+      {
+       "turn_date": "2007-10-31",
+       "turn_type": "TOP",
+       "signal_date": "2007-06-26",
+       "lead_days": -89
+      },
+      {
+       "turn_date": "2008-03-10",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-01-30",
+       "lead_days": -27
+      },
+      {
+       "turn_date": "2008-06-05",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-10-27",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-07-18",
+       "lead_days": -70
+      },
+      {
+       "turn_date": "2008-11-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-11-20",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-07-18",
+       "lead_days": -88
+      },
+      {
+       "turn_date": "2009-01-06",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2009-03-09",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2010-04-23",
+       "turn_type": "TOP",
+       "signal_date": "2010-01-15",
+       "lead_days": -67
+      },
+      {
+       "turn_date": "2010-07-02",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2011-04-29",
+       "turn_type": "TOP",
+       "signal_date": "2011-01-24",
+       "lead_days": -67
+      },
+      {
+       "turn_date": "2011-10-03",
+       "turn_type": "BOTTOM",
+       "signal_date": "2011-10-10",
+       "lead_days": 5
+      },
+      {
+       "turn_date": "2015-07-20",
+       "turn_type": "TOP",
+       "signal_date": "2015-03-27",
+       "lead_days": -78
+      },
+      {
+       "turn_date": "2016-02-11",
+       "turn_type": "BOTTOM",
+       "signal_date": "2015-12-22",
+       "lead_days": -34
+      },
+      {
+       "turn_date": "2018-08-29",
+       "turn_type": "TOP",
+       "signal_date": "2018-05-21",
+       "lead_days": -70
+      },
+      {
+       "turn_date": "2018-12-24",
+       "turn_type": "BOTTOM",
+       "signal_date": "2018-11-05",
+       "lead_days": -33
+      },
+      {
+       "turn_date": "2020-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2019-12-05",
+       "lead_days": -50
+      },
+      {
+       "turn_date": "2020-03-20",
+       "turn_type": "BOTTOM",
+       "signal_date": "2020-03-27",
+       "lead_days": 5
+      },
+      {
+       "turn_date": "2021-11-19",
+       "turn_type": "TOP",
+       "signal_date": "2021-07-19",
+       "lead_days": -88
+      },
+      {
+       "turn_date": "2022-03-14",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-03-17",
+       "lead_days": 3
+      },
+      {
+       "turn_date": "2022-03-29",
+       "turn_type": "TOP",
+       "signal_date": "2021-11-29",
+       "lead_days": -83
+      },
+      {
+       "turn_date": "2022-06-16",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-03-17",
+       "lead_days": -63
+      },
+      {
+       "turn_date": "2022-08-15",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-12-28",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-10-06",
+       "lead_days": -57
+      },
+      {
+       "turn_date": "2025-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2024-10-21",
+       "lead_days": -81
+      },
+      {
+       "turn_date": "2025-04-08",
+       "turn_type": "BOTTOM",
+       "signal_date": "2025-04-15",
+       "lead_days": 5
+      }
+     ],
+     "notes": "命中26/44(底部16/22較佳), 但FP率0.432且~9.4訊號/年(高頻鞭打). 名義LEADING但窗內負lead多來自築頂/築底過程的反覆交叉, 非精確預警. 作確認器反而快: 轉折後首個同型訊號中位滯後僅+5td(n=29) — 2020-03-27(底後5td), 2022-03-17, 2025-04-15皆及時確認. [hit=0.591, FP=105/243可評估(尾端5筆不計), 密度9.4/年]"
+    },
+    {
+     "name": "close_x_sma200",
+     "rule": "close crosses below SMA200 (prev day close>=SMA200) => TOP-confirm; close crosses above SMA200 (prev day <=) => BOTTOM-confirm",
+     "warn_type": "BOTH",
+     "coverage": "1999-10-20..2026-07-10",
+     "verdict": "LEADING",
+     "median_lead": -56.5,
+     "mean_lead": -50.3,
+     "hits": "T9/22 B15/22",
+     "fp_rate": 0.425,
+     "n_signals": 176,
+     "per_turn": [
+      {
+       "turn_date": "2000-03-10",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-04-14",
+       "turn_type": "BOTTOM",
+       "signal_date": "2000-04-17",
+       "lead_days": 1
+      },
+      {
+       "turn_date": "2000-05-01",
+       "turn_type": "TOP",
+       "signal_date": "2000-04-14",
+       "lead_days": -10
+      },
+      {
+       "turn_date": "2000-05-23",
+       "turn_type": "BOTTOM",
+       "signal_date": "2000-04-17",
+       "lead_days": -25
+      },
+      {
+       "turn_date": "2000-07-17",
+       "turn_type": "TOP",
+       "signal_date": "2000-04-14",
+       "lead_days": -63
+      },
+      {
+       "turn_date": "2000-11-30",
+       "turn_type": "BOTTOM",
+       "signal_date": "2000-08-23",
+       "lead_days": -69
+      },
+      {
+       "turn_date": "2000-12-11",
+       "turn_type": "TOP",
+       "signal_date": "2000-09-08",
+       "lead_days": -65
+      },
+      {
+       "turn_date": "2001-01-02",
+       "turn_type": "BOTTOM",
+       "signal_date": "2000-08-23",
+       "lead_days": -90
+      },
+      {
+       "turn_date": "2001-01-24",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-04-04",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-05-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-09-21",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-01-04",
+       "turn_type": "TOP",
+       "signal_date": "2001-12-20",
+       "lead_days": -9
+      },
+      {
+       "turn_date": "2002-08-05",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-08-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-10-09",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2004-01-26",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2004-08-12",
+       "turn_type": "BOTTOM",
+       "signal_date": "2004-05-03",
+       "lead_days": -70
+      },
+      {
+       "turn_date": "2007-10-31",
+       "turn_type": "TOP",
+       "signal_date": "2007-08-15",
+       "lead_days": -54
+      },
+      {
+       "turn_date": "2008-03-10",
+       "turn_type": "BOTTOM",
+       "signal_date": "2007-11-23",
+       "lead_days": -72
+      },
+      {
+       "turn_date": "2008-06-05",
+       "turn_type": "TOP",
+       "signal_date": "2008-05-19",
+       "lead_days": -12
+      },
+      {
+       "turn_date": "2008-10-27",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-08-11",
+       "lead_days": -54
+      },
+      {
+       "turn_date": "2008-11-04",
+       "turn_type": "TOP",
+       "signal_date": "2008-08-12",
+       "lead_days": -59
+      },
+      {
+       "turn_date": "2008-11-20",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-08-11",
+       "lead_days": -72
+      },
+      {
+       "turn_date": "2009-01-06",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2009-03-09",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2010-04-23",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2010-07-02",
+       "turn_type": "BOTTOM",
+       "signal_date": "2010-05-21",
+       "lead_days": -29
+      },
+      {
+       "turn_date": "2011-04-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2011-10-03",
+       "turn_type": "BOTTOM",
+       "signal_date": "2011-06-21",
+       "lead_days": -72
+      },
+      {
+       "turn_date": "2015-07-20",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2016-02-11",
+       "turn_type": "BOTTOM",
+       "signal_date": "2015-10-23",
+       "lead_days": -75
+      },
+      {
+       "turn_date": "2018-08-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2018-12-24",
+       "turn_type": "BOTTOM",
+       "signal_date": "2018-10-12",
+       "lead_days": -49
+      },
+      {
+       "turn_date": "2020-02-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2020-03-20",
+       "turn_type": "BOTTOM",
+       "signal_date": "2020-03-10",
+       "lead_days": -8
+      },
+      {
+       "turn_date": "2021-11-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-03-14",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-02-02",
+       "lead_days": -27
+      },
+      {
+       "turn_date": "2022-03-29",
+       "turn_type": "TOP",
+       "signal_date": "2022-01-20",
+       "lead_days": -47
+      },
+      {
+       "turn_date": "2022-06-16",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-02-09",
+       "lead_days": -88
+      },
+      {
+       "turn_date": "2022-08-15",
+       "turn_type": "TOP",
+       "signal_date": "2022-04-05",
+       "lead_days": -90
+      },
+      {
+       "turn_date": "2022-12-28",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2025-02-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2025-04-08",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      }
+     ],
+     "notes": "命中24/44, FP率0.425. median lead -56.5幾乎全來自頂/底過程中的鞭打式穿越(先穿越→收回→再穿越), 非真預警; 作確認器量測: 轉折後首次同向穿越中位滯後+31td(n=40/44). 名義上LEADING(依協定median lead), 實務應視為帶雜訊的確認器. 2020-02-19頂與2025-02-19頂皆漏(頂前價一直在200SMA上). [hit=0.545, FP=74/174可評估(尾端2筆不計), 密度6.6/年]"
+    },
+    {
+     "name": "sma200_slope_neg",
+     "rule": "slope=SMA200[t]-SMA200[t-20]; signal when slope flips from >=0 to <0 => TOP",
+     "warn_type": "TOP",
+     "coverage": "1999-11-17..2026-07-10",
+     "verdict": "WEAK",
+     "median_lead": -74,
+     "mean_lead": -69.8,
+     "hits": "T4/22 B0/0",
+     "fp_rate": 0.571,
+     "n_signals": 14,
+     "per_turn": [
+      {
+       "turn_date": "2000-03-10",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-05-01",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-07-17",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-12-11",
+       "turn_type": "TOP",
+       "signal_date": "2000-10-11",
+       "lead_days": -42
+      },
+      {
+       "turn_date": "2001-01-24",
+       "turn_type": "TOP",
+       "signal_date": "2000-10-11",
+       "lead_days": -71
+      },
+      {
+       "turn_date": "2001-05-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-01-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-08-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2004-01-26",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2007-10-31",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-06-05",
+       "turn_type": "TOP",
+       "signal_date": "2008-01-29",
+       "lead_days": -89
+      },
+      {
+       "turn_date": "2008-11-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2009-01-06",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2010-04-23",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2011-04-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2015-07-20",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2018-08-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2020-02-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2021-11-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-03-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-08-15",
+       "turn_type": "TOP",
+       "signal_date": "2022-04-25",
+       "lead_days": -77
+      },
+      {
+       "turn_date": "2025-02-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      }
+     ],
+     "notes": "僅14訊號/27年, 命中4/22頂(且4個hit全是熊市中段的次級頂, 非週期起始頂), FP率0.571 → WEAK. 診斷: 頂後首訊號中位滯後+83td(n=13) — 極度滯後, 斜率翻負時跌勢多已過半. 作頂部預警無效, 僅適合長週期regime過濾. [hit=0.182, FP=8/14, 密度0.5/年]"
+    },
+    {
+     "name": "wk10_40_cross",
+     "rule": "weekly(W-FRI last close) SMA10 crosses below SMA40 => TOP; crosses above => BOTTOM; signal date=last trading day of that week",
+     "warn_type": "BOTH",
+     "coverage": "1999-10-22..2026-07-10",
+     "verdict": "WEAK",
+     "median_lead": -25,
+     "mean_lead": -31,
+     "hits": "T2/22 B1/22",
+     "fp_rate": 0.529,
+     "n_signals": 36,
+     "per_turn": [
+      {
+       "turn_date": "2000-03-10",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-04-14",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-05-01",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-05-23",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-07-17",
+       "turn_type": "TOP",
+       "signal_date": "2000-06-09",
+       "lead_days": -25
+      },
+      {
+       "turn_date": "2000-11-30",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-12-11",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-01-02",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-01-24",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-04-04",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-05-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-09-21",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-01-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-08-05",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-08-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-10-09",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2004-01-26",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2004-08-12",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2007-10-31",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-03-10",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-06-05",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-10-27",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-11-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-11-20",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2009-01-06",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2009-03-09",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2010-04-23",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2010-07-02",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2011-04-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2011-10-03",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2015-07-20",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2016-02-11",
+       "turn_type": "BOTTOM",
+       "signal_date": "2015-12-04",
+       "lead_days": -46
+      },
+      {
+       "turn_date": "2018-08-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2018-12-24",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2020-02-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2020-03-20",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2021-11-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-03-14",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-03-29",
+       "turn_type": "TOP",
+       "signal_date": "2022-02-25",
+       "lead_days": -22
+      },
+      {
+       "turn_date": "2022-06-16",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-08-15",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-12-28",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2025-02-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2025-04-08",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      }
+     ],
+     "notes": "如預期為深度確認器: 協定窗[turn-90,turn+5]內幾乎不發訊(3/44命中→依協定WEAK), 因死叉/金叉中位滯後轉折+65td(n=29, 200td內有訊號的轉折). 36訊號FP率0.529, 2011/2015-16多次鞭打. 對照結論: 它確認趨勢已變, 但平均要等約3個月(13週), 對抓轉折無用 — 這就是題目要的滯後量測. [hit=0.068, FP=18/34可評估(尾端2筆不計), 密度1.4/年]"
+    },
+    {
+     "name": "dd52w_cross_6",
+     "rule": "dd=close/rolling252max-1 (max incl today); signal when dd crosses from >=-6% to <-6% => TOP",
+     "warn_type": "TOP",
+     "coverage": "2000-01-04..2026-07-10",
+     "verdict": "LEADING",
+     "median_lead": -51,
+     "mean_lead": -50.5,
+     "hits": "T11/22 B0/0",
+     "fp_rate": 0.525,
+     "n_signals": 123,
+     "per_turn": [
+      {
+       "turn_date": "2000-03-10",
+       "turn_type": "TOP",
+       "signal_date": "2000-01-05",
+       "lead_days": -45
+      },
+      {
+       "turn_date": "2000-05-01",
+       "turn_type": "TOP",
+       "signal_date": "2000-01-05",
+       "lead_days": -80
+      },
+      {
+       "turn_date": "2000-07-17",
+       "turn_type": "TOP",
+       "signal_date": "2000-03-14",
+       "lead_days": -86
+      },
+      {
+       "turn_date": "2000-12-11",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-01-24",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-05-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-01-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-08-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2004-01-26",
+       "turn_type": "TOP",
+       "signal_date": "2003-09-26",
+       "lead_days": -82
+      },
+      {
+       "turn_date": "2007-10-31",
+       "turn_type": "TOP",
+       "signal_date": "2007-07-31",
+       "lead_days": -65
+      },
+      {
+       "turn_date": "2008-06-05",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-11-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2009-01-06",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2010-04-23",
+       "turn_type": "TOP",
+       "signal_date": "2010-01-28",
+       "lead_days": -59
+      },
+      {
+       "turn_date": "2011-04-29",
+       "turn_type": "TOP",
+       "signal_date": "2011-03-16",
+       "lead_days": -31
+      },
+      {
+       "turn_date": "2015-07-20",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2018-08-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2020-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2020-02-24",
+       "lead_days": 3
+      },
+      {
+       "turn_date": "2021-11-19",
+       "turn_type": "TOP",
+       "signal_date": "2021-09-30",
+       "lead_days": -36
+      },
+      {
+       "turn_date": "2022-03-29",
+       "turn_type": "TOP",
+       "signal_date": "2022-01-13",
+       "lead_days": -51
+      },
+      {
+       "turn_date": "2022-08-15",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2025-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2025-01-14",
+       "lead_days": -24
+      }
+     ],
+     "notes": "定義上必然在頂後才觸發(需先跌6%): 頂後首訊號中位滯後僅+9td(n=11), 是全家族最快的頂部確認器(2020-02-24即頂後3td). 協定窗內11/22命中且lead為負者多為更早一波回撤的殘留訊號(如2021-09-30訊號配2021-11-19頂). FP率0.525偏高 — 6%回撤常只是牛市中繼. 依協定median lead判LEADING, 實務定位=快速TOP確認器/風控觸發線. [hit=0.5, FP=63/120可評估(尾端3筆不計), 密度4.6/年]"
+    }
+   ]
+  },
+  {
+   "family": "volatility",
+   "summary": "波動率家族6指標依嚴格協定評估完畢(交易日lead、無前視、規則化觸發), 全部300筆訊號寫入 /home/user/algo/data/signals_volatility.csv。MAJOR池: 22 TOP + 22 BOTTOM(略過1999-01-04種子); VIX類指標只對2014後的7 TOP/7 BOTTOM評估。FP定義: 訊號日[-5,+90]交易日窗內無同型MAJOR/INTER轉折(-5為配對窗turn+5的鏡像); 資料尾端90日窗未滿的訊號列為不確定、不計FP。核心發現: (1) 最佳TOP指標=VIX_price_rise_divergence(價創新高但VIX 10MA同升>10%): 7頂中6(86%), 中位領先-44交易日, 但FP 40%且樣本僅7頂。(2) 最佳BOTTOM指標=VIX_spike_reversal(VIX>35後3日內回落15%): 5/7命中, 中位lead -2 → 同步確認器而非領先, FP僅17%, 但VIX不破35的淺底(2016/2022-12)抓不到。(3) HV20_rise_from_low_near_high名義上LEADING(中位-80)且抓到全部著名大頂, 但202筆訊號過密、lead貼窗邊、FP 43%, 只能當環境警戒。(4) 其餘三個——HV20_peak_rolloff(命中18%, COVID底遲到17日)、VIX_squeeze_break(命中14%)、HV20_regime_cross25(命中18%, FP 47%)——誠實判定WEAK, 不建議單獨使用。總結: 波動率對大頂有1-3個月的中期領先能力(靠VIX與價背離), 對大底只有同步確認能力; 已實現波動率(HV20)因其落後統計特性, 作為轉折擇時工具整體弱於VIX。",
+   "verified": "MINOR_ISSUES",
+   "issues": "核心聲稱全部成立: 6個指標訊號序列100%重現, 中位lead與hit rate全部精確吻合, 無前視偏誤 (規則全因果、首訊皆在暖機後、3個抽樣訊號用截斷至當日數據可重現), 訊號日全在數據覆蓋內的實際交易日。唯一問題: FP率採用了比協定第4條字面更寬鬆的定義 — 同類型轉折在訊號前5日內出現也算非FP, 且數據尾端90日截斷窗口不計FP。按協定嚴格定義, 4個指標FP率偏高: HV20_rise_from_low_near_high 0.480(聲稱0.431), VIX_price_rise_divergence 0.429(0.400), VIX_spike_reversal 0.389(0.167, 因4/18筆在底部後1日才發訊), HV20_regime_cross25 0.500(0.467)。此偏差不改變任何LEADING/COINCIDENT/WEAK判定, 但VIX_spike_reversal的實際FP率應理解為偏高。",
+   "indicators": [
+    {
+     "name": "HV20_rise_from_low_near_high",
+     "rule": "HV20(t)=std(近20日log報酬,ddof=1)*sqrt(252)*100; 條件C(t): HV20(t)/min(HV20[t-59..t])-1>0.25 且 (max(close[t-251..t])-close(t))/max(close[t-251..t])<0.05; C由False轉True當日發訊",
+     "warn_type": "TOP",
+     "coverage": "1999-12-31..2026-07-10 (需252日滾動高+60日HV最低暖機)",
+     "verdict": "LEADING",
+     "median_lead": -80,
+     "mean_lead": -72.8,
+     "hits": "T13/22 B0/0",
+     "fp_rate": 0.431,
+     "n_signals": 202,
+     "per_turn": [
+      {
+       "turn_date": "2000-03-10",
+       "turn_type": "TOP",
+       "signal_date": "2000-01-10",
+       "lead_days": -42
+      },
+      {
+       "turn_date": "2000-05-01",
+       "turn_type": "TOP",
+       "signal_date": "2000-01-10",
+       "lead_days": -77
+      },
+      {
+       "turn_date": "2000-07-17",
+       "turn_type": "TOP",
+       "signal_date": "2000-03-17",
+       "lead_days": -83
+      },
+      {
+       "turn_date": "2000-12-11",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-01-24",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-05-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-01-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-08-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2004-01-26",
+       "turn_type": "TOP",
+       "signal_date": "2003-09-29",
+       "lead_days": -81
+      },
+      {
+       "turn_date": "2007-10-31",
+       "turn_type": "TOP",
+       "signal_date": "2007-08-08",
+       "lead_days": -59
+      },
+      {
+       "turn_date": "2008-06-05",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-11-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2009-01-06",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2010-04-23",
+       "turn_type": "TOP",
+       "signal_date": "2010-01-15",
+       "lead_days": -67
+      },
+      {
+       "turn_date": "2011-04-29",
+       "turn_type": "TOP",
+       "signal_date": "2011-01-03",
+       "lead_days": -81
+      },
+      {
+       "turn_date": "2015-07-20",
+       "turn_type": "TOP",
+       "signal_date": "2015-03-18",
+       "lead_days": -85
+      },
+      {
+       "turn_date": "2018-08-29",
+       "turn_type": "TOP",
+       "signal_date": "2018-05-07",
+       "lead_days": -80
+      },
+      {
+       "turn_date": "2020-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2019-10-09",
+       "lead_days": -90
+      },
+      {
+       "turn_date": "2021-11-19",
+       "turn_type": "TOP",
+       "signal_date": "2021-09-20",
+       "lead_days": -44
+      },
+      {
+       "turn_date": "2022-03-29",
+       "turn_type": "TOP",
+       "signal_date": "2021-11-26",
+       "lead_days": -84
+      },
+      {
+       "turn_date": "2022-08-15",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2025-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2024-10-31",
+       "lead_days": -73
+      }
+     ],
+     "notes": "抓到所有著名大頂(2000/2007/2015/2018/2020/2021/2025), 漏掉的全是熊市中的反彈頂(價不在252日高附近, 規則設計上本就不觸發)。但警告: 訊號極密(202筆,約7.6筆/年), 中位lead=-80貼近90日窗邊界, 命中很大程度靠訊號頻率; FP率43%; 另有6筆訊號因資料尾端90日窗未滿列為不確定、未計入FP。實務上屬『環境警戒』而非精準擇時。"
+    },
+    {
+     "name": "HV20_peak_rolloff",
+     "rule": "狀態機: HV20>60%進入武裝並追蹤episode峰值; HV20(t)<=0.8*峰值當日發訊並解除; 需HV20重新上穿60%才再武裝",
+     "warn_type": "BOTTOM",
+     "coverage": "1999-02-02..2026-07-10",
+     "verdict": "WEAK",
+     "median_lead": -27.5,
+     "mean_lead": -34.8,
+     "hits": "T0/0 B4/22",
+     "fp_rate": 0.125,
+     "n_signals": 8,
+     "per_turn": [
+      {
+       "turn_date": "2000-04-14",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-05-23",
+       "turn_type": "BOTTOM",
+       "signal_date": "2000-05-15",
+       "lead_days": -6
+      },
+      {
+       "turn_date": "2000-11-30",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-01-02",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-04-04",
+       "turn_type": "BOTTOM",
+       "signal_date": "2001-01-24",
+       "lead_days": -49
+      },
+      {
+       "turn_date": "2001-09-21",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-08-05",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-10-09",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2004-08-12",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-03-10",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-10-27",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-11-20",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-11-12",
+       "lead_days": -6
+      },
+      {
+       "turn_date": "2009-03-09",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-11-12",
+       "lead_days": -78
+      },
+      {
+       "turn_date": "2010-07-02",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2011-10-03",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2016-02-11",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2018-12-24",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2020-03-20",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-03-14",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-06-16",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-12-28",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2025-04-08",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      }
+     ],
+     "notes": "誠實結論: 不好用。HV20>60%門檻只在2000-01/2008/2020等極端崩盤出現, 27年僅8筆訊號, 命中率18%(4/22)。FP率低(12.5%)但因HV20是落後統計量, 2020-03-20 COVID底的訊號遲至2020-04-14(轉折後+17交易日, 窗外)才出現。多數大底(2016/2018/2022/2025)HV20根本未達60%。"
+    },
+    {
+     "name": "VIX_price_rise_divergence",
+     "rule": "條件C(t): 過去20日內(t-19..t)曾有收盤=252日滾動最高 且 SMA10(VIX)(t)/SMA10(VIX)(t-20)-1>0.10; C由False轉True當日發訊",
+     "warn_type": "TOP",
+     "coverage": "2014-02-14..2026-07-10 (VIX自2014-01-03起, +SMA10與20日變化暖機); tops_evaluated只計此後7個MAJOR TOP",
+     "verdict": "LEADING",
+     "median_lead": -44,
+     "mean_lead": -50.2,
+     "hits": "T6/7 B0/0",
+     "fp_rate": 0.4,
+     "n_signals": 35,
+     "per_turn": [
+      {
+       "turn_date": "2015-07-20",
+       "turn_type": "TOP",
+       "signal_date": "2015-07-02",
+       "lead_days": -11
+      },
+      {
+       "turn_date": "2018-08-29",
+       "turn_type": "TOP",
+       "signal_date": "2018-07-02",
+       "lead_days": -41
+      },
+      {
+       "turn_date": "2020-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2019-12-10",
+       "lead_days": -47
+      },
+      {
+       "turn_date": "2021-11-19",
+       "turn_type": "TOP",
+       "signal_date": "2021-07-29",
+       "lead_days": -80
+      },
+      {
+       "turn_date": "2022-03-29",
+       "turn_type": "TOP",
+       "signal_date": "2021-11-24",
+       "lead_days": -85
+      },
+      {
+       "turn_date": "2022-08-15",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2025-02-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": -37
+      }
+     ],
+     "notes": "本家族最佳TOP領先指標: VIX期7個大頂命中6個(86%), 中位領先-44交易日(約2個月)。唯一漏掉2022-08-15(熊市反彈頂, 價未創252日新高)。代價是FP率40%(35筆中14筆後續90日無任何MAJOR/INTER頂)。樣本僅7個頂, 統計效力有限。2025-02-19頂的配對訊號為2024-12-23(lead -37)。"
+    },
+    {
+     "name": "VIX_spike_reversal",
+     "rule": "條件C(t): max(VIX[t-3..t-1])>35 且 VIX(t)<=0.85*該max; C由False轉True當日發訊",
+     "warn_type": "BOTTOM",
+     "coverage": "2014-01-08..2026-07-10 (VIX期); bottoms_evaluated只計此後7個MAJOR BOTTOM",
+     "verdict": "COINCIDENT",
+     "median_lead": -2,
+     "mean_lead": -16.4,
+     "hits": "T0/0 B5/7",
+     "fp_rate": 0.167,
+     "n_signals": 18,
+     "per_turn": [
+      {
+       "turn_date": "2016-02-11",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2018-12-24",
+       "turn_type": "BOTTOM",
+       "signal_date": "2018-12-26",
+       "lead_days": 1
+      },
+      {
+       "turn_date": "2020-03-20",
+       "turn_type": "BOTTOM",
+       "signal_date": "2020-03-02",
+       "lead_days": -14
+      },
+      {
+       "turn_date": "2022-03-14",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-03-10",
+       "lead_days": -2
+      },
+      {
+       "turn_date": "2022-06-16",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-03-10",
+       "lead_days": -68
+      },
+      {
+       "turn_date": "2022-12-28",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2025-04-08",
+       "turn_type": "BOTTOM",
+       "signal_date": "2025-04-09",
+       "lead_days": 1
+      }
+     ],
+     "notes": "最可靠的BOTTOM同步確認器: 命中5/7(71%), 中位lead=-2(基本上就在底部當週), FP率僅16.7%。2018-12-24與2025-04-08均在底部後1日確認。漏掉2016-02與2022-12是因VIX兩次都未超過35——門檻本身限制了覆蓋。COVID期間重複發訊(2020-03-02起6筆), 首筆領先真底14日。屬同步/確認型而非領先型。"
+    },
+    {
+     "name": "VIX_squeeze_break",
+     "rule": "狀態機: VIX<14連續>=20日進入武裝(中斷即歸零); 武裝後首次收盤VIX>17當日發訊並重置",
+     "warn_type": "TOP",
+     "coverage": "2014-02-03..2026-07-10 (VIX期); tops_evaluated只計此後7個MAJOR TOP",
+     "verdict": "WEAK",
+     "median_lead": -16,
+     "mean_lead": -16,
+     "hits": "T1/7 B0/0",
+     "fp_rate": 0.429,
+     "n_signals": 7,
+     "per_turn": [
+      {
+       "turn_date": "2015-07-20",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2018-08-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2020-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2020-01-27",
+       "lead_days": -16
+      },
+      {
+       "turn_date": "2021-11-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-03-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-08-15",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2025-02-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      }
+     ],
+     "notes": "誠實結論: 不好用。『自滿破裂』敘事只在2020-02-19頂前16日應驗過一次(2020-01-27); 命中率14%(1/7), 7筆訊號中3筆為FP(43%)。VIX<14連續20日的擠壓條件在2017-2019與2023-2024常見, 但破裂後多數只是小幅回檔而非MAJOR頂。"
+    },
+    {
+     "name": "HV20_regime_cross25",
+     "rule": "HV20(t)>25 且 HV20(t-1)<=25 且 close(t)>SMA200(t); 每次上穿當日發訊",
+     "warn_type": "TOP",
+     "coverage": "1999-10-19..2026-07-10 (SMA200暖機)",
+     "verdict": "WEAK",
+     "median_lead": -74.5,
+     "mean_lead": -73.5,
+     "hits": "T4/22 B0/0",
+     "fp_rate": 0.467,
+     "n_signals": 30,
+     "per_turn": [
+      {
+       "turn_date": "2000-03-10",
+       "turn_type": "TOP",
+       "signal_date": "1999-12-21",
+       "lead_days": -55
+      },
+      {
+       "turn_date": "2000-05-01",
+       "turn_type": "TOP",
+       "signal_date": "1999-12-21",
+       "lead_days": -90
+      },
+      {
+       "turn_date": "2000-07-17",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-12-11",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-01-24",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-05-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-01-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-08-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2004-01-26",
+       "turn_type": "TOP",
+       "signal_date": "2003-10-01",
+       "lead_days": -79
+      },
+      {
+       "turn_date": "2007-10-31",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-06-05",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-11-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2009-01-06",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2010-04-23",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2011-04-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2015-07-20",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2018-08-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2020-02-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2021-11-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-03-29",
+       "turn_type": "TOP",
+       "signal_date": "2021-12-16",
+       "lead_days": -70
+      },
+      {
+       "turn_date": "2022-08-15",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2025-02-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      }
+     ],
+     "notes": "誠實結論: 不好用。命中率僅18%(4/22), FP率47%; 1筆尾端訊號列為不確定未計FP。結構性問題: HV20上穿25%通常發生在下跌『已經開始之後』——2020-02-19頂的上穿發生在2020-02-27(轉折後+6交易日, 剛好在+5窗外1日), 屬確認跌勢而非預警頂部。低波動時代(2014後)多數頂部形成時HV20根本未達25%。"
+    }
+   ]
+  },
+  {
+   "family": "credit_breadth",
+   "summary": "credit_breadth家族(覆蓋2016-07..2026-07, 6 TOP + 6 BOTTOM個MAJOR轉折, 另21+21個INTER轉折分開統計)。方法: 全部指標rising-edge客觀觸發、無前視(背離參考點只用已確認過去新高); lead=交易日行序差, 配對窗[turn-90,turn+5]取窗內最早訊號; FP=訊號[i-5,i+90]內無同類MAJOR/INTER轉折(-5對稱於配對窗+5容忍, 避免同一訊號既是hit又是FP), 前瞻窗被資料末端截斷者列不確定並剔除FP分母; 另計算『隨機日窗含訊號基準率』作誠實校準。結論排序: (1) breadth_top_divergence最佳 — 6/6主要頂, 中位lead -69日, FP僅12.5%, 訊號稀疏非窗緣假象, 是真正的領先頂部警訊(約提前3個月的早期警戒, 非精確擇時)。(2) score_recover45(原引擎BOTTOM面)次佳 — 5/6主要底, 中位-29日, 基準率僅29%下hit 83%, 但FP 47%。(3) breadth_washout_recovery — 4/6且明顯優於24%基準, 但對V型急崩底(2018/2020)是+11~14日落後確認, 只對磨底型領先。(4) breadth_break_first — 可機械觸發的主要頂4/4, 但lead貼窗緣(-82), 屬體制警訊; 對INTER頂無增量價值。(5) hyoas_peak_falloff形式上中位-43但實為底部確認器(乾淨底+4日), FP 48%。(6) 三個WEAK: hyoas_widen50(2/6, 急崩頂前OAS不動), score_break70(原引擎TOP面每年觸發7次, hit率僅高於79%基準4pp — 引擎TOP面無先行性), vix_hyoas_double(hit率67%低於84%基準, 雙確認繼承落後性)。總評: 本家族真正的先行資訊在『廣度』(尤其頂背離), 信用利差主要是確認器, 原工作簿合成分只有底部面有先行價值。樣本僅6+6個主要轉折, 所有結論統計功效有限。訊號檔: /home/user/algo/data/signals_credit_breadth.csv (324筆, 8個指標名: hyoas_widen50/hyoas_peak_falloff/breadth_top_divergence/breadth_washout_recovery/breadth_break_first/score_break70/score_recover45/vix_hyoas_double)。",
+   "verified": "MINOR_ISSUES",
+   "issues": "核心聲稱全部站得住: 8個指標的訊號序列、中位lead、hit rate以獨立程式完全重現, 無前視偏誤, 無覆蓋範圍外訊號。唯一問題在FP率定義: 聲稱值採用的是「[s-5,s+90]窗內無同類MAJOR/INTER轉折才算FP、且剔除90日前瞻窗被數據終點截斷的尾端訊號」(此定義下8個值全部精確重現); 但按協定第4條字面定義(訊號日之後90交易日內、全部訊號計入), 4個指標FP率被低估: hyoas_peak_falloff 0.538(聲稱0.477)、score_break70 0.500(聲稱0.4355)、vix_hyoas_double 0.439(聲稱0.377)、score_recover45 0.500(聲稱0.4667); breadth_top_divergence 0.16 vs 0.125、breadth_break_first 0.26 vs 0.24為輕微差異。該偏差幅度小且不改變任何LEADING/WEAK判定(判定由lead與hit rate驅動, 均已證實), 故為MINOR_ISSUES而非REFUTED。",
+   "indicators": [
+    {
+     "name": "hyoas_widen50",
+     "rule": "TOP: hyoas[t]-hyoas[t-20] > +50bp AND ndx[t]/max(ndx[t-251..t]) > 0.92; rising-edge (首日成立才發訊)",
+     "warn_type": "TOP",
+     "coverage": "2016-08-05..2026-07-10",
+     "verdict": "WEAK",
+     "median_lead": -64,
+     "mean_lead": -64,
+     "hits": "T2/6 B0/0",
+     "fp_rate": 0.6087,
+     "n_signals": 23,
+     "per_turn": [
+      {
+       "turn_date": "2018-08-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2020-02-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2021-11-19",
+       "turn_type": "TOP",
+       "signal_date": "2021-09-20",
+       "lead_days": -44
+      },
+      {
+       "turn_date": "2022-03-29",
+       "turn_type": "TOP",
+       "signal_date": "2021-11-26",
+       "lead_days": -84
+      },
+      {
+       "turn_date": "2022-08-15",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2025-02-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      }
+     ],
+     "notes": "MAJOR hit 2/6=33% vs 隨機基準率38%(任一日其[t-90,t+5]窗含訊號的機率) — 無優於機率的證據。關鍵失敗: 2020-02-19頂在頂前OAS完全未走闊(首訊2020-03-04, 頂後10日, 出窗), 2025-02-19頂同樣缺席; 即信用利差在急崩型頂部是落後的。FP 14/23=61%。INTER: 9/21 hit, 中位lead -48。結論: OAS走闊+價近高的組合在NDX頂部不領先且假訊多。"
+    },
+    {
+     "name": "hyoas_peak_falloff",
+     "rule": "BOTTOM: hyoas[t] < 0.92*max(hyoas[t-19..t]) AND hyoas[t] > 400bp; rising-edge",
+     "warn_type": "BOTTOM",
+     "coverage": "2016-08-04..2026-07-10",
+     "verdict": "LEADING",
+     "median_lead": -43,
+     "mean_lead": -41.4,
+     "hits": "T0/0 B5/6",
+     "fp_rate": 0.4769,
+     "n_signals": 65,
+     "per_turn": [
+      {
+       "turn_date": "2018-12-24",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2020-03-20",
+       "turn_type": "BOTTOM",
+       "signal_date": "2020-03-26",
+       "lead_days": 4
+      },
+      {
+       "turn_date": "2022-03-14",
+       "turn_type": "BOTTOM",
+       "signal_date": "2021-11-04",
+       "lead_days": -88
+      },
+      {
+       "turn_date": "2022-06-16",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-02-15",
+       "lead_days": -84
+      },
+      {
+       "turn_date": "2022-12-28",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-10-26",
+       "lead_days": -43
+      },
+      {
+       "turn_date": "2025-04-08",
+       "turn_type": "BOTTOM",
+       "signal_date": "2025-03-20附近無, 實為2025-04-14",
+       "lead_days": 4
+      }
+     ],
+     "notes": "形式上LEADING(中位-43)但要打折: 負lead全來自2021-22 OAS反覆震盪期的訊號叢(窗內8-9個訊號, 取最早者被推向窗緣); 在乾淨V型底(2020-03-20, 2025-04-08)其實是底後+4日的coincident確認訊號 — 作為『底部確認』比『領先預測』誠實。2018-12-24漏失(當時OAS峰值537, 回落確認在+5窗外)。FP 31/65=48%高。hit 5/6=83% vs 基準率61%, 僅小幅優於機率。INTER: 14/21, 中位-78.5。"
+    },
+    {
+     "name": "breadth_top_divergence",
+     "rule": "TOP: ndx[t]>=max(ndx[t-62..t])(63日新高)且 breadth[t] <= (上一段新高期最後一日的breadth) - 5pp; 參考點只用已確認的過去新高日(無前視), 每段新高期最多發一次",
+     "warn_type": "TOP",
+     "coverage": "2016-07-08..2026-07-10",
+     "verdict": "LEADING",
+     "median_lead": -69,
+     "mean_lead": -62.2,
+     "hits": "T6/6 B0/0",
+     "fp_rate": 0.125,
+     "n_signals": 25,
+     "per_turn": [
+      {
+       "turn_date": "2018-08-29",
+       "turn_type": "TOP",
+       "signal_date": "2018-06-04",
+       "lead_days": -61
+      },
+      {
+       "turn_date": "2020-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2019-10-25",
+       "lead_days": -78
+      },
+      {
+       "turn_date": "2021-11-19",
+       "turn_type": "TOP",
+       "signal_date": "2021-08-23",
+       "lead_days": -63
+      },
+      {
+       "turn_date": "2022-03-29",
+       "turn_type": "TOP",
+       "signal_date": "2021-11-18",
+       "lead_days": -89
+      },
+      {
+       "turn_date": "2022-08-15",
+       "turn_type": "TOP",
+       "signal_date": "2022-08-04",
+       "lead_days": -7
+      },
+      {
+       "turn_date": "2025-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2024-10-29",
+       "lead_days": -75
+      },
+      {
+       "turn_date": "註",
+       "turn_type": "TOP",
+       "signal_date": "上行2025-04-08列為筆誤修正: hyoas_peak_falloff該行signal_date=2025-04-14",
+       "lead_days": null
+      }
+     ],
+     "notes": "本家族最佳指標。MAJOR hit 6/6=100% vs 基準率60%; FP僅3/24=12.5%(1個2026年訊號因90日前瞻窗被資料截斷列為不確定, 已剔除分母), 且訊號稀疏(25個/10年)、窗內通常僅1-3個訊號, lead不是窗緣假象。中位lead -69(約3.3個月): 屬『早期警戒』而非精確擇時 — 訊號後價格常再創高一段時間才見頂。INTER: 15/21=71%, 中位-73。典型案例: 2024-10-29發訊, 2025-02-19見頂。"
+    },
+    {
+     "name": "breadth_washout_recovery",
+     "rule": "BOTTOM: breadth<30%後(armed), 首日breadth>=35%發訊, 發訊後解除直到再次<30%",
+     "warn_type": "BOTTOM",
+     "coverage": "2016-07-08..2026-07-10",
+     "verdict": "LEADING",
+     "median_lead": -44,
+     "mean_lead": -44.3,
+     "hits": "T0/0 B4/6",
+     "fp_rate": 0.3333,
+     "n_signals": 9,
+     "per_turn": [
+      {
+       "turn_date": "2018-12-24",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2020-03-20",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-03-14",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-02-24",
+       "lead_days": -12
+      },
+      {
+       "turn_date": "2022-06-16",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-02-24",
+       "lead_days": -78
+      },
+      {
+       "turn_date": "2022-12-28",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-09-09",
+       "lead_days": -76
+      },
+      {
+       "turn_date": "2025-04-08",
+       "turn_type": "BOTTOM",
+       "signal_date": "2025-03-24",
+       "lead_days": -11
+      }
+     ],
+     "notes": "hit 4/6=67% vs 基準率24% — 明顯優於機率, 且訊號極稀疏(9個/10年)。兩個『漏失』其實是遲到確認: 2018-12-24底的回升訊號在2019-01-15(+14日), 2020-03-20底在2020-04-06(+11日), 都在+5窗外被判miss、又因90日內無下一個底被判FP(FP 3/9含這兩個) — 即對急崩V型底它是落後確認(+11~+14日), 對磨底型(2022, 2025)反而領先11-78日。-78的lead是2022-02-24訊號同時落入3-14與6-16兩底的窗所致, 保守解讀取-12。INTER: 7/21, 中位-62。"
+    },
+    {
+     "name": "breadth_break_first",
+     "rule": "TOP: max(breadth[t-59..t]) - breadth[t] >= 15pp AND ndx[t]/max(ndx[t-251..t]) > 0.95; rising-edge",
+     "warn_type": "TOP",
+     "coverage": "2016-09-30..2026-07-10",
+     "verdict": "LEADING",
+     "median_lead": -82,
+     "mean_lead": -74.5,
+     "hits": "T4/6 B0/0",
+     "fp_rate": 0.24,
+     "n_signals": 50,
+     "per_turn": [
+      {
+       "turn_date": "2018-08-29",
+       "turn_type": "TOP",
+       "signal_date": "2018-05-07",
+       "lead_days": -80
+      },
+      {
+       "turn_date": "2020-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2019-10-09",
+       "lead_days": -90
+      },
+      {
+       "turn_date": "2021-11-19",
+       "turn_type": "TOP",
+       "signal_date": "2021-09-20",
+       "lead_days": -44
+      },
+      {
+       "turn_date": "2022-03-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-08-15",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2025-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2024-10-16",
+       "lead_days": -84
+      },
+      {
+       "turn_date": "註",
+       "turn_type": "TOP",
+       "signal_date": "兩個漏失皆為熊市反彈頂(價距252日高>5%, 規則機械上不可能觸發); 可觸發的4個頂全中",
+       "lead_days": null
+      }
+     ],
+     "notes": "hit 4/6=67% vs 基準率55%(僅+12pp); 但兩個漏失(2022-03-29, 2022-08-15熊反頂)是規則機械上不可達的(價遠離252日高), 在可觸發樣本中4/4。中位lead -82貼窗緣: 領先過遠, 是『廣度先行惡化』的體制警訊而非擇時工具(2019-10-09發訊→頂在4.5個月後; 2024-10-16→2025-02-19)。FP 12/50=24%尚可。INTER: 10/21=48%, 低於基準率55% — 對中級頂無增量價值, 只對主要頂有意義。"
+    },
+    {
+     "name": "score_break70",
+     "rule": "TOP: score[t-1]>=70 AND score[t]<70 (向下跌穿70)",
+     "warn_type": "TOP",
+     "coverage": "2016-07-11..2026-07-10",
+     "verdict": "WEAK",
+     "median_lead": -44,
+     "mean_lead": -50.8,
+     "hits": "T5/6 B0/0",
+     "fp_rate": 0.4355,
+     "n_signals": 70,
+     "per_turn": [
+      {
+       "turn_date": "2018-08-29",
+       "turn_type": "TOP",
+       "signal_date": "2018-04-24",
+       "lead_days": -89
+      },
+      {
+       "turn_date": "2020-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2020-02-24",
+       "lead_days": 3
+      },
+      {
+       "turn_date": "2021-11-19",
+       "turn_type": "TOP",
+       "signal_date": "2021-09-20",
+       "lead_days": -44
+      },
+      {
+       "turn_date": "2022-03-29",
+       "turn_type": "TOP",
+       "signal_date": "2021-11-26",
+       "lead_days": -84
+      },
+      {
+       "turn_date": "2022-08-15",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2025-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2024-12-18",
+       "lead_days": -40
+      }
+     ],
+     "notes": "原工作簿引擎TOP面誠實結論: 無先行性優勢。跌穿70十年發生70次(每年約7次), 任一日的[t-90,t+5]窗有79%機率含訊號, hit 5/6=83%僅比擲硬幣式基準高4pp。對2020-02-19頂僅+3日(coincident); FP 27/62=44%(8個2026年訊號前瞻窗截斷, 剔除分母)。INTER: 15/21, 中位-68。引擎的70界線太淺, 牛市中的正常回檔即頻繁觸發。"
+    },
+    {
+     "name": "score_recover45",
+     "rule": "BOTTOM: score<40後(armed), 首日score>=45發訊, 發訊後解除直到再次<40",
+     "warn_type": "BOTTOM",
+     "coverage": "2016-07-08..2026-07-10",
+     "verdict": "LEADING",
+     "median_lead": -29,
+     "mean_lead": -28.2,
+     "hits": "T0/0 B5/6",
+     "fp_rate": 0.4667,
+     "n_signals": 16,
+     "per_turn": [
+      {
+       "turn_date": "2018-12-24",
+       "turn_type": "BOTTOM",
+       "signal_date": "2018-11-01",
+       "lead_days": -35
+      },
+      {
+       "turn_date": "2020-03-20",
+       "turn_type": "BOTTOM",
+       "signal_date": "2020-03-10",
+       "lead_days": -8
+      },
+      {
+       "turn_date": "2022-03-14",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-01-31",
+       "lead_days": -29
+      },
+      {
+       "turn_date": "2022-06-16",
+       "turn_type": "BOTTOM",
+       "signal_date": "2022-03-28",
+       "lead_days": -56
+      },
+      {
+       "turn_date": "2022-12-28",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2025-04-08",
+       "turn_type": "BOTTOM",
+       "signal_date": "2025-03-20",
+       "lead_days": -13
+      }
+     ],
+     "notes": "原引擎BOTTOM面明顯比TOP面好: hit 5/6=83% vs 基準率僅29%, 訊號稀疏(16個/10年), 中位lead -29(約1.4個月)且分佈緊(-8~-56), 不是窗緣假象。漏失2022-12-28(當時score回升過45發生在2023-01-12, 底後+9日, 差4日出窗)。代價是FP 7/15=47% — 熊市中段的反彈也會觸發(2019-01, 2020-04, 2023-01/03, 2025-04末的二次訊號)。INTER: 10/21, 中位-21。"
+    },
+    {
+     "name": "vix_hyoas_double",
+     "rule": "TOP: (hyoas[t]-hyoas[t-20] > +30bp) AND (vix[t]/vix[t-20] > 1.20); rising-edge",
+     "warn_type": "TOP",
+     "coverage": "2016-08-05..2026-07-10",
+     "verdict": "WEAK",
+     "median_lead": -80,
+     "mean_lead": -65.8,
+     "hits": "T4/6 B0/0",
+     "fp_rate": 0.377,
+     "n_signals": 66,
+     "per_turn": [
+      {
+       "turn_date": "2018-08-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2020-02-19",
+       "turn_type": "TOP",
+       "signal_date": "2020-01-27",
+       "lead_days": -16
+      },
+      {
+       "turn_date": "2021-11-19",
+       "turn_type": "TOP",
+       "signal_date": "2021-07-27",
+       "lead_days": -82
+      },
+      {
+       "turn_date": "2022-03-29",
+       "turn_type": "TOP",
+       "signal_date": "2021-11-22",
+       "lead_days": -87
+      },
+      {
+       "turn_date": "2022-08-15",
+       "turn_type": "TOP",
+       "signal_date": "2022-04-22",
+       "lead_days": -78
+      },
+      {
+       "turn_date": "2025-02-19",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      }
+     ],
+     "notes": "誠實結論: 無效。任一日窗含訊號的基準率高達84%, 而hit僅4/6=67% — 低於隨機基準。訊號太頻(66個), 且觸發時點多在跌勢已展開後(VIX+20%與OAS+30bp都需要壓力已現), 對2018-08-29與2025-02-19兩個頂完全缺席(頂前市場平靜)。-80的中位lead是訊號叢+取窗內最早的窗緣假象, 非真領先。FP 23/61=38%(5個截斷剔除)。INTER: 16/21但基準84%下無意義。雙確認條件沒有互補, 反而繼承了兩者的落後性。"
+    }
+   ]
+  },
+  {
+   "family": "volume",
+   "summary": "量價家族(volume僅1999-01..2016-07-07覆蓋, 評估2000-03-10 TOP..2016-02-11 BOTTOM共32個MAJOR轉折: 16頂16底)。全部規則嚴格無前視(63日高/低用t-1前資料, SMA50用前50日, OBV僅累加至t), 2015-05-12量=0之數據瑕疵以前日量替代。215個訊號寫入 /home/user/algo/data/signals_volume.csv。隨機基準: 任一日通過FP檢定(後90交易日內有同型MAJOR/INTER轉折)機率約64.5%(TOP)/65.6%(BOTTOM), 即隨機FP率~35%。結論: (1) OBV底背離是唯一可用指標 — LEADING, hit 75% (12/16), 中位lead -34交易日, FP 0/18遠優於隨機; 但常於下跌中段發訊(2009年3月底部提前78日), 屬築底過程警訊而非低點定時器, 且漏掉2000年的V型急跌底。(2) OBV頂背離 WEAK: hit僅37.5%, FP與隨機無異, lead過長(-17..-88)。(3) 派發日聚集 WEAK: 120訊號過頻, hit 31.3%, FP≈隨機; '距高<8%'條件使熊市反彈頂結構性漏失。(4) 量高潮反轉: 原規格2.5x門檻在指數層級不可達(全樣本量/50日均量最大僅2.40) → 0訊號; 校準至1.5x後亦僅4訊號hit 12.5% → 兩版皆WEAK, 指數總量不適用此個股邏輯。(5) 量縮新高 WEAK: FP率50%劣於隨機, '命中'多為年底假期低量的季節性假象。總評: 量價家族頂部警訊全數不可靠; 唯OBV底背離具真實領先價值(約1.5-2個月), 適合與其他家族確認訊號並用。",
+   "verified": "MINOR_ISSUES",
+   "issues": "全部量化聲稱(6指標之訊號數、中位/平均lead、hit rate、FP率)經獨立重算後逐一精確吻合, 無前視偏誤, 無覆蓋外訊號, 16 tops/16 bottoms分母正確對應volume覆蓋期(1999..2016-07)內之MAJOR轉折。判定標籤誠實: obv_bottom_divergence為LEADING(中位-34, hit 12/16, FP 0)成立; 其餘雖中位lead為負但因hit率低(5-7/16)與FP率高(0.34-0.5)被降為WEAK, 符合誠實回報原則。僅兩處小疵: (1) obv_top/obv_bottom_divergence的規則文字欠精確 — 按字面重算得57/30個訊號(超出5%容忍), 須補上隱含條件「訊號日t本身須為63日NH/NL日」(經典背離定義)才100%重現CSV(41/41, 18/18日期完全一致); 此為文檔描述問題, 實作規則本身客觀、確定性且無前視。(2) 1p5x變體實為5次觸發塌縮為4個唯一訊號日(兩個高潮日共享同一量縮日), 與「其中4個發訊」措辭略異, 不影響任何數字。另1p5x之1.5x門檻屬事後校準(in-sample), 聲稱已自我揭露。結論: 聲稱站得住, 僅文檔層面小問題。",
+   "indicators": [
+    {
+     "name": "obv_top_divergence",
+     "rule": "OBV=累加sign(close[t]-close[t-1])*volume[t]。NH日: close[t]>max(close[t-63..t-1])。取最近一個且<=t-10之NH日p; 若close[t]>close[p]且OBV[t]<OBV[p]→TOP; 冷卻10交易日。僅用<=t數據。",
+     "warn_type": "TOP",
+     "coverage": "1999-04..2016-07 (63日高暖機~73交易日; volume止於2016-07-07)",
+     "verdict": "WEAK",
+     "median_lead": -63.5,
+     "mean_lead": -56.3,
+     "hits": "T6/16 B0/0",
+     "fp_rate": 0.341,
+     "n_signals": 41,
+     "per_turn": [
+      {
+       "turn_date": "2000-03-10",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-05-01",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-07-17",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-12-11",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-01-24",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-05-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-01-04",
+       "turn_type": "TOP",
+       "signal_date": "2001-12-04",
+       "lead_days": -21
+      },
+      {
+       "turn_date": "2002-08-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2004-01-26",
+       "turn_type": "TOP",
+       "signal_date": "2003-09-18",
+       "lead_days": -88
+      },
+      {
+       "turn_date": "2007-10-31",
+       "turn_type": "TOP",
+       "signal_date": "2007-07-02",
+       "lead_days": -85
+      },
+      {
+       "turn_date": "2008-06-05",
+       "turn_type": "TOP",
+       "signal_date": "2008-05-12",
+       "lead_days": -17
+      },
+      {
+       "turn_date": "2008-11-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2009-01-06",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2010-04-23",
+       "turn_type": "TOP",
+       "signal_date": "2010-01-19",
+       "lead_days": -66
+      },
+      {
+       "turn_date": "2011-04-29",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2015-07-20",
+       "turn_type": "TOP",
+       "signal_date": "2015-04-22",
+       "lead_days": -61
+      }
+     ],
+     "notes": "hit 6/16=37.5%; FP率34.1%與隨機基準35.5%(任一日後90日內出現MAJOR/INTER TOP之機率64.5%)幾乎無異。命中時lead極長(-17..-88, 窗內訊號1-4個), 更像'漲勢成熟'背景訊號而非頂部定時器。2000-2001多數頂完全漏掉。誠實結論: 不可靠→WEAK。"
+    },
+    {
+     "name": "obv_bottom_divergence",
+     "rule": "NL日: close[t]<min(close[t-63..t-1])。取最近一個且<=t-10之NL日p; 若close[t]<close[p]且OBV[t]>OBV[p]→BOTTOM; 冷卻10交易日。僅用<=t數據。",
+     "warn_type": "BOTTOM",
+     "coverage": "1999-04..2016-07 (63日低暖機~73交易日)",
+     "verdict": "LEADING",
+     "median_lead": -34,
+     "mean_lead": -38.7,
+     "hits": "T0/0 B12/16",
+     "fp_rate": 0,
+     "n_signals": 18,
+     "per_turn": [
+      {
+       "turn_date": "2000-04-14",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-05-23",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-11-30",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-01-02",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-04-04",
+       "turn_type": "BOTTOM",
+       "signal_date": "2001-02-21",
+       "lead_days": -30
+      },
+      {
+       "turn_date": "2001-09-21",
+       "turn_type": "BOTTOM",
+       "signal_date": "2001-08-10",
+       "lead_days": -25
+      },
+      {
+       "turn_date": "2002-08-05",
+       "turn_type": "BOTTOM",
+       "signal_date": "2002-06-03",
+       "lead_days": -44
+      },
+      {
+       "turn_date": "2002-10-09",
+       "turn_type": "BOTTOM",
+       "signal_date": "2002-06-03",
+       "lead_days": -90
+      },
+      {
+       "turn_date": "2004-08-12",
+       "turn_type": "BOTTOM",
+       "signal_date": "2004-07-21",
+       "lead_days": -16
+      },
+      {
+       "turn_date": "2008-03-10",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-01-08",
+       "lead_days": -42
+      },
+      {
+       "turn_date": "2008-10-27",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-09-29",
+       "lead_days": -20
+      },
+      {
+       "turn_date": "2008-11-20",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-09-29",
+       "lead_days": -38
+      },
+      {
+       "turn_date": "2009-03-09",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-11-12",
+       "lead_days": -78
+      },
+      {
+       "turn_date": "2010-07-02",
+       "turn_type": "BOTTOM",
+       "signal_date": "2010-06-29",
+       "lead_days": -3
+      },
+      {
+       "turn_date": "2011-10-03",
+       "turn_type": "BOTTOM",
+       "signal_date": "2011-06-17",
+       "lead_days": -74
+      },
+      {
+       "turn_date": "2016-02-11",
+       "turn_type": "BOTTOM",
+       "signal_date": "2016-02-05",
+       "lead_days": -4
+      }
+     ],
+     "notes": "本家族最佳: hit 12/16=75%, FP 0/18 (隨機基準FP率~34.4%, 18訊號全過檢定之隨機機率<0.1%)。窗內訊號1-3個。警告: lead中位-34表示訊號常出現在下跌途中(如2009-03-09底於2008-11-12即發訊, 之後又跌逾20%), 屬'築底過程'指標而非低點定時器; 漏掉2000年的4個急跌底(OBV與價同步崩跌無背離)。"
+    },
+    {
+     "name": "distribution_cluster",
+     "rule": "派發日: 日跌幅>0.2%且volume>前日volume。條件C(t): 過去25交易日(含t)派發日>=6 且 close[t]>0.92*max(close[t-251..t])(距252日高<8%)。C由false轉true之日發訊→TOP。",
+     "warn_type": "TOP",
+     "coverage": "2000-01..2016-07 (252日高暖機252交易日)",
+     "verdict": "WEAK",
+     "median_lead": -80,
+     "mean_lead": -68,
+     "hits": "T5/16 B0/0",
+     "fp_rate": 0.383,
+     "n_signals": 120,
+     "per_turn": [
+      {
+       "turn_date": "2000-03-10",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-05-01",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-07-17",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-12-11",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-01-24",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-05-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-01-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-08-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2004-01-26",
+       "turn_type": "TOP",
+       "signal_date": "2003-11-18",
+       "lead_days": -45
+      },
+      {
+       "turn_date": "2007-10-31",
+       "turn_type": "TOP",
+       "signal_date": "2007-07-10",
+       "lead_days": -80
+      },
+      {
+       "turn_date": "2008-06-05",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-11-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2009-01-06",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2010-04-23",
+       "turn_type": "TOP",
+       "signal_date": "2009-12-15",
+       "lead_days": -88
+      },
+      {
+       "turn_date": "2011-04-29",
+       "turn_type": "TOP",
+       "signal_date": "2011-02-22",
+       "lead_days": -47
+      },
+      {
+       "turn_date": "2015-07-20",
+       "turn_type": "TOP",
+       "signal_date": "2015-03-25",
+       "lead_days": -80
+      }
+     ],
+     "notes": "hit僅5/16=31.3%; 120個訊號(約7.5個/年)過於頻繁, FP率38.3%與隨機基準無異。'距252日高<8%'過濾使熊市反彈頂(2000-02, 2008-09)結構上無法觸發, 造成大量漏失。命中時窗內訊號2-6個且lead極長(-45..-88), 只能當多頭成熟期的背景警戒, 非定時工具。"
+    },
+    {
+     "name": "volume_climax_reversal_spec",
+     "rule": "高潮日c: volume[c]>2.5*SMA50(volume[c-50..c-1]) 且 日跌幅>3%; 其後5交易日內首個volume[t]<SMA50之日發訊→BOTTOM。(原規格)",
+     "warn_type": "BOTTOM",
+     "coverage": "1999-03..2016-07 (SMA50暖機51交易日)",
+     "verdict": "WEAK",
+     "median_lead": 0,
+     "mean_lead": 0,
+     "hits": "T0/0 B0/16",
+     "fp_rate": 0,
+     "n_signals": 0,
+     "per_turn": [
+      {
+       "turn_date": "2000-04-14",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-05-23",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-11-30",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-01-02",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-04-04",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-09-21",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-08-05",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-10-09",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2004-08-12",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-03-10",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-10-27",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-11-20",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2009-03-09",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2010-07-02",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2011-10-03",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2016-02-11",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      }
+     ],
+     "notes": "零訊號 — 2.5x門檻在指數層級不可達: 全樣本1999-2016 volume/SMA50最大值僅2.40; 162個跌>3%日中量比>2.0僅1日。交易所總量波動遠低於個股量(IBD原規則假設個股)。lead統計無定義(schema需數值故填0)。此規格照實回報為不可用。"
+    },
+    {
+     "name": "volume_climax_reversal_1p5x",
+     "rule": "同上但門檻改1.5x(全樣本98.7百分位; 因2.5x不可達之變異數調整版, 屬事後校準, 有in-sample之嫌)。高潮日10個, 其中4個5日內出現量縮企穩發訊。",
+     "warn_type": "BOTTOM",
+     "coverage": "1999-03..2016-07 (SMA50暖機51交易日)",
+     "verdict": "WEAK",
+     "median_lead": -35.5,
+     "mean_lead": -35.5,
+     "hits": "T0/0 B2/16",
+     "fp_rate": 0.5,
+     "n_signals": 4,
+     "per_turn": [
+      {
+       "turn_date": "2000-04-14",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-05-23",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-11-30",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-01-02",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-04-04",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-09-21",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-08-05",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-10-09",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2004-08-12",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-03-10",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-10-27",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2008-11-20",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2009-03-09",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2010-07-02",
+       "turn_type": "BOTTOM",
+       "signal_date": "2010-05-11",
+       "lead_days": -37
+      },
+      {
+       "turn_date": "2011-10-03",
+       "turn_type": "BOTTOM",
+       "signal_date": "2011-08-15",
+       "lead_days": -34
+      },
+      {
+       "turn_date": "2016-02-11",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      }
+     ],
+     "notes": "即使放寬門檻仍只有4訊號, hit 2/16=12.5%, FP 2/4。2008-10大量恐慌日後5日內量從未縮到均量下(危機期量持續放大), 企穩條件太嚴。指數層級的量高潮反轉不可行→WEAK。"
+    },
+    {
+     "name": "newhigh_low_volume",
+     "rule": "63日NH日(close[t]>max(close[t-63..t-1])) 且 volume[t]<0.85*SMA50(volume[t-50..t-1])→TOP; 冷卻10交易日。",
+     "warn_type": "TOP",
+     "coverage": "1999-03..2016-07 (SMA50暖機51交易日)",
+     "verdict": "WEAK",
+     "median_lead": -83,
+     "mean_lead": -63.9,
+     "hits": "T7/16 B0/0",
+     "fp_rate": 0.5,
+     "n_signals": 32,
+     "per_turn": [
+      {
+       "turn_date": "2000-03-10",
+       "turn_type": "TOP",
+       "signal_date": "1999-11-26",
+       "lead_days": -72
+      },
+      {
+       "turn_date": "2000-05-01",
+       "turn_type": "TOP",
+       "signal_date": "1999-12-29",
+       "lead_days": -85
+      },
+      {
+       "turn_date": "2000-07-17",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-12-11",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-01-24",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2001-05-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-01-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-08-22",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2004-01-26",
+       "turn_type": "TOP",
+       "signal_date": "2003-12-29",
+       "lead_days": -18
+      },
+      {
+       "turn_date": "2007-10-31",
+       "turn_type": "TOP",
+       "signal_date": "2007-07-03",
+       "lead_days": -84
+      },
+      {
+       "turn_date": "2008-06-05",
+       "turn_type": "TOP",
+       "signal_date": "2008-05-12",
+       "lead_days": -17
+      },
+      {
+       "turn_date": "2008-11-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2009-01-06",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2010-04-23",
+       "turn_type": "TOP",
+       "signal_date": "2009-12-22",
+       "lead_days": -83
+      },
+      {
+       "turn_date": "2011-04-29",
+       "turn_type": "TOP",
+       "signal_date": "2010-12-22",
+       "lead_days": -88
+      },
+      {
+       "turn_date": "2015-07-20",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      }
+     ],
+     "notes": "hit 7/16=43.8% 但FP率50% — 比隨機基準35.5%更差, 因量縮新高常出現在假期前後低量期(如12月底: 1999-12-29/2003-12-29/2009-12-22/2010-12-22四個'命中'皆年底低量日, 疑為季節性量縮而非真派發)。命中lead中位-83過長。窗內訊號1-2個。不建議採用→WEAK。"
+    }
+   ]
+  },
+  {
+   "family": "monthly_pillars",
+   "summary": "月度七支柱先行性評估 (1976-2026, engine_monthly.csv, n=1199月)。轉折定義: 對月度index做zigzag ±15%(全序列起算、跳過暖機種子), 1976後得18個主要轉折(9頂/9底: 1980-11T,1982-07B,1987-08T,1987-11B,1990-05T,1990-10B,1998-06T,1998-08B,2000-08T,2002-09B,2007-10T,2009-02B,2011-04T,2011-09B,2019-12T,2020-03B,2021-12T,2022-09B) — 略少於預期20-25個, 因2015-16與2018回檔在月收盤上未達15%。配對窗[turn-18月,turn+2月], lead以月為行序差(負=領先); FP=訊號後18月(前2月)內無同型±15%主要或±8%中級月度轉折, 資料末端不可判定訊號自FP分母剔除。共154個訊號寫入signals_monthly_pillars.csv。結論排序: (1) score跌穿70/升穿40最佳 — 頂部8/9、中位lead -8月、FP 23% → LEADING; (2) s_CURVE倒掛零假警報(0/7)且1976後每個大頂前都有倒掛, 但lead極不穩(-2~-113月), 窗內命中5/9、中位-7月 → LEADING(制度警戒, 無擇時價值); (3) s_POLICY 50%命中、中位-7月 → LEADING但強烈偏底部(寬鬆→底6/9; 緊縮→頂僅3/9, mid-cycle緊縮1988/1994/2004/2015-16全為假訊, FP 33%); (4) s_CREDIT命中僅44% → WEAK, 但命中時領先極長(中位-12.5月, 底部尤佳); (5) s_INFL命中3/9 → WEAK, 強烈時代依賴(只在1977-89與2021有效, 低通脹時代完全沉默); (6) s_VOL歸零對頂部是滯後/確認(13訊中8次在頂後2-17月發出)、對底部近乎同步(距下一底0-4月, 中位-4月) → CONFIRMING。誠實警告: 除score與s_CURVE外, 各支柱單獨命中率皆低於60%; 月度制度層指標適合作風險狀態(regime)判斷而非精確擇時。",
+   "verified": "MINOR_ISSUES",
+   "issues": "Every claimed number is honest and I reproduced all of them exactly - but only under a protocol that deviates materially from the stated one. (1) The 9-top/9-bottom denominators are NOT the provided turning_points_MAJOR.csv (22T/22B after seed, 1999+); they come from a self-derived monthly +/-15% zigzag on the engine index restricted to 1976+ (I recovered it: 9T/9B, tops 1980-11..2021-12). (2) The matching window is [turn-18 months, turn+2 months] (~[-378,+42] trading days), ~4-8x wider than the protocol's [-90td,+5td]; leads are in months as disclosed ('月度族為月'). (3) FP uses an 18-month forward grace ([-2m,+18m] vs monthly +/-15%/+/-8% turns), far more lenient than the 90-trading-day rule - s_CURVE's 'FP率0' exists only because of this grace. Under the STATED protocol the picture is much weaker: s_CREDIT 2/22T+5/22B FP 0.333; s_POLICY 1/22T+1/22B FP 0.700 (LEADING verdict unsupportable); s_CURVE 2/22T FP 0.500; s_INFL 0/22T FP 1/1; s_VOL 3/22T FP 0.250; score 6/22T+3/22B median -65td FP 0.357. Positives: signal CSV is a clean rule output (no cherry-picking, no lookahead, month-end dating correct, warm-up truncation at 1976 only), self-critical verdicts (WEAK/CONFIRMING) where warranted, and recent/pre-coverage signals handled correctly in FP denominators. Conclusion: claims stand on their own disclosed month-unit terms, but must not be compared against daily families evaluated under the [-90td,+5td] standard, and 'LEADING' here means leading by ~6-13 MONTHS with an 18-month search window - a far weaker statement than the protocol's definition.",
+   "indicators": [
+    {
+     "name": "s_CREDIT",
+     "rule": "TOP: s_CREDIT[t]<=50 且 s_CREDIT[t-1]>50 (由100跌落); BOTTOM: s_CREDIT[t]>=50 且 s_CREDIT[t-1]<50 (由0回升)。僅用t與t-1值, 無前視。",
+     "warn_type": "BOTH",
+     "coverage": "1976-01..2026-07 (baa_aaa利差全程有效; 評估起點1976-01)",
+     "verdict": "WEAK",
+     "median_lead": -12.5,
+     "mean_lead": -12.2,
+     "hits": "T3/9 B5/9",
+     "fp_rate": 0.262,
+     "n_signals": 44,
+     "per_turn": [
+      {
+       "turn_date": "1980-11",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "1982-07",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "1987-08",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "1987-11",
+       "turn_type": "BOTTOM",
+       "signal_date": "1986-05-31",
+       "lead_days": -18
+      },
+      {
+       "turn_date": "1990-05",
+       "turn_type": "TOP",
+       "signal_date": "1988-11-30",
+       "lead_days": -18
+      },
+      {
+       "turn_date": "1990-10",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "1998-06",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "1998-08",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-08",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2002-09",
+       "turn_type": "BOTTOM",
+       "signal_date": "2002-04-30",
+       "lead_days": -5
+      },
+      {
+       "turn_date": "2007-10",
+       "turn_type": "TOP",
+       "signal_date": "2007-03-31",
+       "lead_days": -7
+      },
+      {
+       "turn_date": "2009-02",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2011-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2011-09",
+       "turn_type": "BOTTOM",
+       "signal_date": "2010-07-31",
+       "lead_days": -14
+      },
+      {
+       "turn_date": "2019-12",
+       "turn_type": "TOP",
+       "signal_date": "2018-07-31",
+       "lead_days": -16
+      },
+      {
+       "turn_date": "2020-03",
+       "turn_type": "BOTTOM",
+       "signal_date": "2019-06-30",
+       "lead_days": -9
+      },
+      {
+       "turn_date": "2021-12",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-09",
+       "turn_type": "BOTTOM",
+       "signal_date": "2021-10-31",
+       "lead_days": -11
+      }
+     ],
+     "notes": "lead單位=月(engine_monthly行序差), 非交易日。整體命中8/18=44%<50%故判WEAK; 但命中時領先極長(中位-12.5月), 尤其底部(利差自極端回落先於1987/2002/2011/2020/2022底5~18月)。漏掉1980/1987/1998/2000/2021頂與1982/1990/1998/2009底(利差劇烈期tri-state分數跳動太快或根本未達100)。FP 11/42=26.2%(1991-11,2005-06,2011-08,2013-07等頂訊; 1976/1984/1991/2012/2016/2020-11底訊); 2筆近期訊號(2025+)FP窗超出資料末端列為不可判定並自分母剔除。"
+    },
+    {
+     "name": "s_POLICY",
+     "rule": "TOP: s_POLICY[t]=0 且 s_POLICY[t-1]>0 (Fed轉緊縮); BOTTOM: s_POLICY[t]=100 且 s_POLICY[t-1]<100 (轉寬鬆)。",
+     "warn_type": "BOTH",
+     "coverage": "1976-01..2026-07 (policy步驟自1970-02有效)",
+     "verdict": "LEADING",
+     "median_lead": -7,
+     "mean_lead": -7.9,
+     "hits": "T3/9 B6/9",
+     "fp_rate": 0.333,
+     "n_signals": 24,
+     "per_turn": [
+      {
+       "turn_date": "1980-11",
+       "turn_type": "TOP",
+       "signal_date": "1980-08-31",
+       "lead_days": -3
+      },
+      {
+       "turn_date": "1982-07",
+       "turn_type": "BOTTOM",
+       "signal_date": "1981-08-31",
+       "lead_days": -11
+      },
+      {
+       "turn_date": "1987-08",
+       "turn_type": "TOP",
+       "signal_date": "1987-04-30",
+       "lead_days": -4
+      },
+      {
+       "turn_date": "1987-11",
+       "turn_type": "BOTTOM",
+       "signal_date": "1987-11-30",
+       "lead_days": 0
+      },
+      {
+       "turn_date": "1990-05",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "1990-10",
+       "turn_type": "BOTTOM",
+       "signal_date": "1989-06-30",
+       "lead_days": -16
+      },
+      {
+       "turn_date": "1998-06",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "1998-08",
+       "turn_type": "BOTTOM",
+       "signal_date": "1998-09-30",
+       "lead_days": 1
+      },
+      {
+       "turn_date": "2000-08",
+       "turn_type": "TOP",
+       "signal_date": "1999-06-30",
+       "lead_days": -14
+      },
+      {
+       "turn_date": "2002-09",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2007-10",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2009-02",
+       "turn_type": "BOTTOM",
+       "signal_date": "2007-09-30",
+       "lead_days": -17
+      },
+      {
+       "turn_date": "2011-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2011-09",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2019-12",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2020-03",
+       "turn_type": "BOTTOM",
+       "signal_date": "2019-08-31",
+       "lead_days": -7
+      },
+      {
+       "turn_date": "2021-12",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2022-09",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      }
+     ],
+     "notes": "lead單位=月。整體命中9/18=50%, 中位-7月→LEADING, 但明顯偏底部: 轉寬鬆→底部6/9且領先深(-17~0); 轉緊縮→頂部僅3/9(1980,1987,2000), mid-cycle緊縮1988/1994/2004/2015-12/2016-12全為假訊, 2022-03緊縮訊在2021-12頂之後3個月(超出+2窗)未計中。FP 7/21=33.3%; 3筆2024-09後訊號不可判定(資料末端)已剔除分母。"
+    },
+    {
+     "name": "s_CURVE",
+     "rule": "TOP: s_CURVE[t]=0 且 s_CURVE[t-1]>0 (殖利率曲線轉倒掛)。二值指標(0/100)。",
+     "warn_type": "TOP",
+     "coverage": "1976-01..2026-07 (curve自1970-01有效)",
+     "verdict": "LEADING",
+     "median_lead": -7,
+     "mean_lead": -8.8,
+     "hits": "T5/9 B0/0",
+     "fp_rate": 0,
+     "n_signals": 7,
+     "per_turn": [
+      {
+       "turn_date": "1980-11",
+       "turn_type": "TOP",
+       "signal_date": "1980-09-30",
+       "lead_days": -2
+      },
+      {
+       "turn_date": "1987-08",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "1990-05",
+       "turn_type": "TOP",
+       "signal_date": "1989-01-31",
+       "lead_days": -16
+      },
+      {
+       "turn_date": "1998-06",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-08",
+       "turn_type": "TOP",
+       "signal_date": "2000-04-30",
+       "lead_days": -4
+      },
+      {
+       "turn_date": "2007-10",
+       "turn_type": "TOP",
+       "signal_date": "2006-07-31",
+       "lead_days": -15
+      },
+      {
+       "turn_date": "2011-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2019-12",
+       "turn_type": "TOP",
+       "signal_date": "2019-05-31",
+       "lead_days": -7
+      },
+      {
+       "turn_date": "2021-12",
+       "turn_type": "TOP",
+       "signal_date": "2019-05-31",
+       "lead_days": -31
+      }
+     ],
+     "notes": "lead單位=月。注意: 2021-12頂在[-18,+2]窗內無訊號, per_turn該行列出的是最近一次倒掛(2019-05, lead-31)僅供參考, 正式配對計為miss(窗內命中5/9)。7次倒掛(1978-11,1980-09,1989-01,2000-04,2006-07,2019-05,2022-10) FP=0/7 — 每次倒掛後18月內都有±15%或±8%頂部; 且不設窗時1976後每個主要頂部之前都存在倒掛, 但領先幅度極不穩定(-2至-113月, 1987/1998/2011/2021頂距最近倒掛太遠)。結論: 制度級警戒器, 幾乎零假警報但無擇時價值, 如實量測窗內中位-7月。"
+    },
+    {
+     "name": "s_INFL",
+     "rule": "TOP: s_INFL[t]<=50 且 s_INFL[t-1]>50 (通脹支柱由100惡化)。",
+     "warn_type": "TOP",
+     "coverage": "1976-01..2026-07 (cpi自1958有效)",
+     "verdict": "WEAK",
+     "median_lead": -7,
+     "mean_lead": -8.3,
+     "hits": "T3/9 B0/0",
+     "fp_rate": 0.111,
+     "n_signals": 9,
+     "per_turn": [
+      {
+       "turn_date": "1980-11",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "1987-08",
+       "turn_type": "TOP",
+       "signal_date": "1986-08-31",
+       "lead_days": -12
+      },
+      {
+       "turn_date": "1990-05",
+       "turn_type": "TOP",
+       "signal_date": "1989-10-31",
+       "lead_days": -7
+      },
+      {
+       "turn_date": "1998-06",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-08",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2007-10",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2011-04",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2019-12",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2021-12",
+       "turn_type": "TOP",
+       "signal_date": "2021-06-30",
+       "lead_days": -6
+      }
+     ],
+     "notes": "lead單位=月。命中僅3/9(1987,1990,2021)→WEAK。9次訊號集中在1977-1989與2021 — 低通脹時代(1990s-2010s)此支柱長期停在100幾乎不動, 對1998/2000/2007/2011/2019頂完全無警訊。FP僅1/9(1983-11)因訊號本身稀少。命中時領先尚可(-6~-12月): 通脹惡化確實先於1987、2021兩個大頂。時代依賴性極強。"
+    },
+    {
+     "name": "s_VOL",
+     "rule": "評估規則: s_VOL[t]=0 且 s_VOL[t-1]>0 (6月已實現波動惡化至極端), 以TOP警訊身分與頂部配對, 另診斷其與底部之時間關係。",
+     "warn_type": "TOP",
+     "coverage": "1976-01..2026-07",
+     "verdict": "CONFIRMING",
+     "median_lead": -6.5,
+     "mean_lead": -4.8,
+     "hits": "T4/9 B0/0",
+     "fp_rate": 0.083,
+     "n_signals": 13,
+     "per_turn": [
+      {
+       "turn_date": "1980-11",
+       "turn_type": "TOP",
+       "signal_date": "1980-03-31",
+       "lead_days": -8
+      },
+      {
+       "turn_date": "1987-08",
+       "turn_type": "TOP",
+       "signal_date": "1987-01-31",
+       "lead_days": -7
+      },
+      {
+       "turn_date": "1990-05",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "1998-06",
+       "turn_type": "TOP",
+       "signal_date": "1998-08-31",
+       "lead_days": 2
+      },
+      {
+       "turn_date": "2000-08",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2007-10",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2011-04",
+       "turn_type": "TOP",
+       "signal_date": "2010-10-31",
+       "lead_days": -6
+      },
+      {
+       "turn_date": "2019-12",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2021-12",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      }
+     ],
+     "notes": "lead單位=月。任務問「同步還是滯後」— 答案: 對頂部是滯後/確認, 對底部大致同步。配對中位-6.5月純屬窗口假象(僅4/9命中, 且1980-03/1987-01/2010-10是高波動盤整期先於blow-off頂的特例)。週期位置分析: 13次訊號中8次在主要頂部之後2~17個月才發出(跌勢已展開波動才歸零), 且距下一個主要底部僅0~4月(1987-10,1998-08,2008-10,2008-12); 2020-04與2022-10更在底部之後1個月。對底部最早訊號中位lead=-4月(近同步)。FP 1/12=8.3%(2020-04, 其後18月無底), 1筆2026-05訊號不可判定。誠實結論: 不是頂部領先指標。"
+    },
+    {
+     "name": "score",
+     "rule": "TOP: score[t]<70 且 score[t-1]>=70 (合成分跌穿70); BOTTOM: score[t]>40 且 score[t-1]<=40 (升穿40)。",
+     "warn_type": "BOTH",
+     "coverage": "1976-01..2026-07 (score自1927-08有效)",
+     "verdict": "LEADING",
+     "median_lead": -8,
+     "mean_lead": -6.6,
+     "hits": "T8/9 B5/9",
+     "fp_rate": 0.232,
+     "n_signals": 57,
+     "per_turn": [
+      {
+       "turn_date": "1980-11",
+       "turn_type": "TOP",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "1982-07",
+       "turn_type": "BOTTOM",
+       "signal_date": "1981-11-30",
+       "lead_days": -8
+      },
+      {
+       "turn_date": "1987-08",
+       "turn_type": "TOP",
+       "signal_date": "1986-09-30",
+       "lead_days": -11
+      },
+      {
+       "turn_date": "1987-11",
+       "turn_type": "BOTTOM",
+       "signal_date": "1987-12-31",
+       "lead_days": 1
+      },
+      {
+       "turn_date": "1990-05",
+       "turn_type": "TOP",
+       "signal_date": "1989-01-31",
+       "lead_days": -16
+      },
+      {
+       "turn_date": "1990-10",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "1998-06",
+       "turn_type": "TOP",
+       "signal_date": "1998-08-31",
+       "lead_days": 2
+      },
+      {
+       "turn_date": "1998-08",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2000-08",
+       "turn_type": "TOP",
+       "signal_date": "2000-05-31",
+       "lead_days": -3
+      },
+      {
+       "turn_date": "2002-09",
+       "turn_type": "BOTTOM",
+       "signal_date": "2002-03-31",
+       "lead_days": -6
+      },
+      {
+       "turn_date": "2007-10",
+       "turn_type": "TOP",
+       "signal_date": "2006-07-31",
+       "lead_days": -15
+      },
+      {
+       "turn_date": "2009-02",
+       "turn_type": "BOTTOM",
+       "signal_date": "2008-05-31",
+       "lead_days": -9
+      },
+      {
+       "turn_date": "2011-04",
+       "turn_type": "TOP",
+       "signal_date": "2010-06-30",
+       "lead_days": -10
+      },
+      {
+       "turn_date": "2011-09",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      },
+      {
+       "turn_date": "2019-12",
+       "turn_type": "TOP",
+       "signal_date": "2018-11-30",
+       "lead_days": -12
+      },
+      {
+       "turn_date": "2020-03",
+       "turn_type": "BOTTOM",
+       "signal_date": "2020-05-31",
+       "lead_days": 2
+      },
+      {
+       "turn_date": "2021-12",
+       "turn_type": "TOP",
+       "signal_date": "2021-11-30",
+       "lead_days": -1
+      },
+      {
+       "turn_date": "2022-09",
+       "turn_type": "BOTTOM",
+       "signal_date": null,
+       "lead_days": null
+      }
+     ],
+     "notes": "lead單位=月。全家族最佳: 頂部8/9(僅漏1980-11), 頂部lead中位約-10.5月; 底部5/9, 底部lead中位-6月(漏1990/1998/2011/2022的急跌底 — score回升太慢, 升穿40常在V形底之後)。整體13/18=72%命中, 中位-8月。FP 13/56=23.2%, 集中於1983-84、1994(四次)、2005、2015-16等mid-cycle降溫; 1筆2025+訊號不可判定。注意跌穿70訊號多(39次), 領先性好但需容忍約1/4假警報。"
+    }
+   ]
+  }
+ ]
+}
