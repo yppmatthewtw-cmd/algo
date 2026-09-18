@@ -1,0 +1,49 @@
+{ ═══════════════════════════════════════════════════════════════════
+  MACD 動能蓄積交叉 · 1分鐘 · 富途牛牛「自定義指標」公式版 (通達信風格)
+  用途: 在牛牛圖表上直接畫出 藍圈(負動能段合格)/橙圈(正動能段合格)/買賣直線, 目視核對訊號
+  安裝: 牛牛桌面版 → 指標 → 自定義指標 → 新建 → 貼上 → 副圖顯示 → 圖表切 1 分鐘
+  注意: ① 牛牛 MACD 柱 = 2×(DIF-DEA), 本式用 1× (HIST), 門檻沿用回測引擎定義
+        ② 自定義指標只能畫訊號, 不能回測/下單; 回測用 futu_fetch_and_backtest.py
+        ③ 若編譯器不支援變週期 SUM/HHV/COUNT, 改用下方「固定窗口版」三行
+  ═══════════════════════════════════════════════════════════════════ }
+
+{ 參數 (可在指標參數面板調) }
+{ MINBARS 4  MINAREA 0.15  MINDEPTH 0.04 }
+
+DIF:=EMA(CLOSE,12)-EMA(CLOSE,26);
+DEA:=EMA(DIF,9);
+HIST:=DIF-DEA;
+HP:=HIST/CLOSE*100;                 { 以價格正規化的柱高 % }
+NEG:=HIST<0;
+POS:=HIST>0;
+
+{ 當前同號段長度 (自上一次相反號以來的根數) }
+NRUN:=IF(NEG,BARSLAST(POS),IF(POS,BARSLAST(NEG),0));
+{ 段面積 / 段深度 (變週期版) }
+AREA:=SUM(ABS(HP),NRUN);
+DEPTH:=HHV(ABS(HP),NRUN);
+{ 固定窗口版 (若上兩行編譯失敗改用): }
+{ AREA:=SUM(ABS(HP)*IF(NEG,NEG,POS),30);  DEPTH:=HHV(ABS(HP),30); }
+
+{ 剛結束的段 = 上一根為止的統計 }
+PBARS:=REF(NRUN,1);
+PAREA:=REF(AREA,1);
+PDEPTH:=REF(DEPTH,1);
+PNEG:=REF(NEG,1);
+PPOS:=REF(POS,1);
+QUAL:=PBARS>=MINBARS AND PAREA>=MINAREA AND PDEPTH>=MINDEPTH;
+
+BUY:=CROSS(DIF,DEA) AND PNEG AND QUAL;     { 藍色直線 }
+SELL:=CROSS(DEA,DIF) AND PPOS AND QUAL;    { 紅色直線 }
+
+{ 繪圖 }
+MACD_H:HIST,COLORSTICK;
+DIF_L:DIF,COLORFF8800,LINETHICK2;
+DEA_L:DEA,COLOR00AAFF;
+STICKLINE(BUY,0,DEPTH*CLOSE/100*-1.5,3,0),COLOR00AAFF;   { 買點直線(向下) }
+STICKLINE(SELL,0,DEPTH*CLOSE/100*1.5,3,0),COLORFF3333;   { 賣點直線(向上) }
+DRAWTEXT(BUY,DIF,'B'),COLOR00AAFF;
+DRAWTEXT(SELL,DIF,'S'),COLORFF3333;
+{ 合格段標示 (代替橢圓): 段內每根柱底/頂加點 }
+DRAWICON(REF(NEG AND NRUN>=MINBARS AND AREA>=MINAREA AND DEPTH>=MINDEPTH,0),HIST,2);
+DRAWICON(REF(POS AND NRUN>=MINBARS AND AREA>=MINAREA AND DEPTH>=MINDEPTH,0),HIST,1);

@@ -1,0 +1,32 @@
+{ ═══════════════════════════════════════════════════════════════════
+  MACD 動能蓄積交叉 · 1分鐘 · Webull 桌面版「自定義指標」公式 (通達信風格)
+  Webull 桌面 App: 圖表 → 指標 → 自定義/編輯指標 → 新建 → 貼上 → 副圖 → 圖表切 1 分鐘
+  與牛牛版同一套公式; Webull 的 MACD 柱同樣顯示 2×(DIF-DEA), 本式用 1× 定義門檻
+  ※ 只能畫訊號目視核對; 回測/下單用 webull_fetch_and_backtest.py / webull_live_trader.py
+  ═══════════════════════════════════════════════════════════════════ }
+
+{ 參數: MINBARS 4  MINAREA 0.15  MINDEPTH 0.04 }
+
+DIF:=EMA(CLOSE,12)-EMA(CLOSE,26);
+DEA:=EMA(DIF,9);
+HIST:=DIF-DEA;
+HP:=HIST/CLOSE*100;
+NEG:=HIST<0;
+POS:=HIST>0;
+NRUN:=IF(NEG,BARSLAST(POS),IF(POS,BARSLAST(NEG),0));
+AREA:=SUM(ABS(HP),NRUN);
+DEPTH:=HHV(ABS(HP),NRUN);
+{ 固定窗口備用: AREA:=SUM(ABS(HP),30); DEPTH:=HHV(ABS(HP),30); }
+PBARS:=REF(NRUN,1);  PAREA:=REF(AREA,1);  PDEPTH:=REF(DEPTH,1);
+PNEG:=REF(NEG,1);    PPOS:=REF(POS,1);
+QUAL:=PBARS>=MINBARS AND PAREA>=MINAREA AND PDEPTH>=MINDEPTH;
+BUY:=CROSS(DIF,DEA) AND PNEG AND QUAL;
+SELL:=CROSS(DEA,DIF) AND PPOS AND QUAL;
+
+MACD_H:HIST,COLORSTICK;
+DIF_L:DIF,COLORFF8800,LINETHICK2;
+DEA_L:DEA,COLOR00AAFF;
+STICKLINE(BUY,0,DEPTH*CLOSE/100*-1.5,3,0),COLOR00AAFF;
+STICKLINE(SELL,0,DEPTH*CLOSE/100*1.5,3,0),COLORFF3333;
+DRAWTEXT(BUY,DIF,'B'),COLOR00AAFF;
+DRAWTEXT(SELL,DIF,'S'),COLORFF3333;

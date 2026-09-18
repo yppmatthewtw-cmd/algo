@@ -1,0 +1,104 @@
+// ═══════════════════════════════════════════════════════════════════════
+//  MACD 動能蓄積交叉策略 · 1分鐘 intraday · TradingView 版 (Pine Script v6)
+//  規則 (依附圖):
+//   買點 = 負動能段「儲夠」(藍圈紅柱群) 後, 完成K線上 DIF 上穿 DEA (藍直線) → 下一根開盤買入
+//   賣點 = 正動能段「儲夠」(橙圈綠柱群) 後, 完成K線上 DIF 下穿 DEA (紅直線) → 下一根開盤賣出
+//   「儲夠」= 該同號柱段 連續根數 ≥ minBars 且 面積 Σ|hist|/close% ≥ minArea 且 深度 max|hist|/close% ≥ minDepth
+//   動能不足的交叉一律忽略; 長倉only; 收市前強制平倉
+//  ※ TradingView 的 MACD 柱 = DIF−DEA (牛牛/Webull 顯示 2×), 門檻以 1× 定義
+//  使用: 圖表切 1 分鐘 → Pine Editor 貼上 → Add to chart → Strategy Tester 看回測
+// ═══════════════════════════════════════════════════════════════════════
+//@version=6
+strategy("MACD動能蓄積交叉 · 1分 intraday", shorttitle="MACD-Momentum-1m", overlay=false,
+     initial_capital=100000, default_qty_type=strategy.percent_of_equity, default_qty_value=100,
+     commission_type=strategy.commission.percent, commission_value=0.03, slippage=1,
+     process_orders_on_close=false, calc_on_every_tick=false, pyramiding=0)
+
+// ── 參數 ──
+fastLen   = input.int(12, "MACD 快線", minval=1)
+slowLen   = input.int(26, "MACD 慢線", minval=1)
+sigLen    = input.int(9,  "訊號線(移動平均週期)", minval=1)
+minBars   = input.int(4,   "動能段最少連續根數", minval=1, group="動能蓄積門檻")
+minArea   = input.float(0.15, "動能段面積門檻 Σ|hist|/close (%·根)", step=0.01, group="動能蓄積門檻")
+minDepth  = input.float(0.04, "動能段深度門檻 max|hist|/close (%)", step=0.01, group="動能蓄積門檻")
+sessStr   = input.session("0930-1200,1300-1600", "交易時段 (港股; 美股改 0930-1600)", group="時段")
+tzStr     = input.string("Asia/Hong_Kong", "時區 (美股 America/New_York)", group="時段")
+noEntry   = input.session("1545-1600", "此時段不開新倉", group="時段")
+eodSess   = input.session("1558-1600", "強制平倉時段", group="時段")
+useStop   = input.bool(false, "啟用固定止損 (原題不設)", group="風控")
+stopPct   = input.float(1.0, "止損 %", step=0.1, group="風控")
+allowShort= input.bool(false, "賣訊反手做空 (港股ETF通常不適用)", group="風控")
+
+// ── MACD ──
+[dif, dea, hist] = ta.macd(close, fastLen, slowLen, sigLen)
+histPct = hist / close * 100.0
+sgn = hist > 0 ? 1 : hist < 0 ? -1 : 0
+
+// ── 同號柱段統計 (只用已完成K線, 無前視) ──
+var int   curSign  = 0
+var int   curBars  = 0
+var float curArea  = 0.0
+var float curDepth = 0.0
+var int   curStart = na
+// 交叉發生在本K: 「剛結束的段」= 上一根為止的統計 (更新前先評估)
+crossUp = ta.crossover(dif, dea)
+crossDn = ta.crossunder(dif, dea)
+prevOK  = curBars >= minBars and curArea >= minArea and curDepth >= minDepth
+negOK   = curSign == -1 and prevOK
+posOK   = curSign ==  1 and prevOK
+buySig  = crossUp and negOK      // 藍直線
+sellSig = crossDn and posOK      // 紅直線
+// 畫圈: 合格段用方框框住 (Pine 無橢圓)
+if buySig
+    box.new(curStart, 0, bar_index - 1, -curDepth * close / 100.0 * 1.15, border_color=color.new(color.aqua, 0), bgcolor=color.new(color.aqua, 88), border_width=2)
+    line.new(bar_index, hist, bar_index, 0, extend=extend.both, color=color.new(color.aqua, 0), width=2)
+if sellSig
+    box.new(curStart, 0, bar_index - 1, curDepth * close / 100.0 * 1.15, border_color=color.new(color.orange, 0), bgcolor=color.new(color.orange, 88), border_width=2)
+    line.new(bar_index, hist, bar_index, 0, extend=extend.both, color=color.new(color.red, 0), width=2)
+// 更新段統計
+if sgn != 0 and sgn != curSign
+    curSign := sgn
+    curBars := 1
+    curArea := math.abs(histPct)
+    curDepth := math.abs(histPct)
+    curStart := bar_index
+else if sgn != 0
+    curBars += 1
+    curArea += math.abs(histPct)
+    curDepth := math.max(curDepth, math.abs(histPct))
+
+// ── 時段 ──
+inSess    = not na(time(timeframe.period, sessStr, tzStr))
+blockNew  = not na(time(timeframe.period, noEntry, tzStr))
+eodBar    = not na(time(timeframe.period, eodSess, tzStr))
+entryOK   = inSess and not blockNew and not eodBar
+
+// ── 下單 (完成K線判定, 下一根開盤成交) ──
+if buySig and entryOK and strategy.position_size <= 0
+    if strategy.position_size < 0
+        strategy.close("S", comment="cover")
+    strategy.entry("L", strategy.long, comment="BUY 動能交叉")
+if sellSig and strategy.position_size > 0
+    strategy.close("L", comment="SELL 動能交叉")
+if sellSig and allowShort and entryOK and strategy.position_size == 0
+    strategy.entry("S", strategy.short, comment="SHORT 動能交叉")
+if useStop and strategy.position_size > 0
+    strategy.exit("SL", "L", stop=strategy.position_avg_price * (1 - stopPct / 100.0))
+if eodBar and strategy.position_size != 0
+    strategy.close_all(comment="EOD 強平")
+
+// ── 繪圖 (MACD 副圖, 與附圖一致) ──
+plot(hist, "Histogram", style=plot.style_columns, color=hist >= 0 ? (hist >= hist[1] ? color.new(color.green, 0) : color.new(color.green, 45)) : (hist <= hist[1] ? color.new(color.red, 0) : color.new(color.red, 45)))
+plot(dif, "DIF", color=color.new(color.orange, 0), linewidth=2)
+plot(dea, "DEA", color=color.new(color.aqua, 0), linewidth=1)
+hline(0)
+plotshape(buySig,  "買訊", style=shape.triangleup,   location=location.bottom, color=color.aqua, size=size.small, text="B")
+plotshape(sellSig, "賣訊", style=shape.triangledown, location=location.top,    color=color.red,  size=size.small, text="S")
+// 狀態表
+var table tb = table.new(position.top_right, 2, 5, border_width=1)
+if barstate.islast
+    table.cell(tb, 0, 0, "段方向", text_size=size.small), table.cell(tb, 1, 0, curSign == 1 ? "正(綠)" : curSign == -1 ? "負(紅)" : "-", text_size=size.small)
+    table.cell(tb, 0, 1, "段根數", text_size=size.small), table.cell(tb, 1, 1, str.tostring(curBars) + " / " + str.tostring(minBars), text_size=size.small)
+    table.cell(tb, 0, 2, "段面積%", text_size=size.small), table.cell(tb, 1, 2, str.tostring(curArea, "#.###") + " / " + str.tostring(minArea), text_size=size.small)
+    table.cell(tb, 0, 3, "段深度%", text_size=size.small), table.cell(tb, 1, 3, str.tostring(curDepth, "#.###") + " / " + str.tostring(minDepth), text_size=size.small)
+    table.cell(tb, 0, 4, "儲夠?", text_size=size.small), table.cell(tb, 1, 4, prevOK ? "✔ 等交叉" : "✘", text_size=size.small, text_color=prevOK ? color.green : color.gray)
