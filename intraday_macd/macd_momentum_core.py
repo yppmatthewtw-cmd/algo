@@ -40,6 +40,8 @@ class Params:
     eod_flat: str = '15:58'       # 此時間(含)之後第一根K強制平倉
     stop_loss_pct: float | None = None  # 可選: 固定止損% (None=關閉, 依原題不設)
     allow_short: bool = False    # 可選: 賣訊反手做空 (港股ETF通常不適用)
+    intraday: bool | None = None # None=自動偵測 (日線/週線→繞過盤中時段與收市強平, 可持倉過夜)
+    initial_capital: float = 100000.0  # 本金 (用於報表的金額損益)
 
     def to_dict(self):
         return asdict(self)
@@ -90,9 +92,14 @@ def compute_signals(df: pd.DataFrame, p: Params) -> pd.DataFrame:
     d['sell_sig'] = cross_dn & d['pos_ok'].values     # 紅/橙直線
     # 合格動能段標記 (供繪圖: 藍圈=負段, 橙圈=正段) — 標在交叉K, 段長=prev_bars
     d['neg_cluster_end'] = d['buy_sig']; d['pos_cluster_end'] = d['sell_sig']
-    # session flags
+    # session flags — 日線/週線自動繞過盤中時段邏輯
+    intraday = p.intraday if p.intraday is not None else is_intraday(d.index)
+    d.attrs['intraday'] = intraday
     t = d.index.time
     def _t(s): return pd.Timestamp('2000-01-01 ' + s).time()
+    if not intraday:
+        d['in_session'] = True; d['entry_ok'] = True; d['eod'] = False
+        return d
     in_sess = (t >= _t(p.session_open)) & (t < _t(p.session_close))
     if p.lunch_start and p.lunch_end:
         in_sess &= ~((t >= _t(p.lunch_start)) & (t < _t(p.lunch_end)))
@@ -100,6 +107,26 @@ def compute_signals(df: pd.DataFrame, p: Params) -> pd.DataFrame:
     d['entry_ok'] = in_sess & (t < _t(p.no_entry_after))
     d['eod'] = t >= _t(p.eod_flat)
     return d
+
+def is_intraday(index: pd.DatetimeIndex) -> bool:
+    """K線是否為盤中週期: 中位間隔 < 1 日 且 並非全部落在 00:00。"""
+    if len(index) < 3:
+        return False
+    step = pd.Series(index).diff().dt.total_seconds().median()
+    all_midnight = bool((index.hour == 0).all() and (index.minute == 0).all())
+    return bool(step < 86400 and not all_midnight)
+
+def auto_thresholds(df: pd.DataFrame, p: Params, pct_len: int = 250, depth_pctl: float = 60.0,
+                    area_factor: float = 0.6) -> Params:
+    """以近 pct_len 根的 |hist|/close 分佈自動定門檻 (對應 Pine 的「自動(百分位)」模式)。
+    日線柱高比 1 分鐘大一個數量級, 用分位數可跨週期/跨標的免手調。"""
+    d = compute_signals(df, p)
+    hp = d['hist_pct'].abs().dropna().tail(pct_len)
+    depth = float(np.percentile(hp, depth_pctl))
+    out = Params(**p.to_dict())
+    out.min_depth_pct = round(depth, 4)
+    out.min_area_pct = round(depth * p.min_bars * area_factor, 4)
+    return out
 
 # ------------------------------------------------------------------ backtest
 def backtest(df: pd.DataFrame, p: Params):
@@ -111,31 +138,36 @@ def backtest(df: pd.DataFrame, p: Params):
     slip = p.slippage_ticks * p.tick
     idx = d.index; o = d['open'].values; c = d['close'].values
     days = d.index.date
+    intraday = d.attrs.get('intraday', True)
+    cap = p.initial_capital
     pending = None  # ('BUY'/'SELL'/'FLAT', reason) to execute at next open
     for i in range(len(d)):
         # 1) execute pending order at this bar's open
         if pending is not None and p.fill == 'next_open':
             side, reason = pending; pending = None
-            if days[i] != days[i-1]:  # 跨日 → 不執行 (前一日已強平)
+            if intraday and days[i] != days[i-1]:  # 盤中策略跨日 → 不執行 (前一日已強平)
                 side = None
             if side == 'BUY' and pos == 0:
                 pos = 1; entry_px = o[i] + slip; entry_time = idx[i]
             elif side in ('SELL', 'FLAT') and pos == 1:
                 px = o[i] - slip
                 r = px / entry_px - 1 - 2 * fee
-                trades.append({'entry_time': entry_time, 'exit_time': idx[i], 'entry': entry_px, 'exit': px, 'ret': r, 'bars': None, 'reason': reason})
+                trades.append({'entry_time': entry_time, 'exit_time': idx[i], 'entry': entry_px, 'exit': px, 'ret': r,
+                               'pnl': cap * equity * r, 'equity_after': cap * equity * (1 + r), 'bars': None, 'reason': reason})
                 equity *= (1 + r); pos = 0
         # 2) evaluate signals on completed bar i
         row_sig_buy = d['buy_sig'].iat[i] and d['entry_ok'].iat[i]
         row_sig_sell = d['sell_sig'].iat[i]
-        eod = d['eod'].iat[i] or (i + 1 < len(d) and days[i+1] != days[i]) or i == len(d) - 1
+        eod = (d['eod'].iat[i] or (i + 1 < len(d) and days[i+1] != days[i])) if intraday else False
+        eod = eod or i == len(d) - 1   # 最後一根一律平倉, 令報表對應完整期間
         stop_hit = pos == 1 and p.stop_loss_pct is not None and c[i] <= entry_px * (1 - p.stop_loss_pct / 100)
         if pos == 1 and (eod or stop_hit or row_sig_sell):
             reason = 'EOD' if eod else ('STOP' if stop_hit else 'MACD_SELL')
             if p.fill == 'close' or eod:
                 px = c[i] - slip
                 r = px / entry_px - 1 - 2 * fee
-                trades.append({'entry_time': entry_time, 'exit_time': idx[i], 'entry': entry_px, 'exit': px, 'ret': r, 'bars': None, 'reason': reason})
+                trades.append({'entry_time': entry_time, 'exit_time': idx[i], 'entry': entry_px, 'exit': px, 'ret': r,
+                               'pnl': cap * equity * r, 'equity_after': cap * equity * (1 + r), 'bars': None, 'reason': reason})
                 equity *= (1 + r); pos = 0
             else:
                 pending = ('SELL', reason)
@@ -158,8 +190,14 @@ def stats(tr: pd.DataFrame, d: pd.DataFrame) -> dict:
     wins = tr[tr.ret > 0]; losses = tr[tr.ret <= 0]
     eqs = d['equity']; dd = (eqs / eqs.cummax() - 1).min()
     n_days = len(set(d.index.date))
+    cap = float(tr['equity_after'].iloc[-1] - tr['pnl'].sum()) if 'pnl' in tr else 0.0
     return {
         'trades': int(len(tr)), 'win_rate': float((tr.ret > 0).mean()),
+        'initial_capital': round(cap, 2),
+        'total_pnl': round(float(tr['pnl'].sum()), 2) if 'pnl' in tr else None,
+        'final_equity': round(float(tr['equity_after'].iloc[-1]), 2) if 'equity_after' in tr else None,
+        'gross_profit': round(float(tr.loc[tr.ret > 0, 'pnl'].sum()), 2) if 'pnl' in tr else None,
+        'gross_loss': round(float(tr.loc[tr.ret <= 0, 'pnl'].sum()), 2) if 'pnl' in tr else None,
         'avg_ret_pct': float(tr.ret.mean() * 100), 'median_ret_pct': float(tr.ret.median() * 100),
         'avg_win_pct': float(wins.ret.mean() * 100) if len(wins) else 0.0,
         'avg_loss_pct': float(losses.ret.mean() * 100) if len(losses) else 0.0,

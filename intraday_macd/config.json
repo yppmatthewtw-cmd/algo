@@ -12,20 +12,119 @@
     "lot_size": 100
   },
   "_換股範例": {
-    "港股": {"market": "HK", "futu_code": "HK.00700", "webull_symbol": "00700", "webull_category": "HK_STOCK", "webull_region": "hk", "tradingview": "HKEX:700", "tick": 0.2, "lot_size": 100},
-    "美股": {"market": "US", "futu_code": "US.TQQQ", "webull_symbol": "TQQQ", "webull_category": "US_ETF", "webull_region": "us", "tradingview": "NASDAQ:TQQQ", "tick": 0.01, "lot_size": 1}
+    "港股": {
+      "market": "HK",
+      "futu_code": "HK.00700",
+      "webull_symbol": "00700",
+      "webull_category": "HK_STOCK",
+      "webull_region": "hk",
+      "tradingview": "HKEX:700",
+      "tick": 0.2,
+      "lot_size": 100
+    },
+    "美股": {
+      "market": "US",
+      "futu_code": "US.TQQQ",
+      "webull_symbol": "TQQQ",
+      "webull_category": "US_ETF",
+      "webull_region": "us",
+      "tradingview": "NASDAQ:TQQQ",
+      "tick": 0.01,
+      "lot_size": 1
+    }
   },
   "strategy": {
-    "fast": 12, "slow": 26, "signal": 9,
-    "min_bars": 4, "min_area_pct": 0.15, "min_depth_pct": 0.04,
-    "fill": "next_open", "commission_bps": 3.0, "slippage_ticks": 0,
-    "stop_loss_pct": null, "allow_short": false
+    "fast": 12,
+    "slow": 26,
+    "signal": 9,
+    "min_bars": 4,
+    "min_area_pct": 0.15,
+    "min_depth_pct": 0.04,
+    "fill": "next_open",
+    "commission_bps": 3.0,
+    "slippage_ticks": 0,
+    "stop_loss_pct": null,
+    "allow_short": false
   },
   "session": {
-    "HK": {"session_open": "09:30", "session_close": "16:00", "lunch_start": "12:00", "lunch_end": "13:00", "no_entry_after": "15:45", "eod_flat": "15:58", "tz": "Asia/Hong_Kong"},
-    "US": {"session_open": "09:30", "session_close": "16:00", "lunch_start": null, "lunch_end": null, "no_entry_after": "15:45", "eod_flat": "15:58", "tz": "America/New_York"}
+    "HK": {
+      "session_open": "09:30",
+      "session_close": "16:00",
+      "lunch_start": "12:00",
+      "lunch_end": "13:00",
+      "no_entry_after": "15:45",
+      "eod_flat": "15:58",
+      "tz": "Asia/Hong_Kong"
+    },
+    "US": {
+      "session_open": "09:30",
+      "session_close": "16:00",
+      "lunch_start": null,
+      "lunch_end": null,
+      "no_entry_after": "15:45",
+      "eod_flat": "15:58",
+      "tz": "America/New_York"
+    }
   },
-  "trading": {"qty": 2000, "futu_trd_env": "SIMULATE", "futu_host": "127.0.0.1", "futu_port": 11111, "webull_dry_run": true},
-  "backtest": {"start": "2026-09-01", "end": "2026-09-18", "data_dir": "data", "out_dir": "sample_output",
-               "sweep_grid": {"min_bars": [3, 4, 5, 6, 8], "min_area_pct": [0.05, 0.1, 0.15, 0.25, 0.4], "min_depth_pct": [0.02, 0.04, 0.06, 0.1]}}
+  "trading": {
+    "qty": 2000,
+    "futu_trd_env": "SIMULATE",
+    "futu_host": "127.0.0.1",
+    "futu_port": 11111,
+    "webull_dry_run": true
+  },
+  "backtest": {
+    "start": "2026-09-01",
+    "end": "2026-09-18",
+    "data_dir": "data",
+    "out_dir": "sample_output",
+    "sweep_grid": {
+      "min_bars": [
+        3,
+        4,
+        5,
+        6,
+        8
+      ],
+      "min_area_pct": [
+        0.05,
+        0.1,
+        0.15,
+        0.25,
+        0.4
+      ],
+      "min_depth_pct": [
+        0.02,
+        0.04,
+        0.06,
+        0.1
+      ]
+    },
+    "initial_capital": 100000,
+    "lookback_days": 365
+  },
+  "timeframe": {
+    "_說明": "門檻隨K線週期改變: 日線柱高(|hist|/close)比1分鐘大一個數量級。建議用 --auto-th 自動定門檻, 或套下方預設再用 --sweep 校準。",
+    "current": "1min",
+    "presets": {
+      "1min": {
+        "min_bars": 4,
+        "min_area_pct": 0.15,
+        "min_depth_pct": 0.04,
+        "intraday": true
+      },
+      "5min": {
+        "min_bars": 4,
+        "min_area_pct": 0.3,
+        "min_depth_pct": 0.08,
+        "intraday": true
+      },
+      "daily": {
+        "min_bars": 3,
+        "min_area_pct": 2.2,
+        "min_depth_pct": 1.2,
+        "intraday": false
+      }
+    }
+  }
 }

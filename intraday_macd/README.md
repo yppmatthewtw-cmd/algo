@@ -11,7 +11,9 @@ intraday_macd/
 ├── macd_momentum_core.py       ← 共用引擎: 指標/訊號/回測/網格搜尋 (三平台同一套邏輯)
 ├── backtest_cli.py             ← 任何 1 分鐘 CSV 直接回測
 ├── make_sample_data.py         ← 合成數據 (只用來自測引擎, 不是真實 07709)
-├── tradingview/macd_momentum_1m.pine     ← TradingView 版 (Pine v6 strategy, 內建回測器)
+├── tradingview/
+│   ├── macd_momentum_1m.pine             ← TradingView 1 分鐘 intraday 版
+│   └── macd_momentum_daily.pine          ← TradingView 【日線版】本金100K / 一年 / 交易報表
 ├── futu_niuniu/
 │   ├── futu_fetch_and_backtest.py        ← 牛牛 OpenAPI 抓 1 分 K → 回測
 │   ├── futu_live_trader.py               ← 牛牛 模擬盤/實盤 執行器
@@ -75,3 +77,49 @@ python webull_fetch_and_backtest.py --sweep
 - Webull OpenAPI SDK 方法簽名依官方文件撰寫,你安裝的版本若有差異,只需改 `fetch_1min()` / `order()` 兩處。
 - 牛牛/Webull 的自定義指標只能畫訊號,不能回測或下單;變週期 `SUM/HHV` 若編譯失敗,檔內附固定窗口備用寫法。
 - 07709 是 2× 槓桿 ETF,1 分鐘線滑點與買賣價差不可忽略,`commission_bps` / `slippage_ticks` 請按實際填。
+
+
+---
+
+# 日線版 (TradingView) — 本金 100K · 一年 · 交易報表
+
+檔案 `tradingview/macd_momentum_daily.pine`,已按要求預設好。
+
+## 開始用
+
+1. 圖表 symbol 設 **`HKEX:7709`**,週期切 **D(日線)**。
+2. Pine Editor 貼上 `macd_momentum_daily.pine` → Save → **Add to chart**。
+3. 圖上會看到:回測期間淡藍底色、合格動能段藍/橙方框、買賣直線與 B/S 標記,右下角**回測報表**。
+4. 下方 **Strategy Tester** 有官方統計;**List of Trades** 分頁是完整逐筆清單(可匯出 CSV)。
+
+## 已預設的三項
+
+| 要求 | 設定位置 | 預設值 |
+|---|---|---|
+| ① 本金 100,000 | `strategy()` 的 `initial_capital`,或 設定→Properties→Initial capital | 100,000 |
+| ② 回測期間一年 | 設定→Inputs→**① 回測期間** | 「最近 N 天」勾選 + 365 天(亦可取消勾選改用指定日期區間) |
+| ③ 交易報表 | 圖上右下角表格 + Pine Logs + Strategy Tester | 見下 |
+
+## 報表內容
+
+**摘要列**:本金、**交易次數**、勝/負、勝率、**總損益 $**、**總損益 %**、期末權益、Profit Factor、毛利/毛損、最大回撤、當前門檻值。
+
+**逐筆列**:每筆 `#`、進場日、出場日、進場價、出場價、**損益 $**、**損益 %**(綠賺紅蝕),預設顯示最近 25 筆(Inputs→⑦ 報表 可調至 60)。
+
+另外收盤會把同一份報表寫進 **Pine Logs**(Pine Editor 下方 Pine Logs 分頁),方便整段複製貼出。
+
+## 日線版與 1 分鐘版的三個差異(重要)
+
+1. **沒有收市強平**:日線持倉會過夜,直到出現賣訊才平。盤中時段/午休/收市強平在日線自動繞過(程式用 `timeframe.isintraday` 判斷)。
+2. **門檻刻度完全不同**:日線的 `|hist|/close` 比 1 分鐘大一個數量級(1 分鐘約 0.02–0.1%,日線約 0.5–2%)。所以日線版預設用**「自動(百分位)」門檻**——取近 250 根柱高的第 60 百分位當深度門檻,換標的、換週期都不用手調。想寫死就在 Inputs→④ 改成「手動」。
+3. **回測窗結束會平倉**:令報表的總損益對應完整一年,不會留一筆未平倉扭曲數字。
+
+## 同一套規則在本機跑(交叉驗證)
+
+Python 引擎已支援日線(自動偵測 K 線週期,日線繞過時段邏輯):
+
+```bash
+python backtest_cli.py --csv data/HK_07709_daily.csv --auto-th --capital 100000
+```
+
+輸出會列出逐筆 `損益$ / 權益` 與「期內交易 N 筆 · 總損益 X (Y%) · 期末權益 Z」,格式與 Pine 報表一致。`--tf daily|1min|5min` 可強制指定週期預設(預設 auto 依數據判定)。

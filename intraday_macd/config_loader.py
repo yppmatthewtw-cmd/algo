@@ -14,6 +14,10 @@ def params_from_config(cfg: dict, overrides: dict | None = None) -> Params:
     market = cfg['symbol']['market']
     sess = {k: v for k, v in cfg['session'][market].items() if k != 'tz'}
     kw = {**cfg['strategy'], **sess, 'tick': cfg['symbol'].get('tick', 0.01)}
+    tf = cfg.get('timeframe', {})
+    preset = tf.get('presets', {}).get(tf.get('current', ''), {})
+    kw.update(preset)
+    kw['initial_capital'] = cfg.get('backtest', {}).get('initial_capital', 100000.0)
     if overrides:
         kw.update({k: v for k, v in overrides.items() if v is not None})
     return Params(**kw)
