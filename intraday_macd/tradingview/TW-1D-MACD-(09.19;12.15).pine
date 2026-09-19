@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-//  W-D-MACD  ·  MACD 動能蓄積交叉策略 · 【日線 DAILY 回測版】 · TradingView Pine Script v6
+//  TW-1D-MACD  ·  MACD 動能蓄積交叉策略 · 【日線 DAILY 回測版】 · TradingView Pine Script v6
 //
 //  規則 (與 1 分鐘版同一套邏輯, 只是 K 線改為日線):
 //   買點 = 負動能段「儲夠」後, 收盤確認 DIF 上穿 DEA → 下一根開盤買入
@@ -25,15 +25,16 @@
 //  ※ 日線的柱高 (|hist|/close) 比 1 分鐘大一個數量級 → 預設用「自動百分位門檻」, 換標的免手調
 //  ※ TradingView 的 MACD 柱 = DIF−DEA (牛牛/Webull 顯示 2×), 門檻以 1× 定義
 //
-//  版本戳: W-D-MACD-(MM.DD;HH:MM) — D=日線, 括號內為建置時間 (HKT)
-//         本檔 = W-D-MACD-(09.19;12:15)  建於 2026-09-19 12:15 HKT
+//  版本戳: TW-1D-MACD-(MM.DD;HH:MM) — 1D=日線 (對應 1 分鐘版 TW-1M-MACD), 括號內為建置時間 (HKT)
+//         本檔 = TW-1D-MACD-(09.19;12:15)  建於 2026-09-19 12:15 HKT
+//         (由 W-D-MACD-(09.19;12:15) 改名而來, 策略邏輯與參數完全相同, 故時間戳不變)
 //         三處必須一致: strategy() 標題 / shorttitle / 檔名
 //         (檔名把 : 寫成 . 因 Windows 檔名不接受冒號; 在 Pine Editor 按 Save 時輸入帶冒號的版本)
 //
 //  使用: 圖表週期切 【D 日線】 → Pine Editor 貼上 → Save 時輸入與檔名相同的名 → Add to chart → 看 Strategy Tester
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("W-D-MACD-(09.19;12:15)", shorttitle="W-D-MACD-(09.19;12:15)", overlay=false,
+strategy("TW-1D-MACD-(09.19;12:15)", shorttitle="TW-1D-MACD-(09.19;12:15)", overlay=false,
      initial_capital       = 100000,
      default_qty_type      = strategy.percent_of_equity, default_qty_value = 100,
      commission_type       = strategy.commission.percent, commission_value = 0.03,

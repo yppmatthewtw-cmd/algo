@@ -12,7 +12,7 @@ intraday_macd/
 ├── backtest_cli.py             ← 任何 1 分鐘 CSV 直接回測
 ├── make_sample_data.py         ← 合成數據 (只用來自測引擎, 不是真實 07709)
 ├── tradingview/
-│   ├── W-D-MACD-(MM.DD;HH.MM).pine       ← TradingView 【日線版】  本金100K / 一年 / 交易報表
+│   ├── TW-1D-MACD-(MM.DD;HH.MM).pine       ← TradingView 【日線版】  本金100K / 一年 / 交易報表
 │   ├── TW-1M-MACD-(MM.DD;HH.MM).pine     ← TradingView 【1分鐘版】 本金100K / 30天 / 盤中時段+收市強平
 │   └── macd_momentum_1m.pine             ← 舊的 1 分鐘版 (已被 TW-1M-MACD 取代, 保留作對照)
 ├── futu_niuniu/
@@ -84,7 +84,7 @@ python webull_fetch_and_backtest.py --sweep
 
 # 日線版 (TradingView) — 本金 100K · 一年 · 交易報表
 
-檔案 `tradingview/W-D-MACD-(MM.DD;HH.MM).pine`,已按要求預設好。**`strategy()` 標題、`shorttitle`、檔名三者一致**,都帶建置時間戳(HKT),方便在 TradingView 的 script 清單分辨版本;在 Pine Editor 按 Save 時輸入同一個名即可。
+檔案 `tradingview/TW-1D-MACD-(MM.DD;HH.MM).pine`,已按要求預設好。**`strategy()` 標題、`shorttitle`、檔名三者一致**,都帶建置時間戳(HKT),方便在 TradingView 的 script 清單分辨版本;在 Pine Editor 按 Save 時輸入同一個名即可。
 
 ## 開始用
 
@@ -123,7 +123,7 @@ python webull_fetch_and_backtest.py --sweep
 
 ## 兩個 TradingView 版本的差異
 
-| | `W-D-MACD` 日線版 | `TW-1M-MACD` 1分鐘版 |
+| | `TW-1D-MACD` 日線版 | `TW-1M-MACD` 1分鐘版 |
 |---|---|---|
 | 圖表週期 | D | 1 分鐘 |
 | 回測期間預設 | 365 天 | **30 天**(1分K載入根數受方案限制) |
