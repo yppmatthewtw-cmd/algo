@@ -255,3 +255,39 @@ python backtest_cli.py --csv data/HK_07709_daily.csv --auto-th --capital 100000
 ```
 
 輸出會列出逐筆 `損益$ / 權益` 與「期內交易 N 筆 · 總損益 X (Y%) · 期末權益 Z」,格式與 Pine 報表一致。`--tf daily|1min|5min` 可強制指定週期預設(預設 auto 依數據判定)。
+
+---
+
+## 多策略同場回測 (2026-09-19 新增)
+
+把這個專案出現過的所有方法整理成 13 個可回測的日內做多策略, 放在同一個窗口、同一套成本與時段規則下比較。
+
+| 檔案 | 用途 |
+|:---|:---|
+| `STRATEGY_CATALOG.md` | 全部方法總表 (A 訊號 / B 選股 / C 統計驗證 / D 工具) + 13 策略規格 + 操作手冊 + 報表判讀 |
+| `tradingview/TW-1M-MULTI-(09月19日_23.24).pine` | TradingView 版: 13 個策略同時跑, 主圖右上印出比較表 |
+| `tradingview/paste_TW-1M-MULTI.html` | 貼上工具 (檔案 31 KB, 遠超過預覽視窗的 8 KB 上限, 必須用這個複製) |
+| `backtest/indicators.py` | 與 Pine 內建函式對齊的指標實作 (RMA / ATR / RSI / MACD / Supertrend / 百分位) |
+| `backtest/strategies.py` | 13 個策略的訊號, 與 Pine 版逐條對應 |
+| `backtest/engine.py` | 逐根回測引擎: 收盤確認 → 下一根開盤成交, 含手續費滑點與固定止損 |
+| `backtest/run_backtest.py` | 讀 CSV 跑完整報表 (比較表 + 逐策略明細 + 分時段勝率 + 逐筆交易 CSV) |
+
+### 快速開始
+
+TradingView: 圖表切 SOXL 1 分鐘 → 用貼上工具複製 → Pine Editor 貼上 → 確認最後一行是 `END OF FILE` → Save 同名 → Add to chart。
+
+離線:
+
+```
+cd intraday_macd/backtest
+python3 run_backtest.py --csv ~/SOXL_1m.csv --days 30 --out ../reports
+python3 run_backtest.py --demo --days 21 --out ../reports    # 合成資料, 只驗證流程
+```
+
+### S13 隨機進場是對照組
+
+13 個策略裡有一個是隨機進場。它存在的目的是給其餘 12 個一條及格線: **排在隨機進場下面的策略, 在那段資料上等於沒有優勢**, 不值得再調參數。這是判讀比較表最重要的一條線。
+
+### 本機無法取得真實行情
+
+開發環境的對外連線由機構出口政策管控, Yahoo Finance / Stooq / Nasdaq / Alpha Vantage 全部回 403。真實 SOXL 分鐘資料只能在 TradingView 上跑, 或由使用者匯出 CSV 後用離線引擎跑。
