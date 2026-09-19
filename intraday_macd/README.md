@@ -15,6 +15,10 @@ intraday_macd/
 │   ├── TW-1D-MACD-(MM.DD;HH.MM).pine     ← TradingView 【日線版】      本金100K / 一年 / 交易報表
 │   ├── TW-1M-MACD-(MM.DD;HH.MM).pine     ← TradingView 【1分鐘·港股】  本金100K / 30天 / 盤中時段+收市強平
 │   ├── TW-US-1M-MACD-(MM.DD;HH.MM).pine  ← TradingView 【1分鐘·美股】  同上, 市場預設=美股
+│   ├── paste_TW-US-1M-MACD.html          ← 「貼上工具」網頁: 一鍵複製完整程式碼 (避開 8KB 截斷)
+│   ├── build_release.py                  ← 由攤平版產出新版本戳 + 檔尾 END OF FILE 標記
+│   ├── make_paste_page.py                ← 把 .pine 包成貼上工具網頁
+│   ├── flatten_pine.py                   ← 攤平延續行 + 語法自檢
 │   └── macd_momentum_1m.pine             ← 舊的 1 分鐘版 (已被 TW-1M-MACD 取代, 保留作對照)
 ├── futu_niuniu/
 │   ├── futu_fetch_and_backtest.py        ← 牛牛 OpenAPI 抓 1 分 K → 回測
@@ -121,6 +125,18 @@ python webull_fetch_and_backtest.py --sweep
 有訊號但沒成交的情況(已有倉時的買訊、無倉時的賣訊、回測窗外的訊號)**一律不畫**。舊版的「合格動能段框」改為 Inputs→⑧ 顯示 內的可選項,預設關閉。
 
 標記畫在**成交 K** 而非訊號 K,比 MACD 交叉晚一根——這是設計如此,因為訂單在下一根開盤才成交,與 Strategy Tester 的 List of Trades 對得上。
+
+## 貼上 TradingView 前必讀:內容截斷會報「Missing closing parenthesis」
+
+`TW-US-1M-MACD` 曾兩次貼上後報 `Syntax error: Missing closing parenthesis`,兩次報錯的行都剛好落在貼上內容的**第 8192 個 byte**(12:34 版第 100 行 = byte 8150–8245;13:02 版 `depthPctl` 行 + 編輯器頂端多出的 13 行 ≈ 8192)。檔案本身逐句括號配對、無怪字元;是**複製路徑只帶走前 8 KB**(檔案預覽視窗常見),最後一句從中間被切斷。
+
+從 `(09.19;16:45)` 起的做法:
+
+1. **檔尾固定一行** `// ═══ END OF FILE ═══ <名稱> · 全檔共 N 行 …`。貼上後捲到最底,行號與內容對得上才算貼齊;看不到這一行就是被截斷。
+2. **用「貼上工具」網頁複製**:`tradingview/paste_TW-US-1M-MACD.html`(或線上版 https://claude.ai/artifact/MjbsHou14geaPZ2mnAt9MU)按【複製全部程式碼】,JS 一次寫進剪貼簿,不經過預覽視窗。備用:點進頁內程式碼框 Ctrl+A / Ctrl+C,或下載 `.pine` 後用純文字編輯器(Notepad / TextEdit / VS Code)開啟再全選複製。
+3. **腳本名稱**:Save 對話框裡 TradingView 預填的名稱可能少了結尾的 `)`(用戶截圖出現過 `TW-US-1M-MACD-(09.19;13:02`),請補齊成與 `strategy()` 標題完全相同;網頁上的【複製腳本名稱】貼的就是完整名稱。
+
+出新版本:`python3 build_release.py <攤平版.pine> MM.DD;HH:MM` → 自動重戳 strategy 標題 / shorttitle / 檔名 / 檔尾標記,再 `python3 make_paste_page.py <新檔.pine> paste_XXX.html` 重做網頁。
 
 ## 三個 TradingView 版本
 
