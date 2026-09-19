@@ -14,7 +14,7 @@ NAMES = [
     "S01 MACD柱動能減弱", "S02 MACD DIF/DEA交叉", "S03 EMA 9/21 交叉", "S04 Supertrend 轉向",
     "S05 RSI 超賣回歸", "S06 布林下軌回歸", "S07 VWAP 偏離回歸", "S08 開盤區間突破",
     "S09 動能突破+量能", "S10 三EMA+ST共振", "S11 ATR標準化MACD", "S12 MACD柱背離",
-    "S13 隨機進場(安慰劑)", "S14 MACD柱+RSI 雙訊號",
+    "S13 隨機進場(安慰劑)", "S14 MACD柱+RSI 雙訊號", "S15 MACD柱+金叉+RSI 三訊號",
 ]
 
 DEFAULTS = dict(
@@ -26,6 +26,9 @@ DEFAULTS = dict(
     # S14: 模式 1 用調高後的下跌動能門檻 (k 1.5 / 最少根數 4), 模式 2 = S05, 匹配窗口 5 根
     s14_k_buy=1.5, s14_mb_buy=4, s14_match_win=5, s14_rsi_sell="neutral",  # "neutral" = RSI 上穿 55; "overbought" = RSI 下穿 70
     rsi_ob=70.0,
+    # S15: 模式 3 = 敏感 MACD (9/26/9) DIF 上穿 DEA, 只參與買入; 買三訊號匹配, 賣 = 模式 1 & 模式 2 匹配
+    s15_fast=9, s15_slow=26, s15_sig=9, s15_def="dea",   # "dea" = DIF 上穿 DEA (金叉); "zero" = DIF 上穿 0 軸
+    s15_match_win=5, s15_match_win_sell=5,
 )
 
 
@@ -188,6 +191,17 @@ def build_signals(df: pd.DataFrame, p: dict = None) -> tuple:
     m2_sell = X[4] if p['s14_rsi_sell'] == "neutral" else ta.crossunder(rsi, p['rsi_ob'])
     X[13] = m1_sell | m2_sell.fillna(False)
 
-    longs = pd.DataFrame({NAMES[i]: L[i].fillna(False).astype(bool) for i in range(14)})
-    exits = pd.DataFrame({NAMES[i]: X[i].fillna(False).astype(bool) for i in range(14)})
+    # S15 三訊號: 買 = 模式 1 (S14 的) & 模式 2 (S05) & 模式 3 (MACD 9/26/9 金叉) 在窗口內同時成立; 賣 = 模式 1 & 模式 2 賣訊同時成立
+    dif3, dea3, _ = ta.macd(c, p['s15_fast'], p['s15_slow'], p['s15_sig'])
+    m3_buy = (ta.crossover(dif3, dea3) if p['s15_def'] == "dea" else ta.crossover(dif3, 0.0)).fillna(False)
+    m3_age = _age_since(m3_buy)
+    w15 = p['s15_match_win']
+    L[14] = (m1_age < w15) & (m2_age < w15) & (m3_age < w15) & (m1_buy | m2_buy | m3_buy)
+    s1_age = _age_since(m1_sell)
+    s2_age = _age_since(m2_sell.fillna(False))
+    ws15 = p['s15_match_win_sell']
+    X[14] = (s1_age < ws15) & (s2_age < ws15) & (m1_sell | m2_sell.fillna(False))
+
+    longs = pd.DataFrame({NAMES[i]: L[i].fillna(False).astype(bool) for i in range(15)})
+    exits = pd.DataFrame({NAMES[i]: X[i].fillna(False).astype(bool) for i in range(15)})
     return longs, exits
