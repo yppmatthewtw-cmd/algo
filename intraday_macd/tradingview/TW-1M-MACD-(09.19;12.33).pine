@@ -22,21 +22,22 @@
 //   (舊版的「合格動能段框」改為預設關閉, 可在 ⑦ 顯示 打開對照)
 //
 //  【與日線版 TW-1D-MACD 的差異 — 盤中專用】
-//   ※ 時段邏輯【啟用】: 港股 09:30-12:00 / 13:00-16:00, 午休不交易
+//   ※ 時段邏輯【啟用】: ⑤ 盤中時段 的「市場預設」一鍵切換 港股 / 美股 / 自訂
+//     ⚠ 時段或時區設錯 (例如用港股設定跑美股) → 一根K都不算在盤中 → 交易次數 0, 報表會直接指出
 //   ※ 15:45 後不開新倉; 15:58 起強制平倉 → 不留隔夜倉 (日線版可持倉過夜)
 //   ※ 1分K柱高 (|hist|/close) 比日線細一個數量級 → 仍用「自動百分位門檻」自動適應, 免手調
 //   ※ 1分鐘進出頻密, 手續費與滑點的影響被放大 → Properties 務必填真實成本, 填 0 會嚴重高估
 //  ※ TradingView 的 MACD 柱 = DIF−DEA (牛牛/Webull 顯示 2×), 門檻以 1× 定義
 //
 //  版本戳: TW-1M-MACD-(MM.DD;HH:MM) — 1M=1分鐘, 括號內為建置時間 (HKT)
-//         本檔 = TW-1M-MACD-(09.19;12:15)  建於 2026-09-19 12:15 HKT
+//         本檔 = TW-1M-MACD-(09.19;12:33)  建於 2026-09-19 12:33 HKT
 //         三處必須一致: strategy() 標題 / shorttitle / 檔名
 //         (檔名把 : 寫成 . 因 Windows 檔名不接受冒號; 在 Pine Editor 按 Save 時輸入帶冒號的版本)
 //
 //  使用: 圖表週期切 【1 分鐘】 → Pine Editor 貼上 → Save 時輸入與檔名相同的名 → Add to chart → 看 Strategy Tester
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("TW-1M-MACD-(09.19;12:15)", shorttitle="TW-1M-MACD-(09.19;12:15)", overlay=false,
+strategy("TW-1M-MACD-(09.19;12:33)", shorttitle="TW-1M-MACD-(09.19;12:33)", overlay=false,
      initial_capital       = 100000,
      default_qty_type      = strategy.percent_of_equity, default_qty_value = 100,
      commission_type       = strategy.commission.percent, commission_value = 0.03,
@@ -131,15 +132,22 @@ else if sgn != 0
     curDepth := math.max(curDepth, math.abs(histPct))
 
 // ─────────────────────────── ⑦ 盤中時段 (本版核心: 全部啟用) ───────────────────────────
-gS       = "⑤ 盤中時段"
-sessStr  = input.session("0930-1200,1300-1600", "交易時段 (港股; 美股改 0930-1600)", group = gS)
-tzStr    = input.string("Asia/Hong_Kong", "時區 (美股改 America/New_York)", group = gS)
-noEntry  = input.session("1545-1600", "此時段不再開新倉", group = gS)
-eodSess  = input.session("1558-1600", "強制平倉時段 (不留隔夜倉)", group = gS)
-isIntra  = timeframe.isintraday
-inSess   = not isIntra or not na(time(timeframe.period, sessStr, tzStr))
-blockNew = isIntra and not na(time(timeframe.period, noEntry, tzStr))
-eodBar   = isIntra and not na(time(timeframe.period, eodSess, tzStr))
+gS        = "⑤ 盤中時段"
+mktPreset = input.string("港股", "市場預設 (一鍵套用時段+時區)", options = ["港股", "美股", "自訂"], group = gS,
+     tooltip = "港股 = 0930-1200,1300-1600 · Asia/Hong_Kong (有午休)\n美股 = 0930-1600 · America/New_York (無午休)\n自訂 = 用下面兩欄自己填\n\n※ 時段/時區與商品不符 → 一根K都不算在盤中 → 一張單都不會成交。報表會直接指出。")
+sessCust  = input.session("0930-1600", "自訂: 交易時段", group = gS)
+tzCust    = input.string("America/New_York", "自訂: 時區", group = gS)
+noEntry   = input.session("1545-1600", "收市前不開新倉時段", group = gS)
+eodSess   = input.session("1558-1600", "強制平倉時段 (不留隔夜倉)", group = gS)
+
+sessStr   = mktPreset == "港股" ? "0930-1200,1300-1600" : mktPreset == "美股" ? "0930-1600" : sessCust
+tzStr     = mktPreset == "港股" ? "Asia/Hong_Kong"      : mktPreset == "美股" ? "America/New_York" : tzCust
+
+isIntra   = timeframe.isintraday
+inSess    = not isIntra or not na(time(timeframe.period, sessStr, tzStr))
+blockNew  = isIntra and not na(time(timeframe.period, noEntry, tzStr))
+eodBar    = isIntra and not na(time(timeframe.period, eodSess, tzStr))
+tzMatch   = tzStr == syminfo.timezone   // 策略時區 vs 此商品交易所時區
 
 // ─────────────────────────── ⑧ 風控 ───────────────────────────
 gR      = "⑥ 風控"
@@ -284,9 +292,11 @@ if barstate.islast and showRpt
     table.cell(rpt, 3, 4, str.tostring(tpd, "#.#") + " 次", text_size = sizeV,
          text_color = tpd > 12 ? color.red : color.gray)
     table.cell(rpt, 4, 4, "在市場時間", text_size = sizeV, bgcolor = hdBg)
-    table.cell(rpt, 5, 4, str.tostring(barsIn * 100.0 / math.max(1, barsTot), "#.#") + "%", text_size = sizeV)
-    table.cell(rpt, 6, 4, tfOK ? "週期 1分 ✓" : "⚠ 非1分鐘週期", text_size = sizeV,
-         text_color = tfOK ? color.green : color.red)
+    table.cell(rpt, 5, 4, str.tostring(barsIn * 100.0 / math.max(1, barsTot), "#.#") + "%", text_size = sizeV,
+         text_color = barsTot == 0 ? color.red : color.gray)
+    warnTxt = not tfOK ? "⚠ 非1分鐘週期" : barsTot == 0 ? "⚠ 時段不符!" : not tzMatch ? "⚠ 時區可疑" : "週期/時段 ✓"
+    warnCol = (not tfOK or barsTot == 0) ? color.red : not tzMatch ? color.orange : color.green
+    table.cell(rpt, 6, 4, warnTxt, text_size = sizeV, text_color = warnCol)
     // ── 逐筆交易表頭 ──
     table.cell(rpt, 0, 5, "#",       text_size = sizeV, bgcolor = hdBg)
     table.cell(rpt, 1, 5, "進場時間",  text_size = sizeV, bgcolor = hdBg)
@@ -322,7 +332,10 @@ if barstate.islast and showRpt
     else
         for c = 0 to 6
             table.cell(rpt, c, row, "", text_size = sizeV)
-        table.cell(rpt, 0, row, "期內無交易 — 門檻太高或回測窗內無合格訊號, 請調 ④ 門檻或拉長 ① 期間",
+        noTradeMsg = barsTot == 0 ?
+             "⚠ 期內無交易 —【時段設定與此商品不符】策略用 " + tzStr + " " + sessStr + ", 但 " + syminfo.ticker + " 的交易所時區是 " + syminfo.timezone + " → 請到 ⑤ 盤中時段 把「市場預設」改對 (港股/美股)" :
+             "期內無交易 — 門檻太高或回測窗內無合格訊號, 請調 ④ 門檻或拉長 ① 期間"
+        table.cell(rpt, 0, row, noTradeMsg,
              text_size = sizeV, text_color = color.orange, text_halign = text.align_left)
         table.merge_cells(rpt, 0, row, 6, row)
 
