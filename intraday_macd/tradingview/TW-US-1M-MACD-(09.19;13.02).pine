@@ -34,27 +34,21 @@
 //  ※ TradingView 的 MACD 柱 = DIF−DEA (牛牛/Webull 顯示 2×), 門檻以 1× 定義
 //
 //  版本戳: TW-US-1M-MACD-(MM.DD;HH:MM) — US=美股, 1M=1分鐘, 括號內為建置時間 (HKT)
-//         本檔 = TW-US-1M-MACD-(09.19;12:34)  建於 2026-09-19 12:34 HKT
+//         本檔 = TW-US-1M-MACD-(09.19;13:02)  建於 2026-09-19 13:02 HKT
 //         (與 TW-1M-MACD 同一份程式, 只是「市場預設」預設為美股)
 //         三處必須一致: strategy() 標題 / shorttitle / 檔名
 //         (檔名把 : 寫成 . 因 Windows 檔名不接受冒號; 在 Pine Editor 按 Save 時輸入帶冒號的版本)
 //
+//  ※ 本檔已「攤平」: 零延續行, 每個語句自成一行 → 任何複製/貼上路徑都不會弄斷語句
 //  使用: 圖表週期切 【1 分鐘】 → Pine Editor 貼上 → Save 時輸入與檔名相同的名 → Add to chart → 看 Strategy Tester
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("TW-US-1M-MACD-(09.19;12:34)", shorttitle="TW-US-1M-MACD-(09.19;12:34)", overlay=false,
-     initial_capital       = 100000,
-     default_qty_type      = strategy.percent_of_equity, default_qty_value = 100,
-     commission_type       = strategy.commission.percent, commission_value = 0.03,
-     slippage              = 2,
-     process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0,
-     max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
+strategy("TW-US-1M-MACD-(09.19;13:02)", shorttitle="TW-US-1M-MACD-(09.19;13:02)", overlay=false, initial_capital       = 100000, default_qty_type      = strategy.percent_of_equity, default_qty_value = 100, commission_type       = strategy.commission.percent, commission_value = 0.03, slippage              = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
 
 // ─────────────────────────── ① 回測期間 (預設最近 30 天) ───────────────────────────
 gBT        = "① 回測期間"
 useRolling = input.bool(true,  "用「最近 N 天」(取消勾選則用下方指定日期)", group = gBT)
-lookbackD  = input.int(30,     "回測天數 (1分K建議 10-60 天)", minval = 1, group = gBT,
-     tooltip = "1分K可載入的根數受 TradingView 方案限制 (免費約5000根 ≈ 15個港股交易日)。設得比圖表能載入的更長, 只會回測到圖表最左邊那一根為止。")
+lookbackD  = input.int(30,     "回測天數 (1分K建議 10-60 天)", minval = 1, group = gBT, tooltip = "1分K可載入的根數受 TradingView 方案限制 (免費約5000根 ≈ 15個港股交易日)。設得比圖表能載入的更長, 只會回測到圖表最左邊那一根為止。")
 startIn    = input.time(timestamp("01 Jan 2025 00:00 +0800"), "開始日期", group = gBT)
 endIn      = input.time(timestamp("31 Dec 2025 23:59 +0800"), "結束日期", group = gBT)
 btStart    = useRolling ? timenow - lookbackD * 86400000 : startIn
@@ -80,8 +74,7 @@ sgn     = hist > 0 ? 1 : hist < 0 ? -1 : 0
 
 // ─────────────────────────── ④ 動能蓄積門檻 ───────────────────────────
 gTH        = "④ 動能蓄積門檻"
-thMode     = input.string("自動(百分位)", "門檻模式", options = ["自動(百分位)", "手動"], group = gTH,
-     tooltip = "自動: 以近N根柱高分佈自動定門檻, 換週期/換標的免手調。手動: 自己填死數。")
+thMode     = input.string("自動(百分位)", "門檻模式", options = ["自動(百分位)", "手動"], group = gTH, tooltip = "自動: 以近N根柱高分佈自動定門檻, 換週期/換標的免手調。手動: 自己填死數。")
 minBars    = input.int(4, "動能段最少連續根數 (1分鐘 4 / 日線 3)", minval = 1, group = gTH)
 pctLen     = input.int(250, "自動模式取樣根數", minval = 30, group = gTH)
 depthPctl  = input.float(60, "自動: 深度門檻取第幾百分位", minval = 1, maxval = 99, step = 5, group = gTH)
@@ -97,8 +90,7 @@ minArea   = thMode == "手動" ? minAreaIn  : autoDepth * minBars * areaFactor
 gDS            = "⑧ 顯示"
 showHoldBox    = input.bool(true,  "橙框: 持倉期間框住 MACD 柱", group = gDS)
 showFillMarks  = input.bool(true,  "三角形 + 直線: 只在真正成交時畫", group = gDS)
-showClusterBox = input.bool(false, "對照用: 合格動能段框 (舊版行為)", group = gDS,
-     tooltip = "打開會另外畫出「儲夠動能」的柱群框 — 注意那是訊號條件, 不代表有成交。")
+showClusterBox = input.bool(false, "對照用: 合格動能段框 (舊版行為)", group = gDS, tooltip = "打開會另外畫出「儲夠動能」的柱群框 — 注意那是訊號條件, 不代表有成交。")
 
 // ─────────────────────────── ⑥ 同號柱段統計 (只用已完成K, 無前視) ───────────────────────────
 var int   curSign  = 0
@@ -118,11 +110,9 @@ sellSig = crossDn and posOK
 
 // 合格動能段框 — 預設關閉。這是「訊號條件」, 不代表有成交, 只作對照用
 if showClusterBox and buySig and inWindow
-    box.new(curStart, 0.0, bar_index - 1, -curDepth * close / 100.0 * 1.15,
-         border_color = color.new(color.aqua, 55), bgcolor = color.new(color.aqua, 93), border_width = 1)
+    box.new(curStart, 0.0, bar_index - 1, -curDepth * close / 100.0 * 1.15, border_color = color.new(color.aqua, 55), bgcolor = color.new(color.aqua, 93), border_width = 1)
 if showClusterBox and sellSig and inWindow
-    box.new(curStart, 0.0, bar_index - 1, curDepth * close / 100.0 * 1.15,
-         border_color = color.new(color.orange, 55), bgcolor = color.new(color.orange, 93), border_width = 1)
+    box.new(curStart, 0.0, bar_index - 1, curDepth * close / 100.0 * 1.15, border_color = color.new(color.orange, 55), bgcolor = color.new(color.orange, 93), border_width = 1)
 
 // 更新段統計
 if sgn != 0 and sgn != curSign
@@ -138,8 +128,7 @@ else if sgn != 0
 
 // ─────────────────────────── ⑦ 盤中時段 (本版核心: 全部啟用) ───────────────────────────
 gS        = "⑤ 盤中時段"
-mktPreset = input.string("美股", "市場預設 (一鍵套用時段+時區)", options = ["美股", "港股", "自訂"], group = gS,
-     tooltip = "美股 = 0930-1600 · America/New_York (無午休, 夏令時間自動處理)\n港股 = 0930-1200,1300-1600 · Asia/Hong_Kong (有午休)\n自訂 = 用下面兩欄自己填\n\n※ 時段/時區與商品不符 → 一根K都不算在盤中 → 一張單都不會成交。報表會直接指出。")
+mktPreset = input.string("美股", "市場預設 (一鍵套用時段+時區)", options = ["美股", "港股", "自訂"], group = gS, tooltip = "美股 = 0930-1600 · America/New_York (無午休, 夏令時間自動處理)\n港股 = 0930-1200,1300-1600 · Asia/Hong_Kong (有午休)\n自訂 = 用下面兩欄自己填\n\n※ 時段/時區與商品不符 → 一根K都不算在盤中 → 一張單都不會成交。報表會直接指出。")
 sessCust  = input.session("0930-1600", "自訂: 交易時段", group = gS)
 tzCust    = input.string("America/New_York", "自訂: 時區", group = gS)
 noEntry   = input.session("1545-1600", "收市前不開新倉時段", group = gS)
@@ -199,8 +188,7 @@ var float hLo  = na
 if showHoldBox and justFilled
     hHi  := hist
     hLo  := hist
-    hBox := box.new(bar_index, hist, bar_index, hist,
-             border_color = color.new(color.orange, 0), bgcolor = color.new(color.orange, 90), border_width = 2)
+    hBox := box.new(bar_index, hist, bar_index, hist, border_color = color.new(color.orange, 0), bgcolor = color.new(color.orange, 90), border_width = 2)
 if not na(hBox) and (posSz > 0 or justClosed)
     hHi := math.max(hHi, hist)
     hLo := math.min(hLo, hist)
@@ -224,9 +212,7 @@ if inWindow and inSess
 tfOK = timeframe.period == "1"   // 本策略為 1 分鐘設計; 貼到其他週期會在報表警告
 
 // ─────────────────────────── ⑫ 繪圖 ───────────────────────────
-plot(hist, "Histogram", style = plot.style_columns,
-     color = hist >= 0 ? (hist >= hist[1] ? color.new(color.green, 0) : color.new(color.green, 45))
-                       : (hist <= hist[1] ? color.new(color.red, 0)   : color.new(color.red, 45)))
+plot(hist, "Histogram", style = plot.style_columns, color = hist >= 0 ? (hist >= hist[1] ? color.new(color.green, 0) : color.new(color.green, 45)) : (hist <= hist[1] ? color.new(color.red, 0)   : color.new(color.red, 45)))
 plot(dif, "DIF", color = color.new(color.orange, 0), linewidth = 2)
 plot(dea, "DEA", color = color.new(color.aqua, 0), linewidth = 1)
 hline(0)
@@ -237,8 +223,7 @@ plotshape(showFillMarks and justClosed, "賣出成交", style = shape.triangledo
 // ─────────────────────────── ⑬ 報表: 交易次數 / 每筆 P&L / Total P&L ───────────────────────────
 gRP      = "⑦ 報表"
 showRpt  = input.bool(true, "顯示圖上報表", group = gRP)
-maxRows  = input.int(25, "最多列出最近幾筆交易", minval = 1, maxval = 60, group = gRP,
-     tooltip = "完整清單見 Strategy Tester → List of Trades (可匯出 CSV)")
+maxRows  = input.int(25, "最多列出最近幾筆交易", minval = 1, maxval = 60, group = gRP, tooltip = "完整清單見 Strategy Tester → List of Trades (可匯出 CSV)")
 rptPos   = input.string("右下", "報表位置", options = ["右下", "右上", "左下", "左上"], group = gRP)
 txtSize  = input.string("tiny", "字體", options = ["tiny", "small", "normal"], group = gRP)
 
@@ -263,8 +248,7 @@ if barstate.islast and showRpt
     // ── 摘要 ──
     for c = 0 to 6
         table.cell(rpt, c, 0, "", text_size = sizeV, bgcolor = color.new(color.blue, 40))
-    table.cell(rpt, 0, 0, "回測摘要 · " + str.format_time(btStart, "yyyy-MM-dd", tzStr) + " → " + str.format_time(math.min(btEnd, timenow), "yyyy-MM-dd", tzStr),
-         text_size = sizeV, text_color = color.white, bgcolor = color.new(color.blue, 40), text_halign = text.align_left)
+    table.cell(rpt, 0, 0, "回測摘要 · " + str.format_time(btStart, "yyyy-MM-dd", tzStr) + " → " + str.format_time(math.min(btEnd, timenow), "yyyy-MM-dd", tzStr), text_size = sizeV, text_color = color.white, bgcolor = color.new(color.blue, 40), text_halign = text.align_left)
     table.merge_cells(rpt, 0, 0, 6, 0)
     table.cell(rpt, 0, 1, "本金",       text_size = sizeV, bgcolor = hdBg)
     table.cell(rpt, 1, 1, str.tostring(eq0, "#,###"), text_size = sizeV)
@@ -274,11 +258,9 @@ if barstate.islast and showRpt
     table.cell(rpt, 5, 1, str.tostring(nW) + " / " + str.tostring(nL), text_size = sizeV)
     table.cell(rpt, 6, 1, "勝率 " + str.tostring(wr, "#.0") + "%", text_size = sizeV)
     table.cell(rpt, 0, 2, "總損益 $",   text_size = sizeV, bgcolor = hdBg)
-    table.cell(rpt, 1, 2, str.tostring(net, "#,###.##"), text_size = sizeV,
-         text_color = net >= 0 ? color.green : color.red)
+    table.cell(rpt, 1, 2, str.tostring(net, "#,###.##"), text_size = sizeV, text_color = net >= 0 ? color.green : color.red)
     table.cell(rpt, 2, 2, "總損益 %",   text_size = sizeV, bgcolor = hdBg)
-    table.cell(rpt, 3, 2, str.tostring(netP, "#.##") + "%", text_size = sizeV,
-         text_color = net >= 0 ? color.green : color.red)
+    table.cell(rpt, 3, 2, str.tostring(netP, "#.##") + "%", text_size = sizeV, text_color = net >= 0 ? color.green : color.red)
     table.cell(rpt, 4, 2, "期末權益",   text_size = sizeV, bgcolor = hdBg)
     table.cell(rpt, 5, 2, str.tostring(eq0 + net, "#,###"), text_size = sizeV)
     table.cell(rpt, 6, 2, "PF " + (na(pf) ? "-" : str.tostring(pf, "#.##")), text_size = sizeV)
@@ -294,11 +276,9 @@ if barstate.islast and showRpt
     table.cell(rpt, 0, 4, "交易日數",   text_size = sizeV, bgcolor = hdBg)
     table.cell(rpt, 1, 4, str.tostring(nDays), text_size = sizeV)
     table.cell(rpt, 2, 4, "每日均交易", text_size = sizeV, bgcolor = hdBg)
-    table.cell(rpt, 3, 4, str.tostring(tpd, "#.#") + " 次", text_size = sizeV,
-         text_color = tpd > 12 ? color.red : color.gray)
+    table.cell(rpt, 3, 4, str.tostring(tpd, "#.#") + " 次", text_size = sizeV, text_color = tpd > 12 ? color.red : color.gray)
     table.cell(rpt, 4, 4, "在市場時間", text_size = sizeV, bgcolor = hdBg)
-    table.cell(rpt, 5, 4, str.tostring(barsIn * 100.0 / math.max(1, barsTot), "#.#") + "%", text_size = sizeV,
-         text_color = barsTot == 0 ? color.red : color.gray)
+    table.cell(rpt, 5, 4, str.tostring(barsIn * 100.0 / math.max(1, barsTot), "#.#") + "%", text_size = sizeV, text_color = barsTot == 0 ? color.red : color.gray)
     warnTxt = not tfOK ? "⚠ 非1分鐘週期" : barsTot == 0 ? "⚠ 時段不符!" : not tzMatch ? "⚠ 時區可疑" : "週期/時段 ✓"
     warnCol = (not tfOK or barsTot == 0) ? color.red : not tzMatch ? color.orange : color.green
     table.cell(rpt, 6, 4, warnTxt, text_size = sizeV, text_color = warnCol)
@@ -331,34 +311,19 @@ if barstate.islast and showRpt
         if nT > maxRows
             for c = 0 to 6
                 table.cell(rpt, c, row, "", text_size = sizeV)
-            table.cell(rpt, 0, row, "…僅顯示最近 " + str.tostring(maxRows) + " 筆, 共 " + str.tostring(nT) + " 筆; 完整清單見 Strategy Tester → List of Trades",
-                 text_size = sizeV, text_color = color.gray, text_halign = text.align_left)
+            table.cell(rpt, 0, row, "…僅顯示最近 " + str.tostring(maxRows) + " 筆, 共 " + str.tostring(nT) + " 筆; 完整清單見 Strategy Tester → List of Trades", text_size = sizeV, text_color = color.gray, text_halign = text.align_left)
             table.merge_cells(rpt, 0, row, 6, row)
     else
         for c = 0 to 6
             table.cell(rpt, c, row, "", text_size = sizeV)
-        noTradeMsg = barsTot == 0 ?
-             "⚠ 期內無交易 —【時段設定與此商品不符】策略用 " + tzStr + " " + sessStr + ", 但 " + syminfo.ticker + " 的交易所時區是 " + syminfo.timezone + " → 請到 ⑤ 盤中時段 把「市場預設」改對 (港股/美股)" :
-             "期內無交易 — 門檻太高或回測窗內無合格訊號, 請調 ④ 門檻或拉長 ① 期間"
-        table.cell(rpt, 0, row, noTradeMsg,
-             text_size = sizeV, text_color = color.orange, text_halign = text.align_left)
+        noTradeMsg = barsTot == 0 ? "⚠ 期內無交易 —【時段設定與此商品不符】策略用 " + tzStr + " " + sessStr + ", 但 " + syminfo.ticker + " 的交易所時區是 " + syminfo.timezone + " → 請到 ⑤ 盤中時段 把「市場預設」改對 (港股/美股)" : "期內無交易 — 門檻太高或回測窗內無合格訊號, 請調 ④ 門檻或拉長 ① 期間"
+        table.cell(rpt, 0, row, noTradeMsg, text_size = sizeV, text_color = color.orange, text_halign = text.align_left)
         table.merge_cells(rpt, 0, row, 6, row)
 
 // ─────────────────────────── ⑭ 收盤把報表也輸出到 Pine Logs (方便複製) ───────────────────────────
 if barstate.islastconfirmedhistory and showRpt
-    log.info("===== MACD動能日線回測 {0} · {1} → {2} =====", syminfo.ticker,
-         str.format_time(btStart, "yyyy-MM-dd", tzStr), str.format_time(btEnd, "yyyy-MM-dd", tzStr))
-    log.info("交易次數 {0} · 勝 {1} 負 {2} · 總損益 {3} ({4}%) · 本金 {5}",
-         strategy.closedtrades, strategy.wintrades, strategy.losstrades,
-         str.tostring(strategy.netprofit, "#,###.##"),
-         str.tostring(strategy.netprofit / strategy.initial_capital * 100.0, "#.##"),
-         str.tostring(strategy.initial_capital, "#,###"))
+    log.info("===== MACD動能日線回測 {0} · {1} → {2} =====", syminfo.ticker, str.format_time(btStart, "yyyy-MM-dd", tzStr), str.format_time(btEnd, "yyyy-MM-dd", tzStr))
+    log.info("交易次數 {0} · 勝 {1} 負 {2} · 總損益 {3} ({4}%) · 本金 {5}", strategy.closedtrades, strategy.wintrades, strategy.losstrades, str.tostring(strategy.netprofit, "#,###.##"), str.tostring(strategy.netprofit / strategy.initial_capital * 100.0, "#.##"), str.tostring(strategy.initial_capital, "#,###"))
     if strategy.closedtrades > 0
         for i = 0 to strategy.closedtrades - 1
-            log.info("#{0} {1} → {2} | {3} → {4} | P&L {5} ({6}%)", i + 1,
-                 str.format_time(strategy.closedtrades.entry_time(i), "yyyy-MM-dd HH:mm", tzStr),
-                 str.format_time(strategy.closedtrades.exit_time(i),  "yyyy-MM-dd HH:mm", tzStr),
-                 str.tostring(strategy.closedtrades.entry_price(i), format.mintick),
-                 str.tostring(strategy.closedtrades.exit_price(i),  format.mintick),
-                 str.tostring(strategy.closedtrades.profit(i), "#,###.##"),
-                 str.tostring((strategy.closedtrades.exit_price(i) / strategy.closedtrades.entry_price(i) - 1.0) * 100.0, "#.##"))
+            log.info("#{0} {1} → {2} | {3} → {4} | P&L {5} ({6}%)", i + 1, str.format_time(strategy.closedtrades.entry_time(i), "yyyy-MM-dd HH:mm", tzStr), str.format_time(strategy.closedtrades.exit_time(i),  "yyyy-MM-dd HH:mm", tzStr), str.tostring(strategy.closedtrades.entry_price(i), format.mintick), str.tostring(strategy.closedtrades.exit_price(i),  format.mintick), str.tostring(strategy.closedtrades.profit(i), "#,###.##"), str.tostring((strategy.closedtrades.exit_price(i) / strategy.closedtrades.entry_price(i) - 1.0) * 100.0, "#.##"))
