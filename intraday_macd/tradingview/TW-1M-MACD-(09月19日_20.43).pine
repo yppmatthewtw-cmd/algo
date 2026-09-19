@@ -1,17 +1,18 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TW-1M-MACD-(09月19日_18:26)  ·  MACD 動能蓄積交叉策略 · 1 分鐘回測版 (市場預設 美股, ⑤ 可一鍵切港股) · TradingView Pine Script v6
+//  TW-1M-MACD-(09月19日_20:43)  ·  MACD 動能蓄積交叉策略 · 1 分鐘回測版 (市場預設 美股, ⑤ 可一鍵切港股) · TradingView Pine Script v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
-//  本檔共 396 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
+//  本檔共 412 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或下載 .pine 後用純文字編輯器開啟 → Ctrl+A → Ctrl+C
 //
 //  【本版關鍵參數 — 目標: 平均每日 5 筆交易】
+//   ★ 觸發方式 = 動能減弱 N 根 (N=2)        ← 買: 負柱段連續 2 根「淺紅」(柱縮短) 完成; 賣: 正柱段連續 2 根「淺綠」完成; 不再等 DIF/DEA 交叉 (④ 可切回舊版交叉)
 //   ★ margin_long = 0, margin_short = 0   ← 修正 0 交易的真正原因: Pine v6 預設 margin 100%, 「全部本金」下單加上手續費/滑點會被拒
 //   ★ 自動校準 目標每日交易次數 = 5       ← 每個交易日收盤結算昨日成交筆數, 低於目標×0.8 門檻係數 k 降 20%, 高於目標×1.3 升 20%
 //   ★ 深度門檻百分位 60 → 50, 最少連續根數 4 → 3, 面積係數 0.6 → 0.5   ← 起始門檻先降一級, 再由自動校準逐日收斂
 //   報表「門檻(現值)」列會顯示現行 k 值與近日均交易數; 手動模式或把目標設 0 即關閉校準
 //
-//  規則: 買 = 負動能段「儲夠」後 DIF 上穿 DEA (收盤確認) → 下一根開盤買; 賣 = 正動能段儲夠後 DIF 下穿 DEA → 下一根開盤賣
-//        儲夠 = 同號柱連續根數 ≥ minBars 且 面積 Σ|hist|/close% ≥ minArea 且 深度 max|hist|/close% ≥ minDepth; 長倉 only
+//  規則: 買 = 負動能段「儲夠」後, 跌勢動能減低 (連續 N 根淺紅柱完成, 收盤確認) → 下一根開盤買; 賣 = 正動能段儲夠後, 升勢動能減低 (連續 N 根淺綠柱完成) → 下一根開盤賣
+//        儲夠 = 同號柱連續根數 ≥ minBars 且 面積 Σ|hist|/close% ≥ minArea 且 深度 max|hist|/close% ≥ minDepth (④ reqMom 可關); 長倉 only
 //  預設: 本金 100,000 · 最近 30 天 · 美股時段 09:30-16:00 America/New_York (DST 自動) · 15:45 後不開新倉 · 15:58 強制平倉
 //  圖示 (主圖與副圖同步): ▲藍三角+藍直線 = 買單真正成交那一根 (訊號K的下一根開盤); ▼紅三角+紅直線 = 賣單成交; 幼點線貫通主圖與 MACD 副圖
 //        橙框 = 持倉期間: 主圖框住該段價格 K 線, 副圖框住該段 MACD 柱 (force_overlay 把繪圖送到主圖, 策略本身仍在副圖)
@@ -24,7 +25,7 @@
 //  版本戳 (MM月DD日_HH:MM) = 建置時間 HKT; 檔名以 . 代替 : (Windows 檔名不接受冒號); 本檔零延續行, 每個語句自成一行
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("TW-1M-MACD-(09月19日_18:26)", shorttitle="TW-1M-MACD-(09月19日_18:26)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
+strategy("TW-1M-MACD-(09月19日_20:43)", shorttitle="TW-1M-MACD-(09月19日_20:43)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
 
 // ─────────────────────────── ① 回測期間 (預設最近 30 天) ───────────────────────────
 gBT        = "① 回測期間"
@@ -57,6 +58,9 @@ sgn     = hist > 0 ? 1 : hist < 0 ? -1 : 0
 gTH        = "④ 動能蓄積門檻"
 thMode     = input.string("自動(百分位)", "門檻模式", options = ["自動(百分位)", "手動"], group = gTH, tooltip = "自動: 以近N根柱高分佈自動定門檻, 換週期/換標的免手調。手動: 自己填死數。", display = display.none)
 minBars    = input.int(3, "動能段最少連續根數 (本版 3; 舊版 4)", minval = 1, group = gTH, display = display.none)
+trigMode   = input.string("動能減弱 N 根", "觸發方式", options = ["動能減弱 N 根", "快慢線交叉 (舊版)"], group = gTH, tooltip = "動能減弱 N 根 (本版): 負柱段中連續 N 根「淺紅」(柱仍為負但比前一根縮短) 完成 → 買; 正柱段中連續 N 根「淺綠」(柱仍為正但比前一根縮短) 完成 → 賣。比等 DIF/DEA 交叉早進出。\n快慢線交叉: 舊版, 等 DIF 上穿/下穿 DEA。", display = display.none)
+fadeBars   = input.int(2, "動能減弱: 連續淺色柱根數 N", minval = 1, maxval = 10, group = gTH, display = display.none)
+reqMom     = input.bool(true, "觸發前需先「儲夠動能」(門檻過濾; 關掉 = 每次減弱都做)", group = gTH, display = display.none)
 pctLen     = input.int(250, "自動模式取樣根數", minval = 30, group = gTH, display = display.none)
 depthPctl  = input.float(50, "自動: 深度門檻取第幾百分位 (本版 50; 舊版 60)", minval = 1, maxval = 99, step = 5, group = gTH, display = display.none)
 areaFactor = input.float(0.5, "自動: 面積係數 (面積門檻 = 深度 × 根數 × 係數; 本版 0.5)", step = 0.1, group = gTH, display = display.none)
@@ -102,14 +106,24 @@ var int   curStart = na
 
 crossUp = ta.crossover(dif, dea)
 crossDn = ta.crossunder(dif, dea)
-// 交叉發生在本K → 「剛結束的段」= 上一根為止的統計 (先評估, 後更新)
-prevOK  = curBars >= minBars and curArea >= minArea and curDepth >= minDepth
+// 動能減弱: 淺紅 = 負柱但比前一根短 (跌勢動能減低); 淺綠 = 正柱但比前一根短 (升勢動能減低) — 與圖上 MACD 柱的淺色一致
+fadeDn  = hist < 0 and hist > hist[1]
+fadeUp  = hist > 0 and hist < hist[1]
+var int nFadeDn = 0
+var int nFadeUp = 0
+nFadeDn := fadeDn ? nFadeDn + 1 : 0
+nFadeUp := fadeUp ? nFadeUp + 1 : 0
+useFade = trigMode == "動能減弱 N 根"
+rawBuy  = useFade ? nFadeDn == fadeBars : crossUp      // 第 N 根淺紅完成的那一根 (只觸發一次) / 上穿
+rawSell = useFade ? nFadeUp == fadeBars : crossDn      // 第 N 根淺綠完成的那一根 / 下穿
+// 「儲夠動能」用上一根為止的段統計 (先評估, 後更新): 交叉模式 = 剛結束的段; 減弱模式 = 仍在進行中的同號段
+prevOK  = not reqMom or (curBars >= minBars and curArea >= minArea and curDepth >= minDepth)
 negOK   = curSign == -1 and prevOK
 posOK   = curSign ==  1 and prevOK
-buySig  = crossUp and negOK
-sellSig = crossDn and posOK
+buySig  = rawBuy  and negOK
+sellSig = rawSell and posOK
 
-// 合格動能段框 — 預設關閉。這是「訊號條件」, 不代表有成交, 只作對照用
+// 合格動能段框 — 預設關閉。這是「訊號條件」, 不代表有成交, 只作對照用 (減弱模式下框到觸發前一根)
 if showClusterBox and buySig and inWindow
     box.new(curStart, 0.0, bar_index - 1, -curDepth * close / 100.0 * 1.15, border_color = color.new(color.aqua, 55), bgcolor = color.new(color.aqua, 93), border_width = 1)
 if showClusterBox and sellSig and inWindow
@@ -255,7 +269,7 @@ sizeV = txtSize == "tiny" ? size.tiny : txtSize == "small" ? size.small : size.n
 
 var table rpt = table.new(posV, 7, 70, border_width = 1, frame_width = 1, frame_color = color.gray, force_overlay = true)   // 回測摘要 + 逐筆交易 → 主圖
 posP = prmPos == "右下" ? position.bottom_right : prmPos == "右上" ? position.top_right : prmPos == "左下" ? position.bottom_left : position.top_left
-var table prm = table.new(posP, 2, 12, border_width = 1, frame_width = 1, frame_color = color.gray)   // 觸發參數 → 副圖
+var table prm = table.new(posP, 2, 13, border_width = 1, frame_width = 1, frame_color = color.gray)   // 觸發參數 → 副圖
 
 // 訊號漏斗計數 (回測窗內 + 盤中): 交叉總數 → 動能合格數, 看門檻濾掉多少
 var int cUp = 0
@@ -263,13 +277,13 @@ var int cUpOK = 0
 var int cDn = 0
 var int cDnOK = 0
 if inWindow and inSess
-    cUp   += crossUp ? 1 : 0
+    cUp   += rawBuy ? 1 : 0
     cUpOK += buySig ? 1 : 0
-    cDn   += crossDn ? 1 : 0
+    cDn   += rawSell ? 1 : 0
     cDnOK += sellSig ? 1 : 0
 
 if barstate.islast and showPrm
-    table.clear(prm, 0, 0, 1, 11)
+    table.clear(prm, 0, 0, 1, 12)
     pBg = color.new(color.gray, 70)
     curOK = curBars >= minBars and curArea >= minArea and curDepth >= minDepth
     table.cell(prm, 0, 0, "觸發參數 (Inputs ④ 調這裡)", text_size = sizeV, text_color = color.white, bgcolor = color.new(color.blue, 40), text_halign = text.align_left)
@@ -287,9 +301,9 @@ if barstate.islast and showPrm
     table.cell(prm, 1, 5, (targetTPD > 0 ? str.tostring(targetTPD, "#") + " 筆/日" : "關閉") + " / " + (na(tpdEMA) ? "-" : str.tostring(tpdEMA, "#.#")), text_size = sizeV)
     table.cell(prm, 0, 6, "現段 (符號·根數·面積·深度)", text_size = sizeV, bgcolor = pBg)
     table.cell(prm, 1, 6, (curSign > 0 ? "正 " : curSign < 0 ? "負 " : "- ") + str.tostring(curBars) + "根 · " + str.tostring(curArea, "#.####") + " · " + str.tostring(curDepth, "#.####") + (curOK ? "  儲夠 ✓" : "  未儲夠"), text_size = sizeV, text_color = curOK ? color.green : color.gray)
-    table.cell(prm, 0, 7, "上穿: 全部 → 動能合格 (買訊)", text_size = sizeV, bgcolor = pBg)
+    table.cell(prm, 0, 7, "買觸發: 全部 → 動能合格", text_size = sizeV, bgcolor = pBg)
     table.cell(prm, 1, 7, str.tostring(cUp) + " → " + str.tostring(cUpOK) + "  (" + str.tostring(cUp > 0 ? cUpOK * 100.0 / cUp : 0.0, "#") + "%)", text_size = sizeV)
-    table.cell(prm, 0, 8, "下穿: 全部 → 動能合格 (賣訊)", text_size = sizeV, bgcolor = pBg)
+    table.cell(prm, 0, 8, "賣觸發: 全部 → 動能合格", text_size = sizeV, bgcolor = pBg)
     table.cell(prm, 1, 8, str.tostring(cDn) + " → " + str.tostring(cDnOK) + "  (" + str.tostring(cDn > 0 ? cDnOK * 100.0 / cDn : 0.0, "#") + "%)", text_size = sizeV)
     table.cell(prm, 0, 9, "成交 / 勝率", text_size = sizeV, bgcolor = pBg)
     table.cell(prm, 1, 9, str.tostring(strategy.closedtrades) + " 筆 · " + str.tostring(strategy.closedtrades > 0 ? strategy.wintrades * 100.0 / strategy.closedtrades : 0.0, "#.0") + "%", text_size = sizeV, text_color = color.blue)
@@ -297,6 +311,8 @@ if barstate.islast and showPrm
     table.cell(prm, 1, 10, "要更嚴 (少而準): 百分位↑ 根數↑ 係數↑ 或 目標筆數↓ · 要更鬆: 反之", text_size = sizeV, text_color = color.gray)
     table.cell(prm, 0, 11, "MACD", text_size = sizeV, bgcolor = pBg)
     table.cell(prm, 1, 11, str.tostring(fastLen) + " / " + str.tostring(slowLen) + " / " + str.tostring(sigLen) + " · 1× 柱 (牛牛/Webull 顯示 2×)", text_size = sizeV)
+    table.cell(prm, 0, 12, "觸發方式", text_size = sizeV, bgcolor = pBg)
+    table.cell(prm, 1, 12, useFade ? "動能減弱: 連續 " + str.tostring(fadeBars) + " 根淺色柱完成即進/出" + (reqMom ? " (先儲夠動能)" : " (不過濾)") : "DIF/DEA 交叉" + (reqMom ? " (先儲夠動能)" : " (不過濾)"), text_size = sizeV)
 
 if barstate.islast and showRpt
     table.clear(rpt, 0, 0, 6, 69)
@@ -393,4 +409,4 @@ if barstate.islastconfirmedhistory and showRpt
     if strategy.closedtrades > 0
         for i = 0 to strategy.closedtrades - 1
             log.info("#{0} {1} → {2} | {3} → {4} | P&L {5} ({6}%)", i + 1, str.format_time(strategy.closedtrades.entry_time(i), "yyyy-MM-dd HH:mm", tzStr), str.format_time(strategy.closedtrades.exit_time(i),  "yyyy-MM-dd HH:mm", tzStr), str.tostring(strategy.closedtrades.entry_price(i), format.mintick), str.tostring(strategy.closedtrades.exit_price(i),  format.mintick), str.tostring(strategy.closedtrades.profit(i), "#,###.##"), str.tostring((strategy.closedtrades.exit_price(i) / strategy.closedtrades.entry_price(i) - 1.0) * 100.0, "#.##"))
-// ═══ END OF FILE ═══ TW-1M-MACD-(09月19日_18:26) · 全檔共 396 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ TW-1M-MACD-(09月19日_20:43) · 全檔共 412 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
