@@ -15,6 +15,8 @@ HEADER = """\
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
 //  本檔共 {n} 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或下載 .pine 後用純文字編輯器開啟 → Ctrl+A → Ctrl+C
+//  ★ 看到 CE10244 "A strategy must contain at least one of the following: any strategy.*() … plot*() …" = 貼上的內容被截斷在 8 KB
+//     (前 8 KB 只有表頭 + strategy() + Inputs, 第一個 plot 在第 228 行) — 這不是程式錯誤, 請改用貼上工具網頁複製, 貼完確認最後一行
 //
 //  【本版規則 — 三條】
 //   模式 1 (MACD 柱動能減弱, ④): 負柱段先「儲夠下跌動能」(夠超賣), 再連續 N 根淺紅柱 (柱仍為負但比前一根短) 完成 → 模式 1 買訊

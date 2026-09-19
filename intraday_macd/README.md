@@ -296,7 +296,7 @@ python3 run_backtest.py --demo --days 21 --out ../reports    # 合成資料, 只
 
 ## MACD 柱 + RSI 雙訊號版 (2026-09-20 新增)
 
-`tradingview/TV-1M-macd-hist&rsi_(09月20日; 00.53).pine` — 由 `TW-1M-MACD-Histogram-(09月19日_21:49)` 衍生, 三條規則:
+`tradingview/TV-1M-macd-hist&rsi_(09月20日; 00.57).pine` — 由 `TW-1M-MACD-Histogram-(09月19日_21:49)` 衍生, 三條規則:
 
 | 規則 | 實作 |
 |:---|:---|
@@ -309,3 +309,9 @@ python3 run_backtest.py --demo --days 21 --out ../reports    # 合成資料, 只
 其餘與 Histogram 版相同: 回測期間預設改為最近 30 天; 81 組參數掃描每一組都套上同一套 RSI 匹配與任一賣訊規則; 逐筆交易表標出場原因 (S-M1 / S-M2 / S-M1+M2 / EOD / SL)。貼上工具: `tradingview/paste_TV-1M-macd-hist-rsi.html`。
 
 離線引擎同步加了 `S14 MACD柱+RSI 雙訊號`, 與 Pine 版同一套規則, 可與其他 13 個策略同場比較。
+
+### CE10244 = 貼上的內容被截斷
+
+`A strategy must contain at least one of the following: any strategy.*() … plot*() …` 這個錯誤出現在第 1 行, 而且只有這一個錯誤時, 代表貼進去的只有前 8192 個 byte: 8 KB 剛好切在第 66 行的註解開頭, 前 65 行只有表頭、strategy() 與 Inputs, 第一個 plot 在第 228 行。從對話附件的預覽視窗複製就會這樣。
+
+貼上工具網頁現在有三道保險: 【複製全部程式碼】一次寫進剪貼簿; 【下載 .pine 檔】由網頁直接產生檔案, 不經過附件預覽; 【貼上前自我檢查】把剪貼簿內容貼進去, 立刻告訴你是 8192 byte 被截斷、缺最後一行, 還是完整。

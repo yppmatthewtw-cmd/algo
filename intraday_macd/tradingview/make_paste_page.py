@@ -79,12 +79,13 @@ textarea:focus-visible{outline:3px solid var(--accent)}
     <div>
       <div class="eyebrow">TradingView · Pine Script v6 · 1 分鐘日內策略 (市場預設 美股, Inputs 可切港股)</div>
       <h1 id="scriptName">__NAME__</h1>
-      <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從檔案預覽視窗複製會在 8 KB 處被截斷, 這裡不會。</p>
+      <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
     </div>
     <div class="card">
       <div class="actions">
         <button class="primary" id="copyAll" type="button">複製全部程式碼</button>
         <button class="secondary" id="copyName" type="button">複製腳本名稱</button>
+        <button class="secondary" id="dlFile" type="button">下載 .pine 檔</button>
         <span class="meta"><span id="mLines">— 行</span><span id="mBytes">— KB</span><span>最後一行 = END OF FILE</span></span>
       </div>
       <div class="status" id="status" role="status" aria-live="polite" style="margin-top:12px"></div>
@@ -109,13 +110,21 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   </section>
 
   <section class="card">
-    <h2>之前為什麼一直報 Missing closing parenthesis</h2>
-    <p class="small" style="margin-bottom:10px">兩次報錯的位置, 都剛好落在貼上內容的第 8192 個 byte。檔案本身沒有語法問題, 是複製過程只帶走了前 8 KB, 最後一句從中間被切斷。</p>
+    <h2>貼上前自我檢查 <span class="small">(不確定剪貼簿裡是不是完整的? 先貼到這裡驗)</span></h2>
+    <p class="small" style="margin-bottom:10px">按了複製之後, 先在下面這個框 Ctrl+V 一次。它會告訴你剪貼簿裡有幾個 byte、幾行、有沒有 END OF FILE。這裡通過了, 再去 Pine Editor 貼。</p>
+    <textarea id="selfcheck" spellcheck="false" style="height:120px;min-height:80px" placeholder="在這裡 Ctrl+V, 貼上剪貼簿的內容 (貼完自動檢查)"></textarea>
+    <div class="status" id="scStatus" role="status" aria-live="polite" style="margin-top:10px"></div>
+  </section>
+
+  <section class="card">
+    <h2>之前為什麼一直報 Missing closing parenthesis / CE10244</h2>
+    <p class="small" style="margin-bottom:10px">三次報錯都指向同一件事: 複製過程只帶走了前 8192 個 byte。切在句子中間就報 Missing closing parenthesis; 切在註解行的開頭 (剛好整行乾淨) 就沒有語法錯誤, 但前 8 KB 裡一個 plot / 下單函式都沒有, 於是報 CE10244。檔案本身兩種情況都沒有問題。</p>
     <div class="tablewrap">
     <table>
       <tr><th>版本</th><th>TradingView 報錯的行</th><th>那一行在原檔的 byte 位置</th><th>結論</th></tr>
       <tr><td class="m">(09.19;12:34)</td><td class="m">showClusterBox = input.bool(…</td><td class="m">8150 – 8245</td><td>8192 落在句子中間</td></tr>
       <tr><td class="m">(09.19;13:02)</td><td class="m">depthPctl = input.float(…</td><td class="m">7171 – 7289 (+ 編輯器頂端多出 13 行 ≈ 900 bytes)</td><td>8192 落在句子中間</td></tr>
+      <tr><td class="m">hist&amp;rsi (00:53)</td><td class="m">第 1 行 · CE10244 A strategy must contain…</td><td class="m">8192 剛好切在第 66 行 (註解) 開頭</td><td>前 65 行沒有任何輸出函式</td></tr>
     </table>
     </div>
     <div class="warnbox" style="margin-top:12px">整份檔案約 __KB__ KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
@@ -161,6 +170,30 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   }
   document.getElementById('copyAll').addEventListener('click', function(){ copy(src, '全部程式碼 (' + lines.length + ' 行, ' + bytes + ' bytes)'); });
   document.getElementById('copyName').addEventListener('click', function(){ copy(name, '腳本名稱 ' + name); });
+  // 下載: 直接由本頁產生檔案, 不經過對話附件的預覽視窗
+  document.getElementById('dlFile').addEventListener('click', function(){
+    var fn = name.replace(/:/g, '.') + '.pine';
+    var blob = new Blob([src], {type: 'text/plain;charset=utf-8'});
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fn;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+    show(true, '已下載 ' + fn + ' (' + bytes + ' bytes) → 用記事本 / VS Code 開啟, Ctrl+A → Ctrl+C, 再貼到 Pine Editor');
+  });
+  // 貼上前自我檢查: 比對剪貼簿內容與本頁原始碼
+  var sc = document.getElementById('selfcheck'), scs = document.getElementById('scStatus');
+  function scShow(ok, msg){ scs.className = 'status ' + (ok ? 'ok' : 'bad'); scs.textContent = msg; }
+  function selfCheck(){
+    var t = sc.value.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    if (!t.trim()) { scs.className = 'status'; scs.textContent = ''; return; }
+    var tt = t.replace(/\n+$/, '') + '\n';
+    var tb = new TextEncoder().encode(tt).length, tl = tt.split('\n').length - 1;
+    var last = tt.replace(/\n$/, '').split('\n').pop();
+    if (tt === src) { scShow(true, '完整 ✓  ' + tl + ' 行 / ' + tb + ' bytes, 與本頁原始碼完全一致, 最後一行是 END OF FILE。可以去 Pine Editor 貼了。'); return; }
+    if (Math.abs(tb - 8192) <= 4) { scShow(false, '被截斷 ✗  剪貼簿只有 ' + tb + ' bytes (剛好 8 KB), ' + tl + ' 行 — 這就是 CE10244 的原因。請改按本頁的【複製全部程式碼】或【下載 .pine 檔】。'); return; }
+    if (last.indexOf('END OF FILE') < 0) { scShow(false, '不完整 ✗  ' + tl + ' 行 / ' + tb + ' bytes (應為 ' + lines.length + ' 行 / ' + bytes + ' bytes), 最後一行不是 END OF FILE。'); return; }
+    scShow(false, '有 END OF FILE 但內容與本頁不完全一致 (' + tl + ' 行 / ' + tb + ' bytes, 應為 ' + lines.length + ' 行 / ' + bytes + ' bytes) — 可能是編輯器自動改了縮排或空白, 建議重新複製。');
+  }
+  sc.addEventListener('input', selfCheck); sc.addEventListener('paste', function(){ setTimeout(selfCheck, 0); });
 })();
 </script>
 """
@@ -174,7 +207,7 @@ def make(pine_path: str, out_path: str) -> None:
     name = m.group(1)
     kb = f'{len(src.encode()) / 1024:.1f}'
     strat_line = next(i for i, l in enumerate(src.split('\n'), 1) if l.startswith('strategy('))
-    html = (TEMPLATE.replace('__TITLE__', name.split('-(')[0] + ' 貼上工具')
+    html = (TEMPLATE.replace('__TITLE__', name.split('(')[0].rstrip('-_') + ' 貼上工具')
                     .replace('__NAME_JSON__', json.dumps(name, ensure_ascii=False))
                     .replace('__NAME__', name)
                     .replace('__KB__', kb)
