@@ -320,7 +320,7 @@ python3 run_backtest.py --demo --days 21 --out ../reports    # 合成資料, 只
 
 ## MACD 柱 + 敏感 MACD 金叉 + RSI 三訊號版 (2026-09-20 新增)
 
-`tradingview/TV-1M-macd-hist,cross&rsi_(09月20日; 01.11).pine` — 由雙訊號版衍生, 加第三個買入模式, 賣出改為兩模式同時:
+`tradingview/TV-1M-macd-hist,cross&rsi_(09月20日; 01.21).pine` — 由雙訊號版衍生, 加第三個買入模式, 賣出改為兩模式同時:
 
 | 規則 | 實作 |
 |:---|:---|
