@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TW-1M-MACD-(09月19日_18:03)  ·  MACD 動能蓄積交叉策略 · 1 分鐘回測版 (市場預設 美股, ⑤ 可一鍵切港股) · TradingView Pine Script v6
+//  TW-1M-MACD-(09月19日_18:14)  ·  MACD 動能蓄積交叉策略 · 1 分鐘回測版 (市場預設 美股, ⑤ 可一鍵切港股) · TradingView Pine Script v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
-//  本檔共 392 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
+//  本檔共 395 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或下載 .pine 後用純文字編輯器開啟 → Ctrl+A → Ctrl+C
 //
 //  【本版關鍵參數 — 目標: 平均每日 5 筆交易】
@@ -13,16 +13,17 @@
 //  規則: 買 = 負動能段「儲夠」後 DIF 上穿 DEA (收盤確認) → 下一根開盤買; 賣 = 正動能段儲夠後 DIF 下穿 DEA → 下一根開盤賣
 //        儲夠 = 同號柱連續根數 ≥ minBars 且 面積 Σ|hist|/close% ≥ minArea 且 深度 max|hist|/close% ≥ minDepth; 長倉 only
 //  預設: 本金 100,000 · 最近 30 天 · 美股時段 09:30-16:00 America/New_York (DST 自動) · 15:45 後不開新倉 · 15:58 強制平倉
-//  圖示 (主圖與副圖同步): ▲藍三角+藍直線 = 買單真正成交那一根 (訊號K的下一根開盤); ▼紅三角+紅直線 = 賣單成交; 直線貫通主圖與 MACD 副圖
+//  圖示 (主圖與副圖同步): ▲藍三角+藍直線 = 買單真正成交那一根 (訊號K的下一根開盤); ▼紅三角+紅直線 = 賣單成交; 幼點線貫通主圖與 MACD 副圖
 //        橙框 = 持倉期間: 主圖框住該段價格 K 線, 副圖框住該段 MACD 柱 (force_overlay 把繪圖送到主圖, 策略本身仍在副圖)
 //  版面: 回測摘要 + 逐筆交易表 → 主圖 (⑦ 可選位置); 副圖只留「觸發參數」表: 門檻現值 / 現段統計 / 交叉→合格漏斗 / 勝率, 調 ④ 即時看效果
+//        兩表預設同靠右上, 直線對齊; 成交直線為幼點線 (width 1, dotted), 淡化程度由 ⑧ lineTransp 調 (預設 55%)
 //  報表: 期內交易次數 / 每筆 P&L ($ 與 %) / 整段 Total P&L / 每日平均交易次數; 時段或時區設錯會直接指出
 //  注意: TradingView 的 MACD 柱 = DIF−DEA (牛牛/Webull 顯示 2×), 門檻以 1× 定義; 手續費/滑點務必填真實值, 填 0 會嚴重高估
 //  使用: 圖表週期切【1 分鐘】→ Pine Editor 貼上 → 檢查最後一行 → Save (輸入同名) → Add to chart → Strategy Tester
 //  版本戳 (MM月DD日_HH:MM) = 建置時間 HKT; 檔名以 . 代替 : (Windows 檔名不接受冒號); 本檔零延續行, 每個語句自成一行
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("TW-1M-MACD-(09月19日_18:03)", shorttitle="TW-1M-MACD-(09月19日_18:03)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
+strategy("TW-1M-MACD-(09月19日_18:14)", shorttitle="TW-1M-MACD-(09月19日_18:14)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
 
 // ─────────────────────────── ① 回測期間 (預設最近 30 天) ───────────────────────────
 gBT        = "① 回測期間"
@@ -88,6 +89,7 @@ minArea   = thMode == "手動" ? minAreaIn  : minDepth * minBars * areaFactor
 gDS            = "⑧ 顯示"
 showHoldBox    = input.bool(true,  "橙框: 持倉期間框住 MACD 柱", group = gDS)
 showFillMarks  = input.bool(true,  "三角形 + 直線: 只在真正成交時畫", group = gDS)
+lineTransp     = input.int(55, "成交直線淡化 (透明度 %; 越大越淡)", minval = 0, maxval = 90, step = 5, group = gDS)
 showClusterBox = input.bool(false, "對照用: 合格動能段框 (舊版行為)", group = gDS, tooltip = "打開會另外畫出「儲夠動能」的柱群框 — 注意那是訊號條件, 不代表有成交。")
 
 // ─────────────────────────── ⑥ 同號柱段統計 (只用已完成K, 無前視) ───────────────────────────
@@ -175,12 +177,13 @@ justClosed = posSz <= 0 and posSz[1] >  0      // 賣單真正成交 (含 MACD�
 
 // 成交直線
 // 成交直線: 副圖 (MACD) 一條 + 主圖 (價格 K 線) 一條, 兩條同一根 K, 上下貫通
+// 直線樣式: 幼 (width 1) · 點線 · 淡色 (透明度由 ⑧ lineTransp 控制), 主圖與副圖一致
 if showFillMarks and justFilled
-    line.new(bar_index, hist, bar_index, 0.0, extend = extend.both, color = color.new(color.aqua, 0), width = 2)
-    line.new(bar_index, low, bar_index, high, extend = extend.both, color = color.new(color.aqua, 0), width = 2, force_overlay = true)
+    line.new(bar_index, hist, bar_index, 0.0, extend = extend.both, color = color.new(color.aqua, lineTransp), width = 1, style = line.style_dotted)
+    line.new(bar_index, low, bar_index, high, extend = extend.both, color = color.new(color.aqua, lineTransp), width = 1, style = line.style_dotted, force_overlay = true)
 if showFillMarks and justClosed
-    line.new(bar_index, hist, bar_index, 0.0, extend = extend.both, color = color.new(color.red, 0), width = 2)
-    line.new(bar_index, low, bar_index, high, extend = extend.both, color = color.new(color.red, 0), width = 2, force_overlay = true)
+    line.new(bar_index, hist, bar_index, 0.0, extend = extend.both, color = color.new(color.red, lineTransp), width = 1, style = line.style_dotted)
+    line.new(bar_index, low, bar_index, high, extend = extend.both, color = color.new(color.red, lineTransp), width = 1, style = line.style_dotted, force_overlay = true)
 
 // 持倉期間橙框: 進場成交K → 出場成交K, 高度包住該段 MACD 柱; 仍持倉則跟著最新K延伸
 var box   hBox  = na    // 副圖: 框住持倉期間的 MACD 柱
@@ -243,7 +246,7 @@ showRpt  = input.bool(true, "顯示圖上報表", group = gRP)
 maxRows  = input.int(25, "最多列出最近幾筆交易", minval = 1, maxval = 60, group = gRP, tooltip = "完整清單見 Strategy Tester → List of Trades (可匯出 CSV)")
 rptPos   = input.string("右上", "回測摘要位置 (主圖)", options = ["右下", "右上", "左下", "左上"], group = gRP)
 showPrm  = input.bool(true, "副圖顯示「觸發參數」表 (調整用)", group = gRP)
-prmPos   = input.string("左上", "觸發參數表位置 (副圖)", options = ["右下", "右上", "左下", "左上"], group = gRP)
+prmPos   = input.string("右上", "觸發參數表位置 (副圖; 預設與主圖摘要同靠右對齊)", options = ["右下", "右上", "左下", "左上"], group = gRP)
 txtSize  = input.string("tiny", "字體", options = ["tiny", "small", "normal"], group = gRP)
 
 posV = rptPos == "右下" ? position.bottom_right : rptPos == "右上" ? position.top_right : rptPos == "左下" ? position.bottom_left : position.top_left
@@ -389,4 +392,4 @@ if barstate.islastconfirmedhistory and showRpt
     if strategy.closedtrades > 0
         for i = 0 to strategy.closedtrades - 1
             log.info("#{0} {1} → {2} | {3} → {4} | P&L {5} ({6}%)", i + 1, str.format_time(strategy.closedtrades.entry_time(i), "yyyy-MM-dd HH:mm", tzStr), str.format_time(strategy.closedtrades.exit_time(i),  "yyyy-MM-dd HH:mm", tzStr), str.tostring(strategy.closedtrades.entry_price(i), format.mintick), str.tostring(strategy.closedtrades.exit_price(i),  format.mintick), str.tostring(strategy.closedtrades.profit(i), "#,###.##"), str.tostring((strategy.closedtrades.exit_price(i) / strategy.closedtrades.entry_price(i) - 1.0) * 100.0, "#.##"))
-// ═══ END OF FILE ═══ TW-1M-MACD-(09月19日_18:03) · 全檔共 392 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ TW-1M-MACD-(09月19日_18:14) · 全檔共 395 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
