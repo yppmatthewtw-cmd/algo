@@ -12,8 +12,9 @@ intraday_macd/
 ├── backtest_cli.py             ← 任何 1 分鐘 CSV 直接回測
 ├── make_sample_data.py         ← 合成數據 (只用來自測引擎, 不是真實 07709)
 ├── tradingview/
-│   ├── macd_momentum_1m.pine             ← TradingView 1 分鐘 intraday 版
-│   └── W-D-MACD-(MM.DD;HH.MM).pine       ← TradingView 【日線版】本金100K / 一年 / 交易報表 (檔名帶版本戳)
+│   ├── W-D-MACD-(MM.DD;HH.MM).pine       ← TradingView 【日線版】  本金100K / 一年 / 交易報表
+│   ├── TW-1M-MACD-(MM.DD;HH.MM).pine     ← TradingView 【1分鐘版】 本金100K / 30天 / 盤中時段+收市強平
+│   └── macd_momentum_1m.pine             ← 舊的 1 分鐘版 (已被 TW-1M-MACD 取代, 保留作對照)
 ├── futu_niuniu/
 │   ├── futu_fetch_and_backtest.py        ← 牛牛 OpenAPI 抓 1 分 K → 回測
 │   ├── futu_live_trader.py               ← 牛牛 模擬盤/實盤 執行器
@@ -119,6 +120,20 @@ python webull_fetch_and_backtest.py --sweep
 有訊號但沒成交的情況(已有倉時的買訊、無倉時的賣訊、回測窗外的訊號)**一律不畫**。舊版的「合格動能段框」改為 Inputs→⑧ 顯示 內的可選項,預設關閉。
 
 標記畫在**成交 K** 而非訊號 K,比 MACD 交叉晚一根——這是設計如此,因為訂單在下一根開盤才成交,與 Strategy Tester 的 List of Trades 對得上。
+
+## 兩個 TradingView 版本的差異
+
+| | `W-D-MACD` 日線版 | `TW-1M-MACD` 1分鐘版 |
+|---|---|---|
+| 圖表週期 | D | 1 分鐘 |
+| 回測期間預設 | 365 天 | **30 天**(1分K載入根數受方案限制) |
+| 盤中時段 | 自動繞過 | **啟用**:09:30–12:00 / 13:00–16:00 |
+| 隔夜倉 | 可以持倉過夜 | **不留**:15:45 後不開新倉、15:58 強平 |
+| 動能段最少根數 | 3 | 4 |
+| 止損預設(若啟用) | 5% | 1% |
+| 報表額外欄 | — | 交易日數、每日均交易、在市場時間 %、週期檢查 |
+
+訊號邏輯(動能段門檻 + 交叉 + 下一根開盤成交 + 只畫真正成交)兩版完全相同。
 
 ## 日線版與 1 分鐘版的三個差異(重要)
 
