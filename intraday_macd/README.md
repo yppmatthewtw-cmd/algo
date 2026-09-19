@@ -15,7 +15,7 @@ intraday_macd/
 │   ├── TW-1D-MACD-(MM.DD;HH.MM).pine     ← TradingView 【日線版】      本金100K / 一年 / 交易報表
 │   ├── TW-1M-MACD-(MM.DD;HH.MM).pine     ← TradingView 【1分鐘·港股】  本金100K / 30天 / 盤中時段+收市強平
 │   ├── TW-US-1M-MACD-(MM.DD;HH.MM).pine  ← TradingView 【1分鐘·美股】  同上, 市場預設=美股
-│   ├── TW-1M-MACD-(MM月.DD日_HH.MM).pine  ← TradingView 【1分鐘·最新】  margin 修正 + 自動校準每日 5 筆 (市場預設美股, 可切港股)
+│   ├── TW-1M-MACD-(MM月DD日_HH.MM).pine   ← TradingView 【1分鐘·最新】  主圖/副圖分工 + margin 修正 + 自動校準每日 5 筆 (市場預設美股, 可切港股)
 │   ├── paste_TW-1M-MACD.html          ← 「貼上工具」網頁: 一鍵複製完整程式碼 (避開 8KB 截斷)
 │   ├── build_release.py                  ← 由攤平版產出新版本戳 + 檔尾 END OF FILE 標記
 │   ├── make_paste_page.py                ← 把 .pine 包成貼上工具網頁
@@ -126,6 +126,20 @@ python webull_fetch_and_backtest.py --sweep
 有訊號但沒成交的情況(已有倉時的買訊、無倉時的賣訊、回測窗外的訊號)**一律不畫**。舊版的「合格動能段框」改為 Inputs→⑧ 顯示 內的可選項,預設關閉。
 
 標記畫在**成交 K** 而非訊號 K,比 MACD 交叉晚一根——這是設計如此,因為訂單在下一根開盤才成交,與 Strategy Tester 的 List of Trades 對得上。
+
+## 主圖 / 副圖分工 — `TW-1M-MACD-(MM月DD日_HH:MM)` 起
+
+策略本身仍在 MACD 副圖(`overlay=false`),用繪圖物件的 `force_overlay = true` 把該顯示在價格上的東西送到主圖:
+
+| 元素 | 主圖(價格 K 線) | 副圖(MACD) |
+|---|---|---|
+| 買/賣成交直線 | 同一根 K 的藍/紅直線,上下貫通 | 同一根 K 的藍/紅直線 |
+| ▲/▼ 三角形 | K 線下方/上方 | 副圖底/頂 |
+| 持倉橙框 | 框住持倉期間的價格高低 | 框住持倉期間的 MACD 柱 |
+| 回測摘要 + 逐筆交易表 | ✓(⑦ 可選四角,預設右上) | — |
+| 觸發參數表 | — | ✓:門檻模式/k、深度與面積門檻現值、最少根數、校準目標/近日均、現段統計與是否儲夠、上穿/下穿 → 動能合格漏斗、成交/勝率、調整方向 |
+
+調 Inputs ④ 時看副圖那張表:漏斗百分比掉太多就是門檻太嚴;勝率低但成交多就往嚴調(百分位↑、根數↑、係數↑ 或目標筆數↓)。
 
 ## 0 交易的真正原因與「每日 5 筆」自動校準 — `TW-1M-MACD-(MM月.DD日_HH:MM)`
 
