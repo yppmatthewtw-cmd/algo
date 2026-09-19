@@ -13,7 +13,7 @@ intraday_macd/
 ├── make_sample_data.py         ← 合成數據 (只用來自測引擎, 不是真實 07709)
 ├── tradingview/
 │   ├── macd_momentum_1m.pine             ← TradingView 1 分鐘 intraday 版
-│   └── macd_momentum_daily.pine          ← TradingView 【日線版】本金100K / 一年 / 交易報表
+│   └── TW-D-MACD-(MM.DD;HH.MM).pine      ← TradingView 【日線版】本金100K / 一年 / 交易報表 (檔名帶版本戳)
 ├── futu_niuniu/
 │   ├── futu_fetch_and_backtest.py        ← 牛牛 OpenAPI 抓 1 分 K → 回測
 │   ├── futu_live_trader.py               ← 牛牛 模擬盤/實盤 執行器
@@ -83,13 +83,13 @@ python webull_fetch_and_backtest.py --sweep
 
 # 日線版 (TradingView) — 本金 100K · 一年 · 交易報表
 
-檔案 `tradingview/macd_momentum_daily.pine`,已按要求預設好。
+檔案 `tradingview/TW-D-MACD-(MM.DD;HH.MM).pine`,已按要求預設好。檔名與 `shorttitle` 都帶建置時間戳(HKT),方便在 TradingView 的 script 清單分辨版本;在 Pine Editor 按 Save 時輸入同一個名即可。
 
 ## 開始用
 
 1. 圖表 symbol 設 **`HKEX:7709`**,週期切 **D(日線)**。
-2. Pine Editor 貼上 `macd_momentum_daily.pine` → Save → **Add to chart**。
-3. 圖上會看到:回測期間淡藍底色、合格動能段藍/橙方框、買賣直線與 B/S 標記,右下角**回測報表**。
+2. Pine Editor 貼上該 `.pine` 檔 → Save(名稱用檔名)→ **Add to chart**。
+3. 圖上會看到:回測期間淡藍底色、**持倉期間橙框**、**真正成交**的買賣直線與 B/S 三角形,右下角**回測報表**。
 4. 下方 **Strategy Tester** 有官方統計;**List of Trades** 分頁是完整逐筆清單(可匯出 CSV)。
 
 ## 已預設的三項
@@ -107,6 +107,18 @@ python webull_fetch_and_backtest.py --sweep
 **逐筆列**:每筆 `#`、進場日、出場日、進場價、出場價、**損益 $**、**損益 %**(綠賺紅蝕),預設顯示最近 25 筆(Inputs→⑦ 報表 可調至 60)。
 
 另外收盤會把同一份報表寫進 **Pine Logs**(Pine Editor 下方 Pine Logs 分頁),方便整段複製貼出。
+
+## 圖示語意:只畫「真正成交」
+
+| 圖示 | 意思 |
+|---|---|
+| ▲ 藍三角 + 藍直線 | 買單**真正成交**那一根(訊號 K 的下一根開盤) |
+| ▼ 紅三角 + 紅直線 | 賣單**真正成交**那一根(含 MACD 賣訊 / 止損 / 窗口結束平倉) |
+| ▭ 橙框 | **持倉期間**,由進場成交 K 框到出場成交 K,高度包住該段 MACD 柱;仍持倉會跟著最新 K 延伸 |
+
+有訊號但沒成交的情況(已有倉時的買訊、無倉時的賣訊、回測窗外的訊號)**一律不畫**。舊版的「合格動能段框」改為 Inputs→⑧ 顯示 內的可選項,預設關閉。
+
+標記畫在**成交 K** 而非訊號 K,比 MACD 交叉晚一根——這是設計如此,因為訂單在下一根開盤才成交,與 Strategy Tester 的 List of Trades 對得上。
 
 ## 日線版與 1 分鐘版的三個差異(重要)
 
