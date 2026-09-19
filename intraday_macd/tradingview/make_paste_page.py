@@ -77,7 +77,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 <div class="wrap">
   <header class="hero">
     <div>
-      <div class="eyebrow">TradingView · Pine Script v6 · 美股 1 分鐘 MACD 動能策略</div>
+      <div class="eyebrow">TradingView · Pine Script v6 · 1 分鐘 MACD 動能策略 (市場預設 美股, 可切港股)</div>
       <h1 id="scriptName">__NAME__</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從檔案預覽視窗複製會在 8 KB 處被截斷, 這裡不會。</p>
     </div>
@@ -94,7 +94,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <section class="card">
     <h2>貼上步驟</h2>
     <ol class="steps">
-      <li><span><b>圖表週期切 1 分鐘</b>, 開美股標的 (例如 NASDAQ:NVDA)。</span></li>
+      <li><span><b>圖表週期切 1 分鐘</b>, 開要測的標的 (例如 NASDAQ:NVDA; 港股請在 ⑤ 把市場預設切成港股)。</span></li>
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>

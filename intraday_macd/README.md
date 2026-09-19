@@ -15,7 +15,8 @@ intraday_macd/
 │   ├── TW-1D-MACD-(MM.DD;HH.MM).pine     ← TradingView 【日線版】      本金100K / 一年 / 交易報表
 │   ├── TW-1M-MACD-(MM.DD;HH.MM).pine     ← TradingView 【1分鐘·港股】  本金100K / 30天 / 盤中時段+收市強平
 │   ├── TW-US-1M-MACD-(MM.DD;HH.MM).pine  ← TradingView 【1分鐘·美股】  同上, 市場預設=美股
-│   ├── paste_TW-US-1M-MACD.html          ← 「貼上工具」網頁: 一鍵複製完整程式碼 (避開 8KB 截斷)
+│   ├── TW-1M-MACD-(MM月.DD日_HH.MM).pine  ← TradingView 【1分鐘·最新】  margin 修正 + 自動校準每日 5 筆 (市場預設美股, 可切港股)
+│   ├── paste_TW-1M-MACD.html          ← 「貼上工具」網頁: 一鍵複製完整程式碼 (避開 8KB 截斷)
 │   ├── build_release.py                  ← 由攤平版產出新版本戳 + 檔尾 END OF FILE 標記
 │   ├── make_paste_page.py                ← 把 .pine 包成貼上工具網頁
 │   ├── flatten_pine.py                   ← 攤平延續行 + 語法自檢
@@ -126,6 +127,23 @@ python webull_fetch_and_backtest.py --sweep
 
 標記畫在**成交 K** 而非訊號 K,比 MACD 交叉晚一根——這是設計如此,因為訂單在下一根開盤才成交,與 Strategy Tester 的 List of Trades 對得上。
 
+## 0 交易的真正原因與「每日 5 筆」自動校準 — `TW-1M-MACD-(MM月.DD日_HH:MM)`
+
+**0 交易的根因**:Pine v6 把 `strategy()` 的 `margin_long` / `margin_short` 預設從 0 改成 100(%)。本策略用「全部本金」下單(`percent_of_equity = 100`),加上手續費與滑點後超出可用資金,訂單被拒,所以訊號再多也是 0 筆、在市場時間 0%。修正:`strategy(... margin_long = 0, margin_short = 0 ...)`,三個 Pine 檔都已加上。
+
+**每日約 5 筆的做法**(關鍵參數,都在 Inputs → ④ 動能蓄積門檻):
+
+| 參數 | 舊 | 新 | 作用 |
+|---|---|---|---|
+| `margin_long` / `margin_short` | 100(v6 預設) | **0** | 讓全部本金下單能成交 |
+| 自動校準 目標每日交易次數 `targetTPD` | 無 | **5** | 每個新交易日結算昨日成交筆數(0.5 權重平滑),低於 5×0.8 門檻係數 k 降 20%,高於 5×1.3 升 20%;k∈[0.1, 5] |
+| 每級調整幅度 `calStep` | 無 | 20% | 校準步長 |
+| 深度門檻百分位 `depthPctl` | 60 | **50** | 起始門檻降一級 |
+| 最少連續根數 `minBars` | 4 | **3** | 起始門檻降一級 |
+| 面積係數 `areaFactor` | 0.6 | **0.5** | 面積門檻 = 深度 × 根數 × 係數 |
+
+校準只用已收盤交易日的成交筆數,對未來無前視;報表「門檻(現值)」列顯示現行 k,「每日均交易」列顯示目標。合成 1 分鐘數據上的自檢:靜態門檻平均 4.1 筆/日,開校準後 5.4 筆/日(`k` 收斂到 0.64)。真實標的的收斂速度取決於前幾個交易日,回測期間建議 ≥ 15 個交易日。目標設 0 或切「手動」模式即關閉校準。
+
 ## 貼上 TradingView 前必讀:內容截斷會報「Missing closing parenthesis」
 
 `TW-US-1M-MACD` 曾兩次貼上後報 `Syntax error: Missing closing parenthesis`,兩次報錯的行都剛好落在貼上內容的**第 8192 個 byte**(12:34 版第 100 行 = byte 8150–8245;13:02 版 `depthPctl` 行 + 編輯器頂端多出的 13 行 ≈ 8192)。檔案本身逐句括號配對、無怪字元;是**複製路徑只帶走前 8 KB**(檔案預覽視窗常見),最後一句從中間被切斷。
@@ -133,7 +151,7 @@ python webull_fetch_and_backtest.py --sweep
 從 `(09.19;16:45)` 起的做法:
 
 1. **檔尾固定一行** `// ═══ END OF FILE ═══ <名稱> · 全檔共 N 行 …`。貼上後捲到最底,行號與內容對得上才算貼齊;看不到這一行就是被截斷。
-2. **用「貼上工具」網頁複製**:`tradingview/paste_TW-US-1M-MACD.html`(或線上版 https://claude.ai/artifact/MjbsHou14geaPZ2mnAt9MU)按【複製全部程式碼】,JS 一次寫進剪貼簿,不經過預覽視窗。備用:點進頁內程式碼框 Ctrl+A / Ctrl+C,或下載 `.pine` 後用純文字編輯器(Notepad / TextEdit / VS Code)開啟再全選複製。
+2. **用「貼上工具」網頁複製**:`tradingview/paste_TW-1M-MACD.html`(或線上版 https://claude.ai/artifact/MjbsHou14geaPZ2mnAt9MU)按【複製全部程式碼】,JS 一次寫進剪貼簿,不經過預覽視窗。備用:點進頁內程式碼框 Ctrl+A / Ctrl+C,或下載 `.pine` 後用純文字編輯器(Notepad / TextEdit / VS Code)開啟再全選複製。
 3. **腳本名稱**:Save 對話框裡 TradingView 預填的名稱可能少了結尾的 `)`(用戶截圖出現過 `TW-US-1M-MACD-(09.19;13:02`),請補齊成與 `strategy()` 標題完全相同;網頁上的【複製腳本名稱】貼的就是完整名稱。
 
 出新版本:`python3 build_release.py <攤平版.pine> MM.DD;HH:MM` → 自動重戳 strategy 標題 / shorttitle / 檔名 / 檔尾標記,再 `python3 make_paste_page.py <新檔.pine> paste_XXX.html` 重做網頁。

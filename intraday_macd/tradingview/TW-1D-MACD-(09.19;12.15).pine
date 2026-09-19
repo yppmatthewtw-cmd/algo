@@ -35,7 +35,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
 strategy("TW-1D-MACD-(09.19;12:15)", shorttitle="TW-1D-MACD-(09.19;12:15)", overlay=false,
-     initial_capital       = 100000,
+     initial_capital       = 100000, margin_long = 0, margin_short = 0,   // v6 預設 margin 100% 會令全部本金下單被拒 → 設 0
      default_qty_type      = strategy.percent_of_equity, default_qty_value = 100,
      commission_type       = strategy.commission.percent, commission_value = 0.03,
      slippage              = 1,
