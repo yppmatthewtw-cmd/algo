@@ -68,7 +68,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <header class="hero">
     <div>
       <div class="eyebrow">TradingView · Pine Script v6 · 1 分鐘 MACD 動能策略 (市場預設 美股, 可切港股)</div>
-      <h1 id="scriptName">TW-1M-MACD-(09月19日_18:14)</h1>
+      <h1 id="scriptName">TW-1M-MACD-(09月19日_18:23)</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從檔案預覽視窗複製會在 8 KB 處被截斷, 這裡不會。</p>
     </div>
     <div class="card">
@@ -88,12 +88,12 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TW-1M-MACD-(09月19日_18:14)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TW-1M-MACD-(09月19日_18:23)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
       <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
     </ol>
     <div class="check">
       <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 26 行</span><code>strategy("TW-1M-MACD-(09月19日_18:14)", shorttitle="TW-1M-MACD-(09月19日_18:14)", …)</code></div>
+      <div><span class="k">第 27 行</span><code>strategy("TW-1M-MACD-(09月19日_18:23)", shorttitle="TW-1M-MACD-(09月19日_18:23)", …)</code></div>
       <div><span class="k">最後一行</span><code id="cLast">—</code></div>
     </div>
   </section>
@@ -108,7 +108,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <tr><td class="m">(09.19;13:02)</td><td class="m">depthPctl = input.float(…</td><td class="m">7171 – 7289 (+ 編輯器頂端多出 13 行 ≈ 900 bytes)</td><td>8192 落在句子中間</td></tr>
     </table>
     </div>
-    <div class="warnbox" style="margin-top:12px">整份檔案約 32.6 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
+    <div class="warnbox" style="margin-top:12px">整份檔案約 34.1 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
   </section>
 
   <section class="card">
@@ -119,9 +119,9 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 
 <script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TW-1M-MACD-(09月19日_18:14)  ·  MACD 動能蓄積交叉策略 · 1 分鐘回測版 (市場預設 美股, ⑤ 可一鍵切港股) · TradingView Pine Script v6
+//  TW-1M-MACD-(09月19日_18:23)  ·  MACD 動能蓄積交叉策略 · 1 分鐘回測版 (市場預設 美股, ⑤ 可一鍵切港股) · TradingView Pine Script v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
-//  本檔共 395 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
+//  本檔共 396 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或下載 .pine 後用純文字編輯器開啟 → Ctrl+A → Ctrl+C
 //
 //  【本版關鍵參數 — 目標: 平均每日 5 筆交易】
@@ -137,36 +137,37 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 //        橙框 = 持倉期間: 主圖框住該段價格 K 線, 副圖框住該段 MACD 柱 (force_overlay 把繪圖送到主圖, 策略本身仍在副圖)
 //  版面: 回測摘要 + 逐筆交易表 → 主圖 (⑦ 可選位置); 副圖只留「觸發參數」表: 門檻現值 / 現段統計 / 交叉→合格漏斗 / 勝率, 調 ④ 即時看效果
 //        兩表預設同靠右上, 直線對齊; 成交直線為幼點線 (width 1, dotted), 淡化程度由 ⑧ lineTransp 調 (預設 55%)
+//        副圖狀態列只顯示策略名稱 (所有 input 與 plot 數值 display 設為不顯示); 橙框主圖/副圖共用同一組時間座標, 左右邊落在 K 與 K 之間
 //  報表: 期內交易次數 / 每筆 P&L ($ 與 %) / 整段 Total P&L / 每日平均交易次數; 時段或時區設錯會直接指出
 //  注意: TradingView 的 MACD 柱 = DIF−DEA (牛牛/Webull 顯示 2×), 門檻以 1× 定義; 手續費/滑點務必填真實值, 填 0 會嚴重高估
 //  使用: 圖表週期切【1 分鐘】→ Pine Editor 貼上 → 檢查最後一行 → Save (輸入同名) → Add to chart → Strategy Tester
 //  版本戳 (MM月DD日_HH:MM) = 建置時間 HKT; 檔名以 . 代替 : (Windows 檔名不接受冒號); 本檔零延續行, 每個語句自成一行
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("TW-1M-MACD-(09月19日_18:14)", shorttitle="TW-1M-MACD-(09月19日_18:14)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
+strategy("TW-1M-MACD-(09月19日_18:23)", shorttitle="TW-1M-MACD-(09月19日_18:23)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
 
 // ─────────────────────────── ① 回測期間 (預設最近 30 天) ───────────────────────────
 gBT        = "① 回測期間"
-useRolling = input.bool(true,  "用「最近 N 天」(取消勾選則用下方指定日期)", group = gBT)
-lookbackD  = input.int(30,     "回測天數 (1分K建議 10-60 天)", minval = 1, group = gBT, tooltip = "1分K可載入的根數受 TradingView 方案限制 (免費約5000根 ≈ 15個港股交易日)。設得比圖表能載入的更長, 只會回測到圖表最左邊那一根為止。")
-startIn    = input.time(timestamp("01 Jan 2025 00:00 +0800"), "開始日期", group = gBT)
-endIn      = input.time(timestamp("31 Dec 2025 23:59 +0800"), "結束日期", group = gBT)
+useRolling = input.bool(true,  "用「最近 N 天」(取消勾選則用下方指定日期)", group = gBT, display = display.none)
+lookbackD  = input.int(30,     "回測天數 (1分K建議 10-60 天)", minval = 1, group = gBT, tooltip = "1分K可載入的根數受 TradingView 方案限制 (免費約5000根 ≈ 15個港股交易日)。設得比圖表能載入的更長, 只會回測到圖表最左邊那一根為止。", display = display.none)
+startIn    = input.time(timestamp("01 Jan 2025 00:00 +0800"), "開始日期", group = gBT, display = display.none)
+endIn      = input.time(timestamp("31 Dec 2025 23:59 +0800"), "結束日期", group = gBT, display = display.none)
 btStart    = useRolling ? timenow - lookbackD * 86400000 : startIn
 btEnd      = useRolling ? timenow : endIn
 inWindow   = time >= btStart and time <= btEnd
 
 // ─────────────────────────── ② 資金 / 下單金額 ───────────────────────────
 gSZ       = "② 資金"
-sizeMode  = input.string("全部本金", "每筆下單金額", options = ["全部本金", "固定金額", "固定股數"], group = gSZ)
-fixedCash = input.float(100000, "固定金額", step = 1000, group = gSZ)
-fixedQty  = input.float(1000,   "固定股數", step = 100,  group = gSZ)
+sizeMode  = input.string("全部本金", "每筆下單金額", options = ["全部本金", "固定金額", "固定股數"], group = gSZ, display = display.none)
+fixedCash = input.float(100000, "固定金額", step = 1000, group = gSZ, display = display.none)
+fixedQty  = input.float(1000,   "固定股數", step = 100,  group = gSZ, display = display.none)
 // ※ 本金 100,000 寫在 strategy() 的 initial_capital; 亦可在 設定→Properties→Initial capital 改
 
 // ─────────────────────────── ③ MACD ───────────────────────────
 gM      = "③ MACD"
-fastLen = input.int(12, "快線 EMA", minval = 1, group = gM)
-slowLen = input.int(26, "慢線 EMA", minval = 1, group = gM)
-sigLen  = input.int(9,  "訊號線 (移動平均週期)", minval = 1, group = gM)
+fastLen = input.int(12, "快線 EMA", minval = 1, group = gM, display = display.none)
+slowLen = input.int(26, "慢線 EMA", minval = 1, group = gM, display = display.none)
+sigLen  = input.int(9,  "訊號線 (移動平均週期)", minval = 1, group = gM, display = display.none)
 
 [dif, dea, hist] = ta.macd(close, fastLen, slowLen, sigLen)
 histPct = hist / close * 100.0
@@ -174,19 +175,19 @@ sgn     = hist > 0 ? 1 : hist < 0 ? -1 : 0
 
 // ─────────────────────────── ④ 動能蓄積門檻 ───────────────────────────
 gTH        = "④ 動能蓄積門檻"
-thMode     = input.string("自動(百分位)", "門檻模式", options = ["自動(百分位)", "手動"], group = gTH, tooltip = "自動: 以近N根柱高分佈自動定門檻, 換週期/換標的免手調。手動: 自己填死數。")
-minBars    = input.int(3, "動能段最少連續根數 (本版 3; 舊版 4)", minval = 1, group = gTH)
-pctLen     = input.int(250, "自動模式取樣根數", minval = 30, group = gTH)
-depthPctl  = input.float(50, "自動: 深度門檻取第幾百分位 (本版 50; 舊版 60)", minval = 1, maxval = 99, step = 5, group = gTH)
-areaFactor = input.float(0.5, "自動: 面積係數 (面積門檻 = 深度 × 根數 × 係數; 本版 0.5)", step = 0.1, group = gTH)
-minDepthIn = input.float(0.35, "手動: 深度門檻 max|hist|/close (%)", step = 0.05, group = gTH)
-minAreaIn  = input.float(1.20, "手動: 面積門檻 Σ|hist|/close (%·根)", step = 0.1, group = gTH)
+thMode     = input.string("自動(百分位)", "門檻模式", options = ["自動(百分位)", "手動"], group = gTH, tooltip = "自動: 以近N根柱高分佈自動定門檻, 換週期/換標的免手調。手動: 自己填死數。", display = display.none)
+minBars    = input.int(3, "動能段最少連續根數 (本版 3; 舊版 4)", minval = 1, group = gTH, display = display.none)
+pctLen     = input.int(250, "自動模式取樣根數", minval = 30, group = gTH, display = display.none)
+depthPctl  = input.float(50, "自動: 深度門檻取第幾百分位 (本版 50; 舊版 60)", minval = 1, maxval = 99, step = 5, group = gTH, display = display.none)
+areaFactor = input.float(0.5, "自動: 面積係數 (面積門檻 = 深度 × 根數 × 係數; 本版 0.5)", step = 0.1, group = gTH, display = display.none)
+minDepthIn = input.float(0.35, "手動: 深度門檻 max|hist|/close (%)", step = 0.05, group = gTH, display = display.none)
+minAreaIn  = input.float(1.20, "手動: 面積門檻 Σ|hist|/close (%·根)", step = 0.1, group = gTH, display = display.none)
 
 autoDepth = ta.percentile_linear_interpolation(math.abs(histPct), pctLen, depthPctl)
 
 // ─── ④b 自動校準: 以「目標每日交易次數」逐日調整門檻係數 k (只用已完成的交易日結算, 無前視) ───
-targetTPD = input.float(5, "自動校準: 目標每日交易次數 (0 = 關閉)", minval = 0, step = 1, group = gTH, tooltip = "每個新交易日開始時結算「昨日」成交筆數 (以 0.5 權重平滑): 低於目標×0.8 → 門檻係數 k 降一級; 高於目標×1.3 → k 升一級。k 乘在自動深度門檻上, 面積門檻隨之連動。手動模式不受影響。")
-calStep   = input.float(20, "自動校準: 每級調整幅度 %", minval = 5, maxval = 50, step = 5, group = gTH)
+targetTPD = input.float(5, "自動校準: 目標每日交易次數 (0 = 關閉)", minval = 0, step = 1, group = gTH, tooltip = "每個新交易日開始時結算「昨日」成交筆數 (以 0.5 權重平滑): 低於目標×0.8 → 門檻係數 k 降一級; 高於目標×1.3 → k 升一級。k 乘在自動深度門檻上, 面積門檻隨之連動。手動模式不受影響。", display = display.none)
+calStep   = input.float(20, "自動校準: 每級調整幅度 %", minval = 5, maxval = 50, step = 5, group = gTH, display = display.none)
 var float kEff       = 1.0     // 現行門檻係數
 var int   ctDayStart = 0       // 今日開始時的累計成交筆數
 var float tpdEMA     = na      // 近日每日成交筆數 (平滑)
@@ -207,10 +208,10 @@ minArea   = thMode == "手動" ? minAreaIn  : minDepth * minBars * areaFactor
 
 // ─────────────────────────── ⑤ 顯示 ───────────────────────────
 gDS            = "⑧ 顯示"
-showHoldBox    = input.bool(true,  "橙框: 持倉期間框住 MACD 柱", group = gDS)
-showFillMarks  = input.bool(true,  "三角形 + 直線: 只在真正成交時畫", group = gDS)
-lineTransp     = input.int(55, "成交直線淡化 (透明度 %; 越大越淡)", minval = 0, maxval = 90, step = 5, group = gDS)
-showClusterBox = input.bool(false, "對照用: 合格動能段框 (舊版行為)", group = gDS, tooltip = "打開會另外畫出「儲夠動能」的柱群框 — 注意那是訊號條件, 不代表有成交。")
+showHoldBox    = input.bool(true,  "橙框: 持倉期間框住 MACD 柱", group = gDS, display = display.none)
+showFillMarks  = input.bool(true,  "三角形 + 直線: 只在真正成交時畫", group = gDS, display = display.none)
+lineTransp     = input.int(55, "成交直線淡化 (透明度 %; 越大越淡)", minval = 0, maxval = 90, step = 5, group = gDS, display = display.none)
+showClusterBox = input.bool(false, "對照用: 合格動能段框 (舊版行為)", group = gDS, tooltip = "打開會另外畫出「儲夠動能」的柱群框 — 注意那是訊號條件, 不代表有成交。", display = display.none)
 
 // ─────────────────────────── ⑥ 同號柱段統計 (只用已完成K, 無前視) ───────────────────────────
 var int   curSign  = 0
@@ -248,11 +249,11 @@ else if sgn != 0
 
 // ─────────────────────────── ⑦ 盤中時段 (本版核心: 全部啟用) ───────────────────────────
 gS        = "⑤ 盤中時段"
-mktPreset = input.string("美股", "市場預設 (一鍵套用時段+時區)", options = ["美股", "港股", "自訂"], group = gS, tooltip = "美股 = 0930-1600 · America/New_York (無午休, 夏令時間自動處理)\n港股 = 0930-1200,1300-1600 · Asia/Hong_Kong (有午休)\n自訂 = 用下面兩欄自己填\n\n※ 時段/時區與商品不符 → 一根K都不算在盤中 → 一張單都不會成交。報表會直接指出。")
-sessCust  = input.session("0930-1600", "自訂: 交易時段", group = gS)
-tzCust    = input.string("America/New_York", "自訂: 時區", group = gS)
-noEntry   = input.session("1545-1600", "收市前不開新倉時段", group = gS)
-eodSess   = input.session("1558-1600", "強制平倉時段 (不留隔夜倉)", group = gS)
+mktPreset = input.string("美股", "市場預設 (一鍵套用時段+時區)", options = ["美股", "港股", "自訂"], group = gS, tooltip = "美股 = 0930-1600 · America/New_York (無午休, 夏令時間自動處理)\n港股 = 0930-1200,1300-1600 · Asia/Hong_Kong (有午休)\n自訂 = 用下面兩欄自己填\n\n※ 時段/時區與商品不符 → 一根K都不算在盤中 → 一張單都不會成交。報表會直接指出。", display = display.none)
+sessCust  = input.session("0930-1600", "自訂: 交易時段", group = gS, display = display.none)
+tzCust    = input.string("America/New_York", "自訂: 時區", group = gS, display = display.none)
+noEntry   = input.session("1545-1600", "收市前不開新倉時段", group = gS, display = display.none)
+eodSess   = input.session("1558-1600", "強制平倉時段 (不留隔夜倉)", group = gS, display = display.none)
 
 sessStr   = mktPreset == "港股" ? "0930-1200,1300-1600" : mktPreset == "美股" ? "0930-1600" : sessCust
 tzStr     = mktPreset == "港股" ? "Asia/Hong_Kong"      : mktPreset == "美股" ? "America/New_York" : tzCust
@@ -265,8 +266,8 @@ tzMatch   = tzStr == syminfo.timezone   // 策略時區 vs 此商品交易所時
 
 // ─────────────────────────── ⑧ 風控 ───────────────────────────
 gR      = "⑥ 風控"
-useStop = input.bool(false, "啟用固定止損 (原題不設)", group = gR)
-stopPct = input.float(1.0, "止損 % (1分鐘刻度; 日線版用 5%)", step = 0.1, group = gR)
+useStop = input.bool(false, "啟用固定止損 (原題不設)", group = gR, display = display.none)
+stopPct = input.float(1.0, "止損 % (1分鐘刻度; 日線版用 5%)", step = 0.1, group = gR, display = display.none)
 
 // ─────────────────────────── ⑨ 下單 ───────────────────────────
 qty     = sizeMode == "全部本金" ? strategy.equity / close : sizeMode == "固定金額" ? fixedCash / close : fixedQty
@@ -306,6 +307,7 @@ if showFillMarks and justClosed
     line.new(bar_index, low, bar_index, high, extend = extend.both, color = color.new(color.red, lineTransp), width = 1, style = line.style_dotted, force_overlay = true)
 
 // 持倉期間橙框: 進場成交K → 出場成交K, 高度包住該段 MACD 柱; 仍持倉則跟著最新K延伸
+halfBar = timeframe.in_seconds() * 500    // 半根 K 的毫秒數: 框的左右邊落在 K 與 K 之間, 主圖/副圖用同一組時間座標 → 必定對齊
 var box   hBox  = na    // 副圖: 框住持倉期間的 MACD 柱
 var float hHi   = na
 var float hLo   = na
@@ -315,22 +317,22 @@ var float pLo   = na
 if showHoldBox and justFilled
     hHi  := hist
     hLo  := hist
-    hBox := box.new(bar_index, hist, bar_index, hist, border_color = color.new(color.orange, 0), bgcolor = color.new(color.orange, 90), border_width = 2)
+    hBox := box.new(time - halfBar, hist, time + halfBar, hist, xloc = xloc.bar_time, border_color = color.new(color.orange, 0), bgcolor = color.new(color.orange, 90), border_width = 2)
     pHi  := high
     pLo  := low
-    hBoxP := box.new(bar_index, high, bar_index, low, border_color = color.new(color.orange, 0), bgcolor = color.new(color.orange, 85), border_width = 2, force_overlay = true)
+    hBoxP := box.new(time - halfBar, high, time + halfBar, low, xloc = xloc.bar_time, border_color = color.new(color.orange, 0), bgcolor = color.new(color.orange, 85), border_width = 2, force_overlay = true)
 if not na(hBox) and (posSz > 0 or justClosed)
     hHi := math.max(hHi, hist)
     hLo := math.min(hLo, hist)
     pad = math.max((hHi - hLo) * 0.15, math.max(math.abs(hHi), math.abs(hLo)) * 0.20)
-    box.set_right(hBox, bar_index)
+    box.set_right(hBox, time + halfBar)
     box.set_top(hBox, hHi + pad)
     box.set_bottom(hBox, hLo - pad)
 if not na(hBoxP) and (posSz > 0 or justClosed)
     pHi := math.max(pHi, high)
     pLo := math.min(pLo, low)
     padP = (pHi - pLo) * 0.08
-    box.set_right(hBoxP, bar_index)
+    box.set_right(hBoxP, time + halfBar)
     box.set_top(hBoxP, pHi + padP)
     box.set_bottom(hBoxP, pLo - padP)
 if justClosed
@@ -350,24 +352,23 @@ if inWindow and inSess
 tfOK = timeframe.period == "1"   // 本策略為 1 分鐘設計; 貼到其他週期會在報表警告
 
 // ─────────────────────────── ⑫ 繪圖 ───────────────────────────
-plot(hist, "Histogram", style = plot.style_columns, color = hist >= 0 ? (hist >= hist[1] ? color.new(color.green, 0) : color.new(color.green, 45)) : (hist <= hist[1] ? color.new(color.red, 0)   : color.new(color.red, 45)))
-plot(dif, "DIF", color = color.new(color.orange, 0), linewidth = 2)
-plot(dea, "DEA", color = color.new(color.aqua, 0), linewidth = 1)
-hline(0)
-bgcolor(inWindow ? color.new(color.blue, 94) : na, title = "回測期間底色")
-plotshape(showFillMarks and justFilled, "買入成交", style = shape.triangleup,   location = location.bottom, color = color.new(color.aqua, 0), size = size.small, text = "B")
-plotshape(showFillMarks and justClosed, "賣出成交", style = shape.triangledown, location = location.top,    color = color.new(color.red, 0),  size = size.small, text = "S")
-plotshape(showFillMarks and justFilled, "買入成交(主圖)", style = shape.triangleup,   location = location.belowbar, color = color.new(color.aqua, 0), size = size.small, text = "B", force_overlay = true)
-plotshape(showFillMarks and justClosed, "賣出成交(主圖)", style = shape.triangledown, location = location.abovebar, color = color.new(color.red, 0),  size = size.small, text = "S", force_overlay = true)
-
+plot(hist, "Histogram", style = plot.style_columns, color = hist >= 0 ? (hist >= hist[1] ? color.new(color.green, 0) : color.new(color.green, 45)) : (hist <= hist[1] ? color.new(color.red, 0)   : color.new(color.red, 45)), display = display.pane + display.price_scale)
+plot(dif, "DIF", color = color.new(color.orange, 0), linewidth = 2, display = display.pane + display.price_scale)
+plot(dea, "DEA", color = color.new(color.aqua, 0), linewidth = 1, display = display.pane + display.price_scale)
+hline(0, display = display.pane)
+bgcolor(inWindow ? color.new(color.blue, 94) : na, title = "回測期間底色", display = display.pane)
+plotshape(showFillMarks and justFilled, "買入成交", style = shape.triangleup,   location = location.bottom, color = color.new(color.aqua, 0), size = size.small, text = "B", display = display.pane)
+plotshape(showFillMarks and justClosed, "賣出成交", style = shape.triangledown, location = location.top,    color = color.new(color.red, 0),  size = size.small, text = "S", display = display.pane)
+plotshape(showFillMarks and justFilled, "買入成交(主圖)", style = shape.triangleup,   location = location.belowbar, color = color.new(color.aqua, 0), size = size.small, text = "B", force_overlay = true, display = display.pane)
+plotshape(showFillMarks and justClosed, "賣出成交(主圖)", style = shape.triangledown, location = location.abovebar, color = color.new(color.red, 0),  size = size.small, text = "S", force_overlay = true, display = display.pane)
 // ─────────────────────────── ⑬ 報表: 交易次數 / 每筆 P&L / Total P&L ───────────────────────────
 gRP      = "⑦ 報表"
-showRpt  = input.bool(true, "顯示圖上報表", group = gRP)
-maxRows  = input.int(25, "最多列出最近幾筆交易", minval = 1, maxval = 60, group = gRP, tooltip = "完整清單見 Strategy Tester → List of Trades (可匯出 CSV)")
-rptPos   = input.string("右上", "回測摘要位置 (主圖)", options = ["右下", "右上", "左下", "左上"], group = gRP)
-showPrm  = input.bool(true, "副圖顯示「觸發參數」表 (調整用)", group = gRP)
-prmPos   = input.string("右上", "觸發參數表位置 (副圖; 預設與主圖摘要同靠右對齊)", options = ["右下", "右上", "左下", "左上"], group = gRP)
-txtSize  = input.string("tiny", "字體", options = ["tiny", "small", "normal"], group = gRP)
+showRpt  = input.bool(true, "顯示圖上報表", group = gRP, display = display.none)
+maxRows  = input.int(25, "最多列出最近幾筆交易", minval = 1, maxval = 60, group = gRP, tooltip = "完整清單見 Strategy Tester → List of Trades (可匯出 CSV)", display = display.none)
+rptPos   = input.string("右上", "回測摘要位置 (主圖)", options = ["右下", "右上", "左下", "左上"], group = gRP, display = display.none)
+showPrm  = input.bool(true, "副圖顯示「觸發參數」表 (調整用)", group = gRP, display = display.none)
+prmPos   = input.string("右上", "觸發參數表位置 (副圖; 預設與主圖摘要同靠右對齊)", options = ["右下", "右上", "左下", "左上"], group = gRP, display = display.none)
+txtSize  = input.string("tiny", "字體", options = ["tiny", "small", "normal"], group = gRP, display = display.none)
 
 posV = rptPos == "右下" ? position.bottom_right : rptPos == "右上" ? position.top_right : rptPos == "左下" ? position.bottom_left : position.top_left
 sizeV = txtSize == "tiny" ? size.tiny : txtSize == "small" ? size.small : size.normal
@@ -512,7 +513,7 @@ if barstate.islastconfirmedhistory and showRpt
     if strategy.closedtrades > 0
         for i = 0 to strategy.closedtrades - 1
             log.info("#{0} {1} → {2} | {3} → {4} | P&L {5} ({6}%)", i + 1, str.format_time(strategy.closedtrades.entry_time(i), "yyyy-MM-dd HH:mm", tzStr), str.format_time(strategy.closedtrades.exit_time(i),  "yyyy-MM-dd HH:mm", tzStr), str.tostring(strategy.closedtrades.entry_price(i), format.mintick), str.tostring(strategy.closedtrades.exit_price(i),  format.mintick), str.tostring(strategy.closedtrades.profit(i), "#,###.##"), str.tostring((strategy.closedtrades.exit_price(i) / strategy.closedtrades.entry_price(i) - 1.0) * 100.0, "#.##"))
-// ═══ END OF FILE ═══ TW-1M-MACD-(09月19日_18:14) · 全檔共 395 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ TW-1M-MACD-(09月19日_18:23) · 全檔共 396 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
 </script>
 <script>
 (function(){
@@ -521,7 +522,7 @@ if barstate.islastconfirmedhistory and showRpt
   src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
   var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
   var bytes = new TextEncoder().encode(src).length;
-  var name = "TW-1M-MACD-(09月19日_18:14)";
+  var name = "TW-1M-MACD-(09月19日_18:23)";
   document.getElementById('code').value = src;
   document.getElementById('mLines').textContent = lines.length + ' 行';
   document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';
