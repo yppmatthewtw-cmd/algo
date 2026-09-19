@@ -75,7 +75,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <div class="actions">
         <button class="primary" id="copyAll" type="button">複製全部程式碼</button>
         <button class="secondary" id="copyName" type="button">複製腳本名稱</button>
-        <button class="secondary" id="dlFile" type="button">下載 .pine 檔</button>
+        <button class="secondary" id="dlFile" type="button">下載 .pine.txt 檔</button>
         <span class="meta"><span id="mLines">— 行</span><span id="mBytes">— KB</span><span>最後一行 = END OF FILE</span></span>
       </div>
       <div class="status" id="status" role="status" aria-live="polite" style="margin-top:12px"></div>
@@ -798,14 +798,33 @@ if barstate.islastconfirmedhistory and showRpt
   }
   document.getElementById('copyAll').addEventListener('click', function(){ copy(src, '全部程式碼 (' + lines.length + ' 行, ' + bytes + ' bytes)'); });
   document.getElementById('copyName').addEventListener('click', function(){ copy(name, '腳本名稱 ' + name); });
-  // 下載: 直接由本頁產生檔案, 不經過對話附件的預覽視窗
-  document.getElementById('dlFile').addEventListener('click', function(){
-    var fn = name.replace(/:/g, '.') + '.pine';
+  // 下載: 檔名用 .pine.txt (檢視器的下載白名單沒有 .pine); 在 claude.ai 檢視器內必須經由 downloads 能力儲存,
+  //       在一般瀏覽器 (本機開啟) 則直接用 Blob 下載。兩條路都不經過對話附件的預覽視窗。
+  var dlBtn = document.getElementById('dlFile');
+  var dlName = name.replace(/:/g, '.') + '.pine.txt';
+  var inViewer = !!(window.claude && typeof window.claude.use === 'function');
+  function afterSave(){ show(true, '已儲存 ' + dlName + ' (' + bytes + ' bytes) → 用記事本 / VS Code 開啟, Ctrl+A → Ctrl+C, 再貼到 Pine Editor'); }
+  function localDownload(){
     var blob = new Blob([src], {type: 'text/plain;charset=utf-8'});
-    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fn;
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = dlName;
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
-    show(true, '已下載 ' + fn + ' (' + bytes + ' bytes) → 用記事本 / VS Code 開啟, Ctrl+A → Ctrl+C, 再貼到 Pine Editor');
+    afterSave();
+  }
+  if (inViewer) {
+    window.claude.use('downloads').then(function(ns){ if (!ns) dlBtn.hidden = true; });
+  }
+  dlBtn.addEventListener('click', function(){
+    if (!inViewer) { localDownload(); return; }
+    window.claude.use('downloads').then(function(ns){
+      if (!ns) { show(false, '這個檢視器不提供下載, 請改用【複製全部程式碼】。'); return; }
+      ns.save({filename: dlName, data: src}).then(afterSave, function(err){
+        var c = err && err.code;
+        if (c === 'declined') show(false, '已取消下載。要的話再按一次, 或改用【複製全部程式碼】。');
+        else if (c === 'rate_limited') show(false, '上一個下載提示還開著, 請先處理它再按。');
+        else show(false, '這個檢視器無法下載 (' + (c || '未知') + '), 請改用【複製全部程式碼】。');
+      });
+    });
   });
   // 貼上前自我檢查: 比對剪貼簿內容與本頁原始碼
   var sc = document.getElementById('selfcheck'), scs = document.getElementById('scStatus');
@@ -817,7 +836,7 @@ if barstate.islastconfirmedhistory and showRpt
     var tb = new TextEncoder().encode(tt).length, tl = tt.split('\n').length - 1;
     var last = tt.replace(/\n$/, '').split('\n').pop();
     if (tt === src) { scShow(true, '完整 ✓  ' + tl + ' 行 / ' + tb + ' bytes, 與本頁原始碼完全一致, 最後一行是 END OF FILE。可以去 Pine Editor 貼了。'); return; }
-    if (Math.abs(tb - 8192) <= 4) { scShow(false, '被截斷 ✗  剪貼簿只有 ' + tb + ' bytes (剛好 8 KB), ' + tl + ' 行 — 這就是 CE10244 的原因。請改按本頁的【複製全部程式碼】或【下載 .pine 檔】。'); return; }
+    if (Math.abs(tb - 8192) <= 4) { scShow(false, '被截斷 ✗  剪貼簿只有 ' + tb + ' bytes (剛好 8 KB), ' + tl + ' 行 — 這就是 CE10244 的原因。請改按本頁的【複製全部程式碼】或【下載 .pine.txt 檔】。'); return; }
     if (last.indexOf('END OF FILE') < 0) { scShow(false, '不完整 ✗  ' + tl + ' 行 / ' + tb + ' bytes (應為 ' + lines.length + ' 行 / ' + bytes + ' bytes), 最後一行不是 END OF FILE。'); return; }
     scShow(false, '有 END OF FILE 但內容與本頁不完全一致 (' + tl + ' 行 / ' + tb + ' bytes, 應為 ' + lines.length + ' 行 / ' + bytes + ' bytes) — 可能是編輯器自動改了縮排或空白, 建議重新複製。');
   }
