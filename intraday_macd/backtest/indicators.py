@@ -18,7 +18,19 @@ def ema(s: pd.Series, n: int) -> pd.Series:
 
 
 def rma(s: pd.Series, n: int) -> pd.Series:
-    return s.ewm(alpha=1.0 / n, adjust=False, min_periods=n).mean()
+    """Pine ta.rma: 第一個值 = 前 n 個樣本的 SMA, 之後 alpha = 1/n 遞迴。pandas ewm 以第一個樣本起始, 暖身期會不同。"""
+    v = s.to_numpy(dtype=float)
+    out = np.full(len(v), np.nan)
+    valid = np.flatnonzero(~np.isnan(v))
+    if len(valid) >= n:
+        first = valid[0]
+        if first + n <= len(v):
+            out[first + n - 1] = np.nanmean(v[first:first + n])
+            a = 1.0 / n
+            for i in range(first + n, len(v)):
+                x = v[i] if not np.isnan(v[i]) else out[i - 1]
+                out[i] = a * x + (1.0 - a) * out[i - 1]
+    return pd.Series(out, index=s.index)
 
 
 def sma(s: pd.Series, n: int) -> pd.Series:

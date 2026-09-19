@@ -296,7 +296,7 @@ python3 run_backtest.py --demo --days 21 --out ../reports    # 合成資料, 只
 
 ## MACD 柱 + RSI 雙訊號版 (2026-09-20 新增)
 
-`tradingview/TV-1M-macd-hist&rsi_(09月20日; 00.21).pine` — 由 `TW-1M-MACD-Histogram-(09月19日_21:49)` 衍生, 三條規則:
+`tradingview/TV-1M-macd-hist&rsi_(09月20日; 00.53).pine` — 由 `TW-1M-MACD-Histogram-(09月19日_21:49)` 衍生, 三條規則:
 
 | 規則 | 實作 |
 |:---|:---|

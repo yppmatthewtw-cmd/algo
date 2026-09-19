@@ -128,7 +128,7 @@ def build_signals(df: pd.DataFrame, p: dict = None) -> tuple:
     orb_ready = in_sess & (bar_no > p['orb_bars']) & orb_h.notna()
 
     seg_sign, seg_bars, seg_area, seg_depth, seg_depth_a = _segment_stats(hist, c, atr)
-    h_pct = (hist.abs() / c.replace(0, np.nan) * 100.0).fillna(0.0)
+    h_pct = hist.abs() / c.replace(0, np.nan) * 100.0          # 暖身期保留 NaN (rolling_percentile 用 nanpercentile), 不可填 0
     auto_depth = ta.rolling_percentile(h_pct, p['pct_len'], p['depth_pct'])
     d_buy, d_sell = auto_depth * p['k_buy'], auto_depth * p['k_sell']
     a_buy = d_buy * p['mb_buy'] * p['area_fac']
@@ -170,15 +170,23 @@ def build_signals(df: pd.DataFrame, p: dict = None) -> tuple:
     # S14 雙訊號: 模式 1 = S01 但下跌動能門檻調高; 模式 2 = S05; 買需兩者在匹配窗口內同時成立, 賣任一即賣
     d_buy14 = auto_depth * p['s14_k_buy']
     a_buy14 = d_buy14 * p['s14_mb_buy'] * p['area_fac']
-    ok_buy14 = (p['s14_k_buy'] <= 0) | ((seg_bars >= p['s14_mb_buy']) & (seg_depth >= d_buy14) & (seg_area >= a_buy14))
-    m1_buy = ((n_fade_dn == p['fade_buy']) & (seg_sign == -1) & ok_buy14).fillna(False)
+    # Pine 的 Histogram / hist&rsi 版在「更新段統計之前」先拍快照 → 門檻用的是前一根為止的段統計; S14 對齊這個慣例。
+    # (S01 / S11 對齊的是 TW-1M-MULTI 版, 那一版用更新後的統計, 兩者差一根。)
+    sb1 = seg_bars.shift(1).fillna(0).astype(int)
+    sa1 = seg_area.shift(1).fillna(0.0)
+    sd1 = seg_depth.shift(1).fillna(0.0)
+    ss1 = seg_sign.shift(1).fillna(0).astype(int)
+    ok_buy14 = (p['s14_k_buy'] <= 0) | ((sb1 >= p['s14_mb_buy']) & (sd1 >= d_buy14) & (sa1 >= a_buy14))
+    m1_buy = ((n_fade_dn == p['fade_buy']) & (ss1 == -1) & ok_buy14).fillna(False)
+    ok_sell14 = (p['k_sell'] <= 0) | ((sb1 >= p['mb_sell']) & (sd1 >= d_sell) & (sa1 >= a_sell))
+    m1_sell = ((n_fade_up == p['fade_sell']) & (ss1 == 1) & ok_sell14).fillna(False)
     m2_buy = L[4].fillna(False)
     m1_age = _age_since(m1_buy)
     m2_age = _age_since(m2_buy)
     win = p['s14_match_win']
     L[13] = (m1_age < win) & (m2_age < win) & (m1_buy | m2_buy)
     m2_sell = X[4] if p['s14_rsi_sell'] == "neutral" else ta.crossunder(rsi, p['rsi_ob'])
-    X[13] = X[0].fillna(False) | m2_sell.fillna(False)
+    X[13] = m1_sell | m2_sell.fillna(False)
 
     longs = pd.DataFrame({NAMES[i]: L[i].fillna(False).astype(bool) for i in range(14)})
     exits = pd.DataFrame({NAMES[i]: X[i].fillna(False).astype(bool) for i in range(14)})
