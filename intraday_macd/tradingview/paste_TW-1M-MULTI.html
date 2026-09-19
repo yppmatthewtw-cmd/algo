@@ -67,8 +67,8 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 <div class="wrap">
   <header class="hero">
     <div>
-      <div class="eyebrow">TradingView · Pine Script v6 · 1 分鐘 MACD 動能策略 (市場預設 美股, 可切港股)</div>
-      <h1 id="scriptName">TW-1M-MULTI-(09月19日_23:24)</h1>
+      <div class="eyebrow">TradingView · Pine Script v6 · 1 分鐘日內策略 (市場預設 美股, Inputs 可切港股)</div>
+      <h1 id="scriptName">TW-1M-MULTI-(09月19日_23:35)</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從檔案預覽視窗複製會在 8 KB 處被截斷, 這裡不會。</p>
     </div>
     <div class="card">
@@ -84,16 +84,16 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <section class="card">
     <h2>貼上步驟</h2>
     <ol class="steps">
-      <li><span><b>圖表週期切 1 分鐘</b>, 開要測的標的 (例如 NASDAQ:NVDA; 港股請在 ⑤ 把市場預設切成港股)。</span></li>
+      <li><span><b>圖表週期切 1 分鐘</b>, 開要測的標的 (例如 AMEX:SOXL)。交易時段與市場預設在 Inputs 的「時段」群組裡改。</span></li>
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TW-1M-MULTI-(09月19日_23:24)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TW-1M-MULTI-(09月19日_23:35)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
       <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
     </ol>
     <div class="check">
       <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 35 行</span><code>strategy("TW-1M-MULTI-(09月19日_23:24)", shorttitle="TW-1M-MULTI-(09月19日_23:24)", …)</code></div>
+      <div><span class="k">第 38 行</span><code>strategy("TW-1M-MULTI-(09月19日_23:35)", shorttitle="TW-1M-MULTI-(09月19日_23:35)", …)</code></div>
       <div><span class="k">最後一行</span><code id="cLast">—</code></div>
     </div>
   </section>
@@ -108,7 +108,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <tr><td class="m">(09.19;13:02)</td><td class="m">depthPctl = input.float(…</td><td class="m">7171 – 7289 (+ 編輯器頂端多出 13 行 ≈ 900 bytes)</td><td>8192 落在句子中間</td></tr>
     </table>
     </div>
-    <div class="warnbox" style="margin-top:12px">整份檔案約 30.6 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
+    <div class="warnbox" style="margin-top:12px">整份檔案約 31.9 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
   </section>
 
   <section class="card">
@@ -119,9 +119,9 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 
 <script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TW-1M-MULTI-(09月19日_23:24)  ·  多策略同場回測比較 · 1 分鐘 · TradingView Pine Script v6
+//  TW-1M-MULTI-(09月19日_23:35)  ·  多策略同場回測比較 · 1 分鐘 · TradingView Pine Script v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
-//  本檔共 451 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
+//  本檔共 475 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或下載 .pine 後用純文字編輯器開啟 → Ctrl+A → Ctrl+C
 //
 //  【這支腳本做甚麼】
@@ -146,13 +146,16 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 //  【回測期間】① 預設 方式 B 最近 30 天 (一個月); 另有 方式 A 最近 N 個交易日 (預設 21) / 方式 C 指定起迄日期 — 全部在 Inputs 設定
 //   ※ 1 分 K 一個月約 8,200 根, TradingView 依方案只載入 5,000-20,000 根 → 實際回測從圖表最左那根開始, 報表標題顯示實際起始日與實際根數
 //
+//  【只設計給 1 分鐘】強制平倉時段 15:58-16:00 在 1 分 K 上剛好涵蓋收市前最後兩根; 換成 3 分/5 分 K 時這個時段可能落不到任何一根,
+//   會變成留倉過夜 → 若要跑其他週期, 必須先把 ② 的「強制平倉時段」調寬 (例如 5 分 K 用 1545-1600)。報表最後一行會在週期不符時提醒。
+//
 //  【怎麼用】圖表切【SOXL · 1 分鐘】→ Pine Editor 貼上 → 檢查最後一行 → Save (輸入同名) → Add to chart
 //   → 看主圖右上的比較表 → 選出前列策略 → 回 ③ 把它設為下真單 → 看 Strategy Tester 的逐筆明細與權益曲線
 //  【怎麼讀】捕獲率 = 該策略總報酬 ÷ 期內最大昇幅; 獲利因子 < 1 = 賠錢; 交易次數 < 30 的勝率沒有統計意義, 只能當參考
 //  版本戳 TW-1M-MULTI-(MM月DD日_HH:MM), 括號內 = 建置時間 HKT; 檔名以 . 代替 : (Windows 檔名不接受冒號); 本檔零延續行, 每個語句自成一行
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("TW-1M-MULTI-(09月19日_23:24)", shorttitle="TW-1M-MULTI-(09月19日_23:24)", overlay = true, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_labels_count = 500, max_lines_count = 500, max_boxes_count = 500)
+strategy("TW-1M-MULTI-(09月19日_23:35)", shorttitle="TW-1M-MULTI-(09月19日_23:35)", overlay = true, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_labels_count = 500, max_lines_count = 500, max_boxes_count = 500)
 
 // ═══════════════════════════ ① 回測期間 (全部可在 Inputs 改, 預設一個月) ═══════════════════════════
 gBT        = "① 回測期間"
@@ -361,13 +364,17 @@ s06L = ta.crossover(close, bbLo)
 s06X = ta.crossover(close, bbB)
 s07L = ta.crossover(devA, -vwapK)
 s07X = ta.crossover(devA, 0.0)
-s08Lraw = orbReady and not orbUsed and ta.crossover(close, orbH)
+orbXup = ta.crossover(close, orbH)
+orbXdn = ta.crossunder(close, orbL)
+s08Lraw = orbReady and not orbUsed and orbXup
 if s08Lraw
     orbUsed := true
 s08L = s08Lraw
-s08X = orbReady and ta.crossunder(close, orbL)
+s08X = orbReady and orbXdn
 s09L = close > donH and volume > volA * volMult and close > e3
-s09X = ta.crossunder(close, e2) or ta.crossunder(close, donL)
+s09Xa = ta.crossunder(close, e2)
+s09Xb = ta.crossunder(close, donL)
+s09X = s09Xa or s09Xb
 s10L = e1 > e2 and e2 > e3 and stDir == -1 and not (e1[1] > e2[1] and e2[1] > e3[1] and stDir[1] == -1)
 s10X = e1 < e2 or stDir == 1
 s11L = nFadeDn == fadeBuy  and segSign == -1 and okBuyA
@@ -403,14 +410,20 @@ var float maxRise = 0.0
 var float winOpen = na
 var int   winBars = 0
 var int   winDays = 0
+var int   winT0   = na
+var int   lastD   = na
 if inWindow and inSess
-    runMin  := na(runMin) ? low : math.min(runMin, low)
-    maxRise := math.max(maxRise, (high - runMin) / runMin * 100.0)
+    prevMin = na(runMin) ? low : runMin
+    maxRise := math.max(maxRise, (high - prevMin) / prevMin * 100.0)
+    runMin  := math.min(prevMin, low)
     winBars := winBars + 1
     if na(winOpen)
         winOpen := open
-if inWindow and inSess and newSess
-    winDays := winDays + 1
+        winT0   := time
+    dcur = dayofmonth(time, tzStr)
+    if na(lastD) or dcur != lastD
+        winDays := winDays + 1
+        lastD   := dcur
 bhRet = na(winOpen) ? 0.0 : (close / winOpen - 1.0) * 100.0
 
 cost2 = 2.0 * commPct / 100.0
@@ -461,7 +474,7 @@ for i = 0 to NS - 1
     pn = array.get(vPos, i)
     if pn == 1
         array.set(vHold, i, array.get(vHold, i) + 1)
-    mtm = pn == 1 ? array.get(vEq, i) * (close / array.get(vEntry, i) - cost2) : array.get(vEq, i)
+    mtm = pn == 1 ? array.get(vEq, i) * (close / array.get(vEntry, i)) * (1.0 - cost2) : array.get(vEq, i)
     if mtm > array.get(vPeak, i)
         array.set(vPeak, i, mtm)
     ddNow = array.get(vPeak, i) > 0 ? (1.0 - mtm / array.get(vPeak, i)) * 100.0 : 0.0
@@ -501,31 +514,49 @@ bgcolor(showBg and inWindow ? color.new(color.blue, 94) : na, title = "回測期
 posR = rptPos == "左上" ? position.top_left : rptPos == "右下" ? position.bottom_right : rptPos == "左下" ? position.bottom_left : rptPos == "中上" ? position.top_center : position.top_right
 szR  = rptSize == "極細" ? size.tiny : rptSize == "正常" ? size.normal : size.small
 var table rpt = table.new(posR, 11, 22, border_width = 1, border_color = color.new(color.gray, 60))
+var bool rptInit = false
 barMin = timeframe.in_seconds() / 60.0
+bhRow  = NS + 4
+ftRow  = NS + 5
 
 if barstate.islast and showRpt
     hBg = color.new(color.navy, 15)
     tBg = color.new(color.black, 20)
     rBg = color.new(color.black, 55)
     txt = color.white
-    for cf = 1 to 10
-        table.cell(rpt, cf, 0, "", text_size = szR, bgcolor = tBg)
-        table.cell(rpt, cf, 1, "", text_size = szR, bgcolor = tBg)
-        table.cell(rpt, cf, 2, "", text_size = szR, bgcolor = tBg)
-    table.cell(rpt, 0, 0, "多策略同場回測 · " + syminfo.ticker + " · " + timeframe.period + " 分鐘 · 同一窗口 / 同一成本 / 同一時段 / 全部只做多", text_size = szR, text_color = color.yellow, bgcolor = tBg, text_halign = text.align_left)
-    table.merge_cells(rpt, 0, 0, 10, 0)
-    info1 = "窗口 " + (winMode == "最近 N 個交易日" ? str.tostring(tradDays) + " 個交易日" : winMode == "最近 N 天 (日曆)" ? str.tostring(lookbackD) + " 天" : "指定日期") + " · 實際 " + str.tostring(winDays) + " 個交易日 / " + str.tostring(winBars) + " 根 K · 起 " + str.format_time(btStart, "yyyy-MM-dd", tzStr) + " 迄 " + str.format_time(last_bar_time, "yyyy-MM-dd", tzStr)
-    table.cell(rpt, 0, 1, info1, text_size = szR, text_color = txt, bgcolor = tBg, text_halign = text.align_left)
-    table.merge_cells(rpt, 0, 1, 10, 1)
+    // 起始日顯示「窗口內實際第一根 K」而非設定值: 1 分 K 一個月約 8,200 根, TradingView 常載不滿, 實際起點會比設定晚
+    t0str = na(winT0) ? "無資料" : str.format_time(winT0, "yyyy-MM-dd", tzStr)
+    t1str = str.format_time(winMode == "指定日期" ? btEnd : last_bar_time, "yyyy-MM-dd", tzStr)
+    title1 = "多策略同場回測 · " + syminfo.ticker + " · " + timeframe.period + " 分鐘 · 同一窗口 / 同一成本 / 同一時段 / 全部只做多"
+    info1 = "窗口 " + (winMode == "最近 N 個交易日" ? str.tostring(tradDays) + " 個交易日" : winMode == "最近 N 天 (日曆)" ? str.tostring(lookbackD) + " 天" : "指定日期") + " · 實際 " + str.tostring(winDays) + " 個交易日 / " + str.tostring(winBars) + " 根 K · 實際起 " + t0str + " 迄 " + t1str
     info2 = "期內最大昇幅 " + str.tostring(maxRise, "#.##") + "% · 買入持有 " + str.tostring(bhRet, "#.##") + "% · 手續費 " + str.tostring(commPct, "#.##") + "%/邊 · 滑點 " + str.tostring(slipTk) + " tick · 止損 " + (useStop ? str.tostring(stopPct, "#.#") + "%" : "關") + " · 下真單 " + liveName
-    table.cell(rpt, 0, 2, info2, text_size = szR, text_color = color.aqua, bgcolor = tBg, text_halign = text.align_left)
-    table.merge_cells(rpt, 0, 2, 10, 2)
+    warn = winBars == 0 ? "⚠ 窗口內無 K 線 — 檢查 ① 期間與 ② 時段/時區 (本商品交易所時區 " + syminfo.timezone + ")" : not tzMatch ? "⚠ 策略時區 " + tzStr + " 與本商品 " + syminfo.timezone + " 不同 — 請到 ② 改市場預設" : timeframe.period != tfExpect ? "⚠ 本版設計為 " + tfExpect + " 分鐘, 目前圖表為 " + timeframe.period + " — 非 1 分鐘時請把 ② 的強制平倉時段調寬, 否則可能留倉過夜" : syminfo.ticker != tickerHint ? "提示: 本版預設針對 " + tickerHint + ", 目前為 " + syminfo.ticker + " (仍可正常運算)" : "捕獲率 = 該策略總報酬 ÷ 期內最大昇幅; S13 隨機進場是安慰劑基準 — 排在它下面的策略等於沒有優勢"
+    // 合併過的儲存格不可重複合併, 也不可再用 table.cell() 寫入 → 只在第一次建立, 之後用 cell_set_text 更新
+    if not rptInit
+        for cf = 1 to 10
+            table.cell(rpt, cf, 0, "", text_size = szR, bgcolor = tBg)
+            table.cell(rpt, cf, 1, "", text_size = szR, bgcolor = tBg)
+            table.cell(rpt, cf, 2, "", text_size = szR, bgcolor = tBg)
+            table.cell(rpt, cf, ftRow, "", text_size = szR, bgcolor = tBg)
+        table.cell(rpt, 0, 0, title1, text_size = szR, text_color = color.yellow, bgcolor = tBg, text_halign = text.align_left)
+        table.cell(rpt, 0, 1, info1, text_size = szR, text_color = txt, bgcolor = tBg, text_halign = text.align_left)
+        table.cell(rpt, 0, 2, info2, text_size = szR, text_color = color.aqua, bgcolor = tBg, text_halign = text.align_left)
+        table.cell(rpt, 0, ftRow, warn, text_size = szR, text_color = color.orange, bgcolor = tBg, text_halign = text.align_left)
+        table.merge_cells(rpt, 0, 0, 10, 0)
+        table.merge_cells(rpt, 0, 1, 10, 1)
+        table.merge_cells(rpt, 0, 2, 10, 2)
+        table.merge_cells(rpt, 0, ftRow, 10, ftRow)
+        rptInit := true
+    else
+        table.cell_set_text(rpt, 0, 1, info1)
+        table.cell_set_text(rpt, 0, 2, info2)
+        table.cell_set_text(rpt, 0, ftRow, warn)
     string[] hd = array.from("排名", "策略", "交易", "勝率", "總報酬%", "最大回撤%", "獲利因子", "平均每筆%", "最佳/最差%", "平均持倉分", "捕獲率%")
     for c = 0 to 10
         table.cell(rpt, c, 3, array.get(hd, c), text_size = szR, text_color = txt, bgcolor = hBg)
     float[] retA = array.new_float(NS, 0.0)
-    for i = 0 to NS - 1
-        array.set(retA, i, (array.get(vEq, i) - 1.0) * 100.0)
+    for i3 = 0 to NS - 1
+        array.set(retA, i3, (array.get(vEq, i3) - 1.0) * 100.0)
     int[] ord = array.sort_indices(retA, order.descending)
     for rk = 0 to NS - 1
         si  = array.get(ord, rk)
@@ -553,7 +584,6 @@ if barstate.islast and showRpt
         table.cell(rpt, 8, rw, tr > 0 ? str.tostring(array.get(vBest, si), "#.#") + " / " + str.tostring(array.get(vWorst, si), "#.#") : "—", text_size = szR, text_color = txt, bgcolor = bg)
         table.cell(rpt, 9, rw, tr > 0 ? str.tostring(hm, "#.#") : "—", text_size = szR, text_color = txt, bgcolor = bg)
         table.cell(rpt, 10, rw, str.tostring(cap, "#.#") + "%", text_size = szR, text_color = cap >= 30 ? color.lime : txt, bgcolor = bg)
-    bhRow = NS + 4
     table.cell(rpt, 0, bhRow, "—", text_size = szR, text_color = txt, bgcolor = hBg)
     table.cell(rpt, 1, bhRow, "B&H 買入持有 (窗口首根→現在)", text_size = szR, text_color = color.aqua, bgcolor = hBg, text_halign = text.align_left)
     table.cell(rpt, 2, bhRow, "1", text_size = szR, text_color = txt, bgcolor = hBg)
@@ -562,13 +592,7 @@ if barstate.islast and showRpt
     for c2 = 5 to 9
         table.cell(rpt, c2, bhRow, "—", text_size = szR, text_color = txt, bgcolor = hBg)
     table.cell(rpt, 10, bhRow, maxRise > 0 ? str.tostring(bhRet / maxRise * 100.0, "#.#") + "%" : "—", text_size = szR, text_color = txt, bgcolor = hBg)
-    ftRow = NS + 5
-    warn = winBars == 0 ? "⚠ 窗口內無 K 線 — 檢查 ① 期間與 ② 時段/時區 (本商品交易所時區 " + syminfo.timezone + ")" : not tzMatch ? "⚠ 策略時區 " + tzStr + " 與本商品 " + syminfo.timezone + " 不同 — 請到 ② 改市場預設" : timeframe.period != tfExpect ? "⚠ 本版設計為 " + tfExpect + " 分鐘, 目前圖表為 " + timeframe.period : syminfo.ticker != tickerHint ? "提示: 本版預設針對 " + tickerHint + ", 目前為 " + syminfo.ticker + " (仍可正常運算)" : "捕獲率 = 該策略總報酬 ÷ 期內最大昇幅; S13 隨機進場是安慰劑基準 — 排在它下面的策略等於沒有優勢"
-    for cg = 1 to 10
-        table.cell(rpt, cg, ftRow, "", text_size = szR, bgcolor = tBg)
-    table.cell(rpt, 0, ftRow, warn, text_size = szR, text_color = color.orange, bgcolor = tBg, text_halign = text.align_left)
-    table.merge_cells(rpt, 0, ftRow, 10, ftRow)
-// ═══ END OF FILE ═══ TW-1M-MULTI-(09月19日_23:24) · 全檔共 451 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ TW-1M-MULTI-(09月19日_23:35) · 全檔共 475 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
 </script>
 <script>
 (function(){
@@ -577,7 +601,7 @@ if barstate.islast and showRpt
   src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
   var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
   var bytes = new TextEncoder().encode(src).length;
-  var name = "TW-1M-MULTI-(09月19日_23:24)";
+  var name = "TW-1M-MULTI-(09月19日_23:35)";
   document.getElementById('code').value = src;
   document.getElementById('mLines').textContent = lines.length + ' 行';
   document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';

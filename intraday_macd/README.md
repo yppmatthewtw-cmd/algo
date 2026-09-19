@@ -265,8 +265,8 @@ python backtest_cli.py --csv data/HK_07709_daily.csv --auto-th --capital 100000
 | 檔案 | 用途 |
 |:---|:---|
 | `STRATEGY_CATALOG.md` | 全部方法總表 (A 訊號 / B 選股 / C 統計驗證 / D 工具) + 13 策略規格 + 操作手冊 + 報表判讀 |
-| `tradingview/TW-1M-MULTI-(09月19日_23.24).pine` | TradingView 版: 13 個策略同時跑, 主圖右上印出比較表 |
-| `tradingview/paste_TW-1M-MULTI.html` | 貼上工具 (檔案 31 KB, 遠超過預覽視窗的 8 KB 上限, 必須用這個複製) |
+| `tradingview/TW-1M-MULTI-(09月19日_23.35).pine` | TradingView 版: 13 個策略同時跑, 主圖右上印出比較表 |
+| `tradingview/paste_TW-1M-MULTI.html` | 貼上工具 (檔案 32 KB, 遠超過預覽視窗的 8 KB 上限, 必須用這個複製) |
 | `backtest/indicators.py` | 與 Pine 內建函式對齊的指標實作 (RMA / ATR / RSI / MACD / Supertrend / 百分位) |
 | `backtest/strategies.py` | 13 個策略的訊號, 與 Pine 版逐條對應 |
 | `backtest/engine.py` | 逐根回測引擎: 收盤確認 → 下一根開盤成交, 含手續費滑點與固定止損 |
