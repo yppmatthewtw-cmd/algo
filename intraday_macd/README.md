@@ -12,8 +12,9 @@ intraday_macd/
 ├── backtest_cli.py             ← 任何 1 分鐘 CSV 直接回測
 ├── make_sample_data.py         ← 合成數據 (只用來自測引擎, 不是真實 07709)
 ├── tradingview/
-│   ├── TW-1D-MACD-(MM.DD;HH.MM).pine       ← TradingView 【日線版】  本金100K / 一年 / 交易報表
-│   ├── TW-1M-MACD-(MM.DD;HH.MM).pine     ← TradingView 【1分鐘版】 本金100K / 30天 / 盤中時段+收市強平
+│   ├── TW-1D-MACD-(MM.DD;HH.MM).pine     ← TradingView 【日線版】      本金100K / 一年 / 交易報表
+│   ├── TW-1M-MACD-(MM.DD;HH.MM).pine     ← TradingView 【1分鐘·港股】  本金100K / 30天 / 盤中時段+收市強平
+│   ├── TW-US-1M-MACD-(MM.DD;HH.MM).pine  ← TradingView 【1分鐘·美股】  同上, 市場預設=美股
 │   └── macd_momentum_1m.pine             ← 舊的 1 分鐘版 (已被 TW-1M-MACD 取代, 保留作對照)
 ├── futu_niuniu/
 │   ├── futu_fetch_and_backtest.py        ← 牛牛 OpenAPI 抓 1 分 K → 回測
@@ -121,9 +122,16 @@ python webull_fetch_and_backtest.py --sweep
 
 標記畫在**成交 K** 而非訊號 K,比 MACD 交叉晚一根——這是設計如此,因為訂單在下一根開盤才成交,與 Strategy Tester 的 List of Trades 對得上。
 
-## 兩個 TradingView 版本的差異
+## 三個 TradingView 版本
 
-| | `TW-1D-MACD` 日線版 | `TW-1M-MACD` 1分鐘版 |
+| | `TW-1D-MACD` | `TW-1M-MACD` | `TW-US-1M-MACD` |
+|---|---|---|---|
+| 週期 / 市場 | 日線 · 通用 | 1 分鐘 · **港股**預設 | 1 分鐘 · **美股**預設 |
+| 市場預設 | 不適用(日線繞過時段) | 港股 09:30–12:00 / 13:00–16:00 | 美股 09:30–16:00(無午休) |
+
+後兩者是**同一份程式**,只差在 ⑤ 盤中時段 的「市場預設」預設值不同;任何一份都可以用下拉切到另一個市場。
+
+| | `TW-1D-MACD` 日線版 | 1 分鐘版(兩者共通) |
 |---|---|---|
 | 圖表週期 | D | 1 分鐘 |
 | 回測期間預設 | 365 天 | **30 天**(1分K載入根數受方案限制) |
@@ -137,7 +145,7 @@ python webull_fetch_and_backtest.py --sweep
 
 ### ⚠ 1 分鐘版換市場必做一步
 
-`TW-1M-MACD` 的 **Inputs → ⑤ 盤中時段 → 市場預設** 要跟圖表商品相符:
+1 分鐘版的 **Inputs → ⑤ 盤中時段 → 市場預設** 要跟圖表商品相符:
 
 | 市場 | 設定 | 交易時段 |
 |---|---|---|
@@ -148,6 +156,8 @@ python webull_fetch_and_backtest.py --sweep
 **設錯的後果是靜默的**:例如用港股設定跑 NVDA,美股的 K 線落在香港時間 21:30–04:00,跟 09:30–16:00 完全沒有重疊 → 每一根 K 都被判定為「非交易時段」→ 訊號照常產生但**一張單都不會成交,交易次數 0**。
 
 報表會直接指出:「在市場時間」顯示紅色 0%、右上角顯示「⚠ 時段不符!」、並列出策略用的時區與該商品交易所時區的落差。
+
+**時區改對但時段字串沒改也會出事**:用美股時區配港股的午休時段跑美股,紐約時間 12:00–13:00(正常交易時段)會被當成午休砍掉。合成數據實測:8,190 根 K 只剩 6,930 根可交易(-15%),交易由 79 筆掉到 67 筆。所以要整組切換,不要只改時區。
 
 ## 日線版與 1 分鐘版的三個差異(重要)
 
