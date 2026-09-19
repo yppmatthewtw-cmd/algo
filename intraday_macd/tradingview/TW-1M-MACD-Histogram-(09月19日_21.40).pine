@@ -1,11 +1,12 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TW-1M-MACD-Histogram-(09月19日_21:29)  ·  MACD 柱動能減弱策略 · 1 分鐘回測版 (市場預設 美股, ⑤ 可一鍵切港股) · TradingView Pine Script v6
+//  TW-1M-MACD-Histogram-(09月19日_21:40)  ·  MACD 柱動能減弱策略 · 1 分鐘回測版 (市場預設 美股, ⑤ 可一鍵切港股) · TradingView Pine Script v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
-//  本檔共 593 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
+//  本檔共 595 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或下載 .pine 後用純文字編輯器開啟 → Ctrl+A → Ctrl+C
 //
 //  【本版關鍵參數 — 目標: 在 2 個交易日窗口內, 盡量捕獲期內最大昇幅】
-//   ★ 回測窗口 = 最近 N 個交易日, N=2 (①)      ← 由最後一根 K 的那天往回數 2 個交易日 (跳過週六日); 報表顯示期內最大昇幅 / 買入持有 / 策略捕獲率
+//   ★ 回測期間全部在 Inputs ① 設定, 不用改程式碼: 方式 A 最近 N 個交易日 (預設 2, 跳週六日) / 方式 B 最近 N 天 (日曆) / 方式 C 指定開始與結束日期
+//       另有「策略設計的 K 線週期」欄 (預設 1 分鐘), 圖表週期與它不同時報表會警告; K 線週期本身在圖表上方切換, 策略永遠用圖表週期運算
 //   ★ 觸發方式 = 動能減弱 N 根 (④)              ← 買: 負柱段連續 N 根「淺紅」(柱縮短) 完成; 賣: 正柱段連續 N 根「淺綠」完成; 可切回舊版 DIF/DEA 交叉
 //   ★ 「是否儲夠下跌 / 上昇動能」= 買賣各自的變數 (④):
 //       買: fadeBuy (淺紅 N, 預設 2) · kBuy (下跌動能門檻倍數, 0=不要求 / 1=自動門檻 / 越大越嚴, 預設 1) · mbBuy (負柱段最少根數, 預設 3)
@@ -30,15 +31,16 @@
 //  版本戳 TW-1M-MACD-Histogram-(MM月DD日_HH:MM), 括號內 = 建置時間 HKT; 檔名以 . 代替 : (Windows 檔名不接受冒號); 本檔零延續行, 每個語句自成一行
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("TW-1M-MACD-Histogram-(09月19日_21:29)", shorttitle="TW-1M-MACD-Histogram-(09月19日_21:29)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
+strategy("TW-1M-MACD-Histogram-(09月19日_21:40)", shorttitle="TW-1M-MACD-Histogram-(09月19日_21:40)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
 
 // ─────────────────────────── ① 回測期間 (預設最近 30 天) ───────────────────────────
-gBT        = "① 回測期間"
-winMode    = input.string("最近 N 個交易日", "回測期間方式", options = ["最近 N 個交易日", "最近 N 天 (日曆)", "指定日期"], group = gBT, tooltip = "最近 N 個交易日 (本版預設 N=2): 由圖表最後一根 K 所在的那一天往回數 N 個交易日 (跳過週六日, 不含假期表), 從該日 00:00 (交易所時區) 起算到最後一根。", display = display.none)
-tradDays   = input.int(2, "最近 N 個交易日 (本版 2)", minval = 1, maxval = 60, group = gBT, display = display.none)
-lookbackD  = input.int(30, "最近 N 天 (日曆)", minval = 1, group = gBT, tooltip = "1分K可載入的根數受 TradingView 方案限制 (免費約5000根 ≈ 15個港股交易日)。設得比圖表能載入的更長, 只會回測到圖表最左邊那一根為止。", display = display.none)
-startIn    = input.time(timestamp("01 Jan 2025 00:00 +0800"), "開始日期", group = gBT, display = display.none)
-endIn      = input.time(timestamp("31 Dec 2025 23:59 +0800"), "結束日期", group = gBT, display = display.none)
+gBT        = "① 回測期間 — 全部在此設定, 不用改程式碼"
+winMode    = input.string("最近 N 個交易日", "回測期間方式 (三選一)", options = ["最近 N 個交易日", "最近 N 天 (日曆)", "指定日期"], group = gBT, tooltip = "最近 N 個交易日 (本版預設 N=2): 由圖表最後一根 K 所在的那一天往回數 N 個交易日 (跳過週六日, 不含假期表), 從該日 00:00 (交易所時區) 起算到最後一根。", display = display.none)
+tradDays   = input.int(2, "方式 A · 最近 N 個交易日 (由圖表最後一根 K 往回數, 跳週六日)", minval = 1, maxval = 250, group = gBT, display = display.none)
+lookbackD  = input.int(30, "方式 B · 最近 N 天 (日曆, 由現在時間往回)", minval = 1, group = gBT, tooltip = "1分K可載入的根數受 TradingView 方案限制 (免費約5000根 ≈ 15個港股交易日)。設得比圖表能載入的更長, 只會回測到圖表最左邊那一根為止。", display = display.none)
+startIn    = input.time(timestamp("15 Sep 2026 00:00 -0400"), "方式 C · 開始日期 (含)", group = gBT, tooltip = "選「指定日期」時生效。點日期欄可直接在日曆挑; 時間以圖表交易所時區解讀。", display = display.none)
+endIn      = input.time(timestamp("19 Sep 2026 23:59 -0400"), "方式 C · 結束日期 (含)", group = gBT, display = display.none)
+tfExpect   = input.string("1", "策略設計的 K 線週期 (圖表週期與此不同時報表會警告; 換週期請在圖表上方切)", options = ["1", "2", "3", "5", "10", "15", "30", "60", "D"], group = gBT, display = display.none)
 tzX        = syminfo.timezone
 lastDay0   = timestamp(tzX, year(last_bar_time, tzX), month(last_bar_time, tzX), dayofmonth(last_bar_time, tzX), 0, 0, 0)   // 最後一根 K 當天 00:00 (交易所時區)
 var int tdStart = na
@@ -356,7 +358,7 @@ if inWindow and inSess
     barsTot += 1
     if strategy.position_size != 0
         barsIn += 1
-tfOK = timeframe.period == "1"   // 本策略為 1 分鐘設計; 貼到其他週期會在報表警告
+tfOK = timeframe.period == tfExpect   // 圖表週期與 ① 設定的設計週期不同時, 報表警告 (策略永遠以圖表週期的 K 運算)
 
 // ─────────────────────────── ⑫ 繪圖 ───────────────────────────
 plot(hist, "Histogram", style = plot.style_columns, color = hist >= 0 ? (hist >= hist[1] ? color.new(color.green, 0) : color.new(color.green, 45)) : (hist <= hist[1] ? color.new(color.red, 0)   : color.new(color.red, 45)), display = display.pane + display.price_scale)
@@ -532,7 +534,7 @@ if barstate.islast and showRpt
     table.cell(rpt, 3, 4, str.tostring(tpd, "#.#") + " 次" + (targetTPD > 0 ? " (目標 " + str.tostring(targetTPD, "#") + ")" : ""), text_size = sizeV, text_color = tpd > 12 ? color.red : color.gray)
     table.cell(rpt, 4, 4, "在市場時間", text_size = sizeV, bgcolor = hdBg)
     table.cell(rpt, 5, 4, str.tostring(barsIn * 100.0 / math.max(1, barsTot), "#.#") + "%", text_size = sizeV, text_color = barsTot == 0 ? color.red : color.gray)
-    warnTxt = not tfOK ? "⚠ 非1分鐘週期" : barsTot == 0 ? "⚠ 時段不符!" : not tzMatch ? "⚠ 時區可疑" : "週期/時段 ✓"
+    warnTxt = not tfOK ? "⚠ 圖表週期 " + timeframe.period + " ≠ 設定 " + tfExpect : barsTot == 0 ? "⚠ 時段不符!" : not tzMatch ? "⚠ 時區可疑" : "週期/時段 ✓"
     warnCol = (not tfOK or barsTot == 0) ? color.red : not tzMatch ? color.orange : color.green
     table.cell(rpt, 6, 4, warnTxt, text_size = sizeV, text_color = warnCol)
     // ── 捕獲率列: 策略報酬 vs 期內最大昇幅 ──
@@ -590,4 +592,4 @@ if barstate.islastconfirmedhistory and showRpt
     if strategy.closedtrades > 0
         for i = 0 to strategy.closedtrades - 1
             log.info("#{0} {1} → {2} | {3} → {4} | P&L {5} ({6}%)", i + 1, str.format_time(strategy.closedtrades.entry_time(i), "yyyy-MM-dd HH:mm", tzStr), str.format_time(strategy.closedtrades.exit_time(i),  "yyyy-MM-dd HH:mm", tzStr), str.tostring(strategy.closedtrades.entry_price(i), format.mintick), str.tostring(strategy.closedtrades.exit_price(i),  format.mintick), str.tostring(strategy.closedtrades.profit(i), "#,###.##"), str.tostring((strategy.closedtrades.exit_price(i) / strategy.closedtrades.entry_price(i) - 1.0) * 100.0, "#.##"))
-// ═══ END OF FILE ═══ TW-1M-MACD-Histogram-(09月19日_21:29) · 全檔共 593 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ TW-1M-MACD-Histogram-(09月19日_21:40) · 全檔共 595 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
