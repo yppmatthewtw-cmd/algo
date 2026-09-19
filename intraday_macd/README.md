@@ -13,7 +13,7 @@ intraday_macd/
 ├── make_sample_data.py         ← 合成數據 (只用來自測引擎, 不是真實 07709)
 ├── tradingview/
 │   ├── macd_momentum_1m.pine             ← TradingView 1 分鐘 intraday 版
-│   └── TW-D-MACD-(MM.DD;HH.MM).pine      ← TradingView 【日線版】本金100K / 一年 / 交易報表 (檔名帶版本戳)
+│   └── W-D-MACD-(MM.DD;HH.MM).pine       ← TradingView 【日線版】本金100K / 一年 / 交易報表 (檔名帶版本戳)
 ├── futu_niuniu/
 │   ├── futu_fetch_and_backtest.py        ← 牛牛 OpenAPI 抓 1 分 K → 回測
 │   ├── futu_live_trader.py               ← 牛牛 模擬盤/實盤 執行器
@@ -83,7 +83,7 @@ python webull_fetch_and_backtest.py --sweep
 
 # 日線版 (TradingView) — 本金 100K · 一年 · 交易報表
 
-檔案 `tradingview/TW-D-MACD-(MM.DD;HH.MM).pine`,已按要求預設好。檔名與 `shorttitle` 都帶建置時間戳(HKT),方便在 TradingView 的 script 清單分辨版本;在 Pine Editor 按 Save 時輸入同一個名即可。
+檔案 `tradingview/W-D-MACD-(MM.DD;HH.MM).pine`,已按要求預設好。**`strategy()` 標題、`shorttitle`、檔名三者一致**,都帶建置時間戳(HKT),方便在 TradingView 的 script 清單分辨版本;在 Pine Editor 按 Save 時輸入同一個名即可。
 
 ## 開始用
 
