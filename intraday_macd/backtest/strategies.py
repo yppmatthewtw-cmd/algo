@@ -14,7 +14,7 @@ NAMES = [
     "S01 MACD柱動能減弱", "S02 MACD DIF/DEA交叉", "S03 EMA 9/21 交叉", "S04 Supertrend 轉向",
     "S05 RSI 超賣回歸", "S06 布林下軌回歸", "S07 VWAP 偏離回歸", "S08 開盤區間突破",
     "S09 動能突破+量能", "S10 三EMA+ST共振", "S11 ATR標準化MACD", "S12 MACD柱背離",
-    "S13 隨機進場(安慰劑)",
+    "S13 隨機進場(安慰劑)", "S14 MACD柱+RSI 雙訊號",
 ]
 
 DEFAULTS = dict(
@@ -23,6 +23,9 @@ DEFAULTS = dict(
     ema_f=9, ema_m=21, ema_s=50, st_atr=10, st_mult=3.0,
     rsi_len=14, rsi_buy=30.0, rsi_exit=55.0, bb_len=20, bb_mult=2.0, vwap_k=1.5,
     orb_bars=15, brk_len=20, vol_mult=1.5, div_len=20, p_rand=0.004, hold_bars=30,
+    # S14: 模式 1 用調高後的下跌動能門檻 (k 1.5 / 最少根數 4), 模式 2 = S05, 匹配窗口 5 根
+    s14_k_buy=1.5, s14_mb_buy=4, s14_match_win=5, s14_rsi_sell="neutral",  # "neutral" = RSI 上穿 55; "overbought" = RSI 下穿 70
+    rsi_ob=70.0,
 )
 
 
@@ -70,6 +73,17 @@ def _run_counter(flag: pd.Series) -> pd.Series:
     for i, v in enumerate(f):
         run = run + 1 if v else 0
         out[i] = run
+    return pd.Series(out, index=flag.index)
+
+
+def _age_since(flag: pd.Series) -> pd.Series:
+    """距上一次成立過了幾根 (成立那根 = 0; 從未成立 = 999), 與 Pine 版的 m1Age / m2Age 相同。"""
+    f = flag.fillna(False).to_numpy()
+    out = np.full(len(f), 999, dtype=int)
+    age = 999
+    for i, v in enumerate(f):
+        age = 0 if v else min(age + 1, 999)
+        out[i] = age
     return pd.Series(out, index=flag.index)
 
 
@@ -153,6 +167,19 @@ def build_signals(df: pd.DataFrame, p: dict = None) -> tuple:
     L[11], X[11] = (l <= p_low) & (hist > h_low), (h >= p_high) & (hist < h_high)
     L[12], X[12] = rnd < p['p_rand'], pd.Series(False, index=c.index)
 
-    longs = pd.DataFrame({NAMES[i]: L[i].fillna(False).astype(bool) for i in range(13)})
-    exits = pd.DataFrame({NAMES[i]: X[i].fillna(False).astype(bool) for i in range(13)})
+    # S14 雙訊號: 模式 1 = S01 但下跌動能門檻調高; 模式 2 = S05; 買需兩者在匹配窗口內同時成立, 賣任一即賣
+    d_buy14 = auto_depth * p['s14_k_buy']
+    a_buy14 = d_buy14 * p['s14_mb_buy'] * p['area_fac']
+    ok_buy14 = (p['s14_k_buy'] <= 0) | ((seg_bars >= p['s14_mb_buy']) & (seg_depth >= d_buy14) & (seg_area >= a_buy14))
+    m1_buy = ((n_fade_dn == p['fade_buy']) & (seg_sign == -1) & ok_buy14).fillna(False)
+    m2_buy = L[4].fillna(False)
+    m1_age = _age_since(m1_buy)
+    m2_age = _age_since(m2_buy)
+    win = p['s14_match_win']
+    L[13] = (m1_age < win) & (m2_age < win) & (m1_buy | m2_buy)
+    m2_sell = X[4] if p['s14_rsi_sell'] == "neutral" else ta.crossunder(rsi, p['rsi_ob'])
+    X[13] = X[0].fillna(False) | m2_sell.fillna(False)
+
+    longs = pd.DataFrame({NAMES[i]: L[i].fillna(False).astype(bool) for i in range(14)})
+    exits = pd.DataFrame({NAMES[i]: X[i].fillna(False).astype(bool) for i in range(14)})
     return longs, exits
