@@ -68,7 +68,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <header class="hero">
     <div>
       <div class="eyebrow">TradingView · Pine Script v6 · 1 分鐘 MACD 動能策略 (市場預設 美股, 可切港股)</div>
-      <h1 id="scriptName">TW-1M-MACD-Histogram-(09月19日_21:17)</h1>
+      <h1 id="scriptName">TW-1M-MACD-Histogram-(09月19日_21:29)</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從檔案預覽視窗複製會在 8 KB 處被截斷, 這裡不會。</p>
     </div>
     <div class="card">
@@ -88,12 +88,12 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TW-1M-MACD-Histogram-(09月19日_21:17)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TW-1M-MACD-Histogram-(09月19日_21:29)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
       <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
     </ol>
     <div class="check">
       <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 33 行</span><code>strategy("TW-1M-MACD-Histogram-(09月19日_21:17)", shorttitle="TW-1M-MACD-Histogram-(09月19日_21:17)", …)</code></div>
+      <div><span class="k">第 33 行</span><code>strategy("TW-1M-MACD-Histogram-(09月19日_21:29)", shorttitle="TW-1M-MACD-Histogram-(09月19日_21:29)", …)</code></div>
       <div><span class="k">最後一行</span><code id="cLast">—</code></div>
     </div>
   </section>
@@ -108,7 +108,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <tr><td class="m">(09.19;13:02)</td><td class="m">depthPctl = input.float(…</td><td class="m">7171 – 7289 (+ 編輯器頂端多出 13 行 ≈ 900 bytes)</td><td>8192 落在句子中間</td></tr>
     </table>
     </div>
-    <div class="warnbox" style="margin-top:12px">整份檔案約 49.7 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
+    <div class="warnbox" style="margin-top:12px">整份檔案約 50.9 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
   </section>
 
   <section class="card">
@@ -119,9 +119,9 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 
 <script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TW-1M-MACD-Histogram-(09月19日_21:17)  ·  MACD 柱動能減弱策略 · 1 分鐘回測版 (市場預設 美股, ⑤ 可一鍵切港股) · TradingView Pine Script v6
+//  TW-1M-MACD-Histogram-(09月19日_21:29)  ·  MACD 柱動能減弱策略 · 1 分鐘回測版 (市場預設 美股, ⑤ 可一鍵切港股) · TradingView Pine Script v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
-//  本檔共 579 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
+//  本檔共 593 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或下載 .pine 後用純文字編輯器開啟 → Ctrl+A → Ctrl+C
 //
 //  【本版關鍵參數 — 目標: 在 2 個交易日窗口內, 盡量捕獲期內最大昇幅】
@@ -132,9 +132,9 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 //       賣: fadeSell (淺綠 N, 預設 2) · kSell (上昇動能門檻倍數, 預設 1) · mbSell (正柱段最少根數, 預設 3)
 //       門檻 = 深度 ≥ 自動深度基準 × k, 面積 ≥ 深度門檻 × 根數 × 面積係數; 自動深度基準 = 近 250 根 |hist|/close 第 50 百分位 × 逐日校準係數
 //   ★ 參數掃描表 (⑨, 主圖左下)                   ← 同窗口對 81 組 (買N∈1-3 × 買k∈0/1/2 × 賣N∈1-3 × 賣k∈0/1/2) 各跑虛擬回測,
-//       同樣下一根開盤成交 / 時段 / 收市強平 / 手續費滑點, 按報酬與「捕獲 %」排名, 橙底 = 現行設定 → 把最佳組合填回 ④ 即套用下單
+//       同樣下一根開盤成交 / 時段 / 收市強平 / 手續費滑點 / ⑥ 固定止損, 按報酬與「捕獲 %」排名, 橙底 = 現行設定 → 把最佳組合填回 ④ 即套用下單
 //   ★ margin_long = 0, margin_short = 0          ← Pine v6 預設 margin 100% 會令「全部本金」下單被拒 (0 交易)
-//   ★ 自動校準 目標每日交易次數 = 5 (④)          ← 只在窗口 ≥ 3 個交易日時才有作用; 2 日窗口下基本維持 k=1
+//   ★ 自動校準 (④b) 本版預設關閉 (目標 = 0)   ← 2 日窗口用不到; 關閉時 k=1, 真實策略與掃描表用同一組門檻, 填回組合可完全重現掃描數字
 //
 //  規則: 買 = 負動能段「儲夠」後, 跌勢動能減低 (連續 N 根淺紅柱完成, 收盤確認) → 下一根開盤買; 賣 = 正動能段儲夠後, 升勢動能減低 (連續 N 根淺綠柱完成) → 下一根開盤賣
 //        儲夠 = 同號柱連續根數 ≥ minBars 且 面積 Σ|hist|/close% ≥ minArea 且 深度 max|hist|/close% ≥ minDepth (④ reqMom 可關); 長倉 only
@@ -150,7 +150,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 //  版本戳 TW-1M-MACD-Histogram-(MM月DD日_HH:MM), 括號內 = 建置時間 HKT; 檔名以 . 代替 : (Windows 檔名不接受冒號); 本檔零延續行, 每個語句自成一行
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("TW-1M-MACD-Histogram-(09月19日_21:17)", shorttitle="TW-1M-MACD-Histogram-(09月19日_21:17)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
+strategy("TW-1M-MACD-Histogram-(09月19日_21:29)", shorttitle="TW-1M-MACD-Histogram-(09月19日_21:29)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
 
 // ─────────────────────────── ① 回測期間 (預設最近 30 天) ───────────────────────────
 gBT        = "① 回測期間"
@@ -215,7 +215,7 @@ minAreaIn  = input.float(1.20, "手動: 面積門檻 Σ|hist|/close (%·根)", s
 autoDepth = ta.percentile_linear_interpolation(math.abs(histPct), pctLen, depthPctl)
 
 // ─── ④b 自動校準: 以「目標每日交易次數」逐日調整門檻係數 k (只用已完成的交易日結算, 無前視) ───
-targetTPD = input.float(5, "自動校準: 目標每日交易次數 (0 = 關閉)", minval = 0, step = 1, group = gTH, tooltip = "每個新交易日開始時結算「昨日」成交筆數 (以 0.5 權重平滑): 低於目標×0.8 → 門檻係數 k 降一級; 高於目標×1.3 → k 升一級。k 乘在自動深度門檻上, 面積門檻隨之連動。手動模式不受影響。", display = display.none)
+targetTPD = input.float(0, "自動校準: 目標每日交易次數 (0 = 關閉; 本版預設關閉, 2 日窗口用不到)", minval = 0, step = 1, group = gTH, tooltip = "每個新交易日開始時結算「昨日」成交筆數 (以 0.5 權重平滑): 低於目標×0.8 → 門檻係數 k 降一級; 高於目標×1.3 → k 升一級。k 乘在自動深度門檻上, 面積門檻隨之連動。手動模式不受影響。", display = display.none)
 calStep   = input.float(20, "自動校準: 每級調整幅度 %", minval = 5, maxval = 50, step = 5, group = gTH, display = display.none)
 var float kEff       = 1.0     // 現行門檻係數
 var int   ctDayStart = 0       // 今日開始時的累計成交筆數
@@ -338,7 +338,7 @@ if not inWindow and strategy.position_size != 0
 
 // ─────────────────────────── ⑮ 參數掃描: 同一窗口 81 組 (買N×買k×賣N×賣k) 虛擬回測, 找最能捕獲期內最大昇幅的組合 ───────────────────────────
 gSW       = "⑨ 參數掃描"
-showSweep = input.bool(true, "顯示參數掃描表 (主圖)", group = gSW, tooltip = "在同一回測窗口內, 對 81 組「買 N∈{1,2,3} × 買 k∈{0,1,2} × 賣 N∈{1,2,3} × 賣 k∈{0,1,2}」各跑一套虛擬回測 (同樣下一根開盤成交、同樣時段/收市強平、同樣手續費滑點), 以最後一根收盤 mark-to-market 排名。k 以 ④ 的自動深度基準為 1 倍; 最少根數與面積係數用 ④ 現行值。看完把最佳組合填回 ④ 的 買/賣 N 與 k 即可。", display = display.none)
+showSweep = input.bool(true, "顯示參數掃描表 (主圖)", group = gSW, tooltip = "在同一回測窗口內, 對 81 組「買 N∈{1,2,3} × 買 k∈{0,1,2} × 賣 N∈{1,2,3} × 賣 k∈{0,1,2}」各跑一套虛擬回測 (同樣下一根開盤成交、同樣時段/收市強平、同樣手續費滑點), 以最後一根收盤 mark-to-market 排名。k 以 ④ 的自動深度基準為 1 倍; 最少根數與面積係數用 ④ 現行值。看完把最佳組合填回 ④ 的 買/賣 N 與 k 即可。※ 掃描的深度基準不含 ④b 校準 k (本版校準預設關閉, 兩者一致); 若開啟校準, 橙底列會與真實策略略有出入。掃描有模擬 ⑥ 固定止損。", display = display.none)
 swpPos    = input.string("左下", "掃描表位置 (主圖)", options = ["右下", "右上", "左下", "左上"], group = gSW, display = display.none)
 swpRows   = input.int(12, "列出前幾名", minval = 3, maxval = 30, group = gSW, display = display.none)
 commPct   = input.float(0.03, "掃描用 · 單邊手續費 % (需與 strategy() 的 commission_value 一致)", minval = 0, step = 0.01, group = gSW, display = display.none)
@@ -360,6 +360,7 @@ if inWindow and inSess
     maxRise := math.max(maxRise, (high - runMin) / runMin * 100.0)
     if na(winOpen)
         winOpen := open
+swBase = thMode == "手動" ? minDepthIn : autoDepth    // 掃描用深度基準: 不含 ④b 校準 k, 令 81 組結果與現行輸入無關 (校準關閉時 = baseDepth)
 if showSweep
     for v1 = 0 to NV - 1
         iNb  = v1 / 27
@@ -386,10 +387,23 @@ if showSweep
                 array.set(vWin, v1, array.get(vWin, v1) + 1)
             array.set(vPos, v1, 0)
             array.set(vPend, v1, 0)
+        // 1b) 固定止損 (與 strategy.exit 同步: 成交當根收盤才掛, 下一根起生效; 開盤跳空低於止損則以開盤成交)
+        if useStop and pendV != 1 and array.get(vPos, v1) == 1
+            epS  = array.get(vEntry, v1)
+            stpS = epS * (1.0 - stopPct / 100.0)
+            if low <= stpS
+                xpS = math.min(open, stpS) - slipTk * syminfo.mintick
+                rS  = xpS / epS - 1.0 - 2.0 * commPct / 100.0
+                array.set(vEq, v1, array.get(vEq, v1) * (1.0 + rS))
+                array.set(vTr, v1, array.get(vTr, v1) + 1)
+                if rS > 0
+                    array.set(vWin, v1, array.get(vWin, v1) + 1)
+                array.set(vPos, v1, 0)
+                array.set(vPend, v1, 0)
         // 2) 本根收盤評估訊號 → 掛到下一根開盤
         posV1 = array.get(vPos, v1)
-        dB   = baseDepth * kb
-        dS   = baseDepth * ks
+        dB   = swBase * kb
+        dS   = swBase * ks
         aB   = thMode == "手動" ? minAreaIn * kb : dB * mbBuy  * areaFactor
         aS   = thMode == "手動" ? minAreaIn * ks : dS * mbSell * areaFactor
         okB  = kb <= 0 or (segBars >= mbBuy  and segDepth >= dB and segArea >= aB)
@@ -696,7 +710,7 @@ if barstate.islastconfirmedhistory and showRpt
     if strategy.closedtrades > 0
         for i = 0 to strategy.closedtrades - 1
             log.info("#{0} {1} → {2} | {3} → {4} | P&L {5} ({6}%)", i + 1, str.format_time(strategy.closedtrades.entry_time(i), "yyyy-MM-dd HH:mm", tzStr), str.format_time(strategy.closedtrades.exit_time(i),  "yyyy-MM-dd HH:mm", tzStr), str.tostring(strategy.closedtrades.entry_price(i), format.mintick), str.tostring(strategy.closedtrades.exit_price(i),  format.mintick), str.tostring(strategy.closedtrades.profit(i), "#,###.##"), str.tostring((strategy.closedtrades.exit_price(i) / strategy.closedtrades.entry_price(i) - 1.0) * 100.0, "#.##"))
-// ═══ END OF FILE ═══ TW-1M-MACD-Histogram-(09月19日_21:17) · 全檔共 579 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ TW-1M-MACD-Histogram-(09月19日_21:29) · 全檔共 593 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
 </script>
 <script>
 (function(){
@@ -705,7 +719,7 @@ if barstate.islastconfirmedhistory and showRpt
   src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
   var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
   var bytes = new TextEncoder().encode(src).length;
-  var name = "TW-1M-MACD-Histogram-(09月19日_21:17)";
+  var name = "TW-1M-MACD-Histogram-(09月19日_21:29)";
   document.getElementById('code').value = src;
   document.getElementById('mLines').textContent = lines.length + ' 行';
   document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';
