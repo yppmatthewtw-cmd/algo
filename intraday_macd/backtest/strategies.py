@@ -14,7 +14,7 @@ NAMES = [
     "S01 MACD柱動能減弱", "S02 MACD DIF/DEA交叉", "S03 EMA 9/21 交叉", "S04 Supertrend 轉向",
     "S05 RSI 超賣回歸", "S06 布林下軌回歸", "S07 VWAP 偏離回歸", "S08 開盤區間突破",
     "S09 動能突破+量能", "S10 三EMA+ST共振", "S11 ATR標準化MACD", "S12 MACD柱背離",
-    "S13 隨機進場(安慰劑)", "S14 MACD柱+RSI 雙訊號", "S15 MACD柱+金叉+RSI 三訊號", "S16 四模式 (三訊號+EMA9向上)",
+    "S13 隨機進場(安慰劑)", "S14 柱到界+RSI區 雙模式", "S15 柱到界+RSI區+金叉 三模式", "S16 四模式 (柱到界+RSI區+金叉+EMA9向上)",
 ]
 
 DEFAULTS = dict(
@@ -23,11 +23,14 @@ DEFAULTS = dict(
     ema_f=9, ema_m=21, ema_s=50, st_atr=10, st_mult=3.0,
     rsi_len=14, rsi_buy=30.0, rsi_exit=55.0, bb_len=20, bb_mult=2.0, vwap_k=1.5,
     orb_bars=15, brk_len=20, vol_mult=1.5, div_len=20, p_rand=0.004, hold_bars=30,
-    # S14: 模式 1 用調高後的下跌動能門檻 (k 1.5 / 最少根數 4), 匹配窗口 5 根
-    s14_k_buy=1.5, s14_mb_buy=4, s14_match_win=5,
-    # 模式 2 (S14 / S15 / S16 共用) = cRSI v4 轉勢 + 動態上下界, 與 TV-1M-dashboard ④c 一致:
-    #   可買 = cRSI 梯度由 ≤0 轉 >0 且 谷底 (前一根) 曾在 m2_reach 根內到達/低於下界; 可賣 = 相反
-    m2_domcycle=20, m2_vibration=10, m2_leveling=10.0, m2_reach=1,
+    # S14 / S15 / S16 的模式 1 = 柱上下界 (與 TV-1M-dashboard ④ 一致): 上下界基準 = 最近 pct_len 根 |柱| 的第 s14_depth_pct 百分位,
+    #   下界 = 基準 × s14_k_buy, 上界 = 基準 × k_sell; 段內最深柱要到界, 根數 ≥ 最少; 面積門檻預設關
+    s14_k_buy=1.5, s14_mb_buy=4, s14_match_win=5, s14_depth_pct=75, s14_use_area=False,
+    # 模式 2 (S14 / S15 / S16 共用) = RSI 14/28 可買區 / 可賣區 (狀態), 與 TV-1M-dashboard ④c 一致:
+    #   進可買區 = RSI14 梯度由 ≤0 轉 >0 且 谷底 (前一根) 曾在 m2_reach 根內到達/低於下界; 進可賣區 = 相反
+    #   可買區結束 (m2_end): "cross" = RSI14 跌破 RSI28 或 在 RSI28 之下轉勢向下; "fast" = RSI14 轉勢向下; "slow" = RSI28 轉勢向下
+    m2_fast=14, m2_slow=28, m2_band="dynamic", m2_pct_len=120, m2_pct_lo=10.0, m2_pct_hi=90.0, m2_fix_lo=30.0, m2_fix_hi=70.0,
+    m2_reach=1, m2_end="cross", m2_exit_on_end=True,
     # S15: 模式 3 = 敏感 MACD (9/26/9) DIF 上穿 DEA, 只參與買入; 買三訊號匹配, 賣 = 模式 1 & 模式 2 匹配
     s15_fast=9, s15_slow=26, s15_sig=9, s15_def="dea",   # "dea" = DIF 上穿 DEA (金叉); "zero" = DIF 上穿 0 軸
     s15_match_win=5, s15_match_win_sell=5,
@@ -174,50 +177,88 @@ def build_signals(df: pd.DataFrame, p: dict = None) -> tuple:
     L[11], X[11] = (l <= p_low) & (hist > h_low), (h >= p_high) & (hist < h_high)
     L[12], X[12] = rnd < p['p_rand'], pd.Series(False, index=c.index)
 
-    # 模式 2 = cRSI v4 (whentotrade / Lars von Thienen) 轉勢 + 動態上下界 (舊的 RSI(14) 上穿 30 / 55 已刪除)
-    cr = ta.crsi(c, p['m2_domcycle'], p['m2_vibration'])
-    db, ub = ta.crsi_bands(cr, p['m2_domcycle'], p['m2_leveling'])
-    turn_up = (cr > cr.shift(1)) & (cr.shift(1) <= cr.shift(2))
-    turn_dn = (cr < cr.shift(1)) & (cr.shift(1) >= cr.shift(2))
-    reach_lo = ta.barssince(cr <= db).shift(1).fillna(99999) < p['m2_reach']
-    reach_hi = ta.barssince(cr >= ub).shift(1).fillna(99999) < p['m2_reach']
-    m2_buy = (turn_up & reach_lo).fillna(False)
-    m2_sell = (turn_dn & reach_hi).fillna(False)
+    # 模式 2 = RSI 14/28 可買區 / 可賣區 (狀態機, 與 TV-1M-dashboard ④c 逐項對齊; 舊的 cRSI 已刪除)
+    rf, rs = ta.rsi(c, p['m2_fast']), ta.rsi(c, p['m2_slow'])
+    if p['m2_band'] == "dynamic":
+        lo_b = ta.rolling_percentile(rf, p['m2_pct_len'], p['m2_pct_lo']).fillna(p['m2_fix_lo'])
+        hi_b = ta.rolling_percentile(rf, p['m2_pct_len'], p['m2_pct_hi']).fillna(p['m2_fix_hi'])
+    else:
+        lo_b = pd.Series(p['m2_fix_lo'], index=c.index)
+        hi_b = pd.Series(p['m2_fix_hi'], index=c.index)
+    turn_up_f = (rf > rf.shift(1)) & (rf.shift(1) <= rf.shift(2))
+    turn_dn_f = (rf < rf.shift(1)) & (rf.shift(1) >= rf.shift(2))
+    turn_up_s = (rs > rs.shift(1)) & (rs.shift(1) <= rs.shift(2))
+    turn_dn_s = (rs < rs.shift(1)) & (rs.shift(1) >= rs.shift(2))
+    reach_lo = ta.barssince(rf <= lo_b).shift(1).fillna(99999) < p['m2_reach']
+    reach_hi = ta.barssince(rf >= hi_b).shift(1).fillna(99999) < p['m2_reach']
+    x_dn, x_up = ta.crossunder(rf, rs), ta.crossover(rf, rs)
+    m2_buy_start = (turn_up_f & reach_lo).fillna(False)
+    m2_sell_start = (turn_dn_f & reach_hi).fillna(False)
+    if p['m2_end'] == "cross":
+        buy_end_raw = (x_dn | ((rf < rs) & turn_dn_f)).fillna(False)
+        sell_end_raw = (x_up | ((rf > rs) & turn_up_f)).fillna(False)
+    elif p['m2_end'] == "fast":
+        buy_end_raw, sell_end_raw = turn_dn_f.fillna(False), turn_up_f.fillna(False)
+    else:
+        buy_end_raw, sell_end_raw = turn_dn_s.fillna(False), turn_up_s.fillna(False)
+    bs, ss_, be, se = (m2_buy_start.to_numpy(), m2_sell_start.to_numpy(), buy_end_raw.to_numpy(), sell_end_raw.to_numpy())
+    st = np.zeros(len(bs), dtype=int)
+    cur = 0
+    for i in range(len(bs)):                       # 進入新區優先於現區結束 (與 Pine 的 if / else if 順序一致)
+        if bs[i]:
+            cur = 1
+        elif ss_[i]:
+            cur = -1
+        elif cur == 1 and be[i]:
+            cur = 0
+        elif cur == -1 and se[i]:
+            cur = 0
+        st[i] = cur
+    m2_state = pd.Series(st, index=c.index)
+    m2_prev = m2_state.shift(1).fillna(0).astype(int)
+    in_buy, in_sell = m2_state == 1, m2_state == -1
+    buy_end = (m2_prev == 1) & ~in_buy                # 可買區結束 (含直接轉入可賣區) → 持倉要平
+    L[4], X[4] = L[4], X[4]                           # S05 (原版 RSI 上穿 30 / 55) 保留作對照, 不變
 
-    # S14 雙訊號: 模式 1 = S01 但下跌動能門檻調高; 模式 2 = cRSI 可買; 買需兩者在匹配窗口內同時成立, 賣任一即賣
-    d_buy14 = auto_depth * p['s14_k_buy']
+    # S14 雙訊號: 模式 1 = 柱到下界 + 淺紅 N 根 (門檻用 s14_depth_pct); 模式 2 = 可買區 (狀態); 買需 M1 在窗口內 且 處於可買區
+    auto_depth14 = ta.rolling_percentile(h_pct, p['pct_len'], p['s14_depth_pct'])
+    d_buy14 = auto_depth14 * p['s14_k_buy']
     a_buy14 = d_buy14 * p['s14_mb_buy'] * p['area_fac']
+    d_sell14 = auto_depth14 * p['k_sell']
+    a_sell14 = d_sell14 * p['mb_sell'] * p['area_fac']
     # Pine 的 Histogram / hist&rsi 版在「更新段統計之前」先拍快照 → 門檻用的是前一根為止的段統計; S14 對齊這個慣例。
     # (S01 / S11 對齊的是 TW-1M-MULTI 版, 那一版用更新後的統計, 兩者差一根。)
     sb1 = seg_bars.shift(1).fillna(0).astype(int)
     sa1 = seg_area.shift(1).fillna(0.0)
     sd1 = seg_depth.shift(1).fillna(0.0)
     ss1 = seg_sign.shift(1).fillna(0).astype(int)
-    ok_buy14 = (p['s14_k_buy'] <= 0) | ((sb1 >= p['s14_mb_buy']) & (sd1 >= d_buy14) & (sa1 >= a_buy14))
+    area_ok_b = (~np.array([p['s14_use_area']]))[0] | (sa1 >= a_buy14)
+    area_ok_s = (~np.array([p['s14_use_area']]))[0] | (sa1 >= a_sell14)
+    ok_buy14 = (p['s14_k_buy'] <= 0) | ((sb1 >= p['s14_mb_buy']) & (sd1 >= d_buy14) & area_ok_b)
     m1_buy = ((n_fade_dn == p['fade_buy']) & (ss1 == -1) & ok_buy14).fillna(False)
-    ok_sell14 = (p['k_sell'] <= 0) | ((sb1 >= p['mb_sell']) & (sd1 >= d_sell) & (sa1 >= a_sell))
+    ok_sell14 = (p['k_sell'] <= 0) | ((sb1 >= p['mb_sell']) & (sd1 >= d_sell14) & area_ok_s)
     m1_sell = ((n_fade_up == p['fade_sell']) & (ss1 == 1) & ok_sell14).fillna(False)
     m1_age = _age_since(m1_buy)
-    m2_age = _age_since(m2_buy)
     win = p['s14_match_win']
-    L[13] = (m1_age < win) & (m2_age < win) & (m1_buy | m2_buy)
-    X[13] = m1_sell | m2_sell
+    s1_age = _age_since(m1_sell)
+    zone_exit = buy_end if p['m2_exit_on_end'] else pd.Series(False, index=c.index)
+    L[13] = (m1_age < win) & in_buy & (m1_buy | m2_buy_start)
+    X[13] = ((s1_age < win) & in_sell & (m1_sell | m2_sell_start)) | zone_exit
 
-    # S15 三訊號: 買 = 模式 1 (S14 的) & 模式 2 (cRSI 可買) & 模式 3 (MACD 9/26/9 金叉) 在窗口內同時成立; 賣 = 模式 1 & 模式 2 賣訊同時成立
+    # S15 三訊號: 買 = 模式 1 & 模式 3 (MACD 9/26/9 金叉) 在窗口內同時 且 處於可買區; 賣 = 模式 1 賣訊 (有效 N 根) 在可賣區內, 或 可買區結束
     dif3, dea3, _ = ta.macd(c, p['s15_fast'], p['s15_slow'], p['s15_sig'])
     m3_buy = (ta.crossover(dif3, dea3) if p['s15_def'] == "dea" else ta.crossover(dif3, 0.0)).fillna(False)
     m3_age = _age_since(m3_buy)
     w15 = p['s15_match_win']
-    L[14] = (m1_age < w15) & (m2_age < w15) & (m3_age < w15) & (m1_buy | m2_buy | m3_buy)
-    s1_age = _age_since(m1_sell)
-    s2_age = _age_since(m2_sell)
     ws15 = p['s15_match_win_sell']
-    X[14] = (s1_age < ws15) & (s2_age < ws15) & (m1_sell | m2_sell)
+    L[14] = (m1_age < w15) & (m3_age < w15) & in_buy & (m1_buy | m3_buy | m2_buy_start)
+    X[14] = ((s1_age < ws15) & in_sell & (m1_sell | m2_sell_start)) | zone_exit
 
-    # S16 = S15 + 模式 4: EMA9 斜率為正 (現值 > N 根前) 才可買 — 與 TV-1M-dashboard ④e 一致
+    # S16 = 四模式同時: S15 + 模式 4 EMA9 斜率為正 (狀態; 剛轉向上那一根也算「剛出現買點」) — 與 TV-1M-dashboard ④e 一致
     e9 = ta.ema(c, p['m4_ema_len'])
     m4_up = ((e9 - e9.shift(p['m4_look'])) > 0).fillna(False)
-    L[15] = L[14] & m4_up
+    m4_start = m4_up & ~m4_up.shift(1).fillna(False)
+    L[15] = (m1_age < w15) & (m3_age < w15) & in_buy & m4_up & (m1_buy | m3_buy | m2_buy_start | m4_start)
     X[15] = X[14]
 
     longs = pd.DataFrame({NAMES[i]: L[i].fillna(False).astype(bool) for i in range(16)})

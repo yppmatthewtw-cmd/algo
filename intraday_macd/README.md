@@ -531,3 +531,22 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 | `TV-1M-winrate-mode4_(09月20日; 16.14).pine` (80 行) | 模式 4 副圖 (只換版本戳) | https://claude.ai/artifact/UBhypAstvwhcQkii6SKAuU |
 
 副圖 ② 的 domcycle / vibration / leveling / 上下界算法 / 到界回看根數 必須與主策略 ④c 一致。離線引擎 `backtest/indicators.py` 加了 `crsi` / `crsi_bands` / `barssince`, S14 / S15 / S16 的模式 2 同步改為 cRSI 可買 / 可賣 (S05 仍是原版 RSI 策略, 供對照)。一個月 1 分鐘回測仍要在 TradingView 上跑 (SOXL · 1 分鐘 · 三支一起 Add to chart); 這裡沒有真實 SOXL 資料。
+
+---
+
+## TV-1M-dashboard_(mode 1-4) · 模式 1 柱上下界 + 模式 2 RSI 14/28 可買區 / 可賣區 (2026-09-20 16:59)
+
+完整規格 (每個模式的要求、參數、觸發到買賣點的條件) 見 **[MODE_SPEC.md](MODE_SPEC.md)**。本版重點:
+
+1. **模式 1 上下界**: 副圖在 MACD 柱上畫兩條線 — 上界 (紅) / 下界 (藍) = 最近 250 根 |柱| 的第 75 百分位 (舊版 50) × 倍數 (買 1.5 / 賣 1.0)。負柱段要先**跌到下界**, 之後連續 2 根淺紅才是模式 1 買訊; 正柱段要先**昇到上界**, 之後 2 根淺綠才是賣訊。未到界的淺紅 / 淺綠不再有訊號 (可開灰色小三角對照)。面積門檻改為可選 (預設關)。
+2. **模式 2 改為狀態 (像模式 4)**: 畫 RSI14 (深棕粗) 與 RSI28 (橙細), 標出快慢線交叉。**進入可買區** = RSI14 梯度由 ≤0 轉 >0 且轉勢的谷底到達或低於下界 (最近 120 根 RSI14 的第 10 百分位, 可切固定 30); 可買區從那一根起一直持續, 直到「昇不上」= RSI14 跌破 RSI28, 或 RSI14 在 RSI28 之下就轉勢向下 (④c 可改為只看 RSI14 / RSI28 轉勢)。**進入可賣區** = 相反原理 (峰頂到達或高於上界後轉勢向下), 結束條件相反。模式 2 只輸出 可買區 / 可賣區 / 無, 不形成絕對買賣點。舊的 cRSI 全部刪除。
+3. **持倉中可買區結束 → 平倉** (出場原因 M2區結束, 預設開)。
+4. **買入 = 四模式同時**: 模式 1 與 3 的買訊在 5 根窗口內 + 模式 2 處於可買區 + 模式 4 EMA9 向上, 且本根至少一個剛出現 (含剛進可買區 / EMA9 剛轉向上)。**賣出** = 模式 1 賣訊 (有效 5 根) 在可賣區內, 或 可買區結束, 或 15:58 強平。81 組掃描套同一套規則。
+
+| 腳本 | 貼上工具 |
+|:---|:---|
+| `TV-1M-dashboard_(mode 1-4)_(09月20日; 16.59).pine` (822 行) | https://claude.ai/artifact/KgJkRDEyys75bsjW3HerXu |
+| `TV-1M-RSI-mode2_(09月20日; 16.59).pine` (197 行) | https://claude.ai/artifact/GzebPs3jwTA9xgC31KTUCE |
+| `TV-1M-winrate-mode4_(09月20日; 16.59).pine` (80 行, 只換版本戳) | https://claude.ai/artifact/UBhypAstvwhcQkii6SKAuU |
+
+離線引擎 S14 / S15 / S16 同步: 模式 1 用第 75 百分位上下界 (`s14_depth_pct`, 面積可選), 模式 2 為 RSI 14/28 區間狀態機 (`m2_end` = cross / fast / slow), 可買區結束平倉 (`m2_exit_on_end`)。
