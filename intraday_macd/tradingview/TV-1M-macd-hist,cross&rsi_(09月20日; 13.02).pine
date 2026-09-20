@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TV-1M-macd-hist,cross&rsi_(09月20日; 12:54)  ·  MACD 柱動能減弱 + 敏感 MACD 金叉 + RSI 超賣回歸 三訊號策略 · 1 分鐘 · 一個月回測 · TradingView Pine Script v6
+//  TV-1M-macd-hist,cross&rsi_(09月20日; 13:02)  ·  MACD 柱動能減弱 + 敏感 MACD 金叉 + RSI 超賣回歸 三訊號策略 · 1 分鐘 · 一個月回測 · TradingView Pine Script v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
-//  本檔共 746 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
+//  本檔共 747 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或按【下載 .pine.txt】用純文字編輯器開啟 → Ctrl+A → Ctrl+C
 //  ★ 看到 CE10244 "A strategy must contain at least one of the following: any strategy.*() … plot*() …" = 貼上的內容被截斷在 8 KB
 //     (前 8 KB 只有表頭 + strategy() + Inputs, 第一個 plot 在很後面) — 這不是程式錯誤, 請改用貼上工具網頁複製, 貼完確認最後一行
@@ -24,6 +24,7 @@
 //        純顯示, 不影響策略買賣; 右側有標籤。另有底部小圓點 / 菱形 / 方塊 = 模式 1 / 2 / 3 買訊; 藍三角 B = 真正成交
 //        副圖另畫模式 3 的 DIF / DEA 細線 (半透明, ④d 可關); 逐筆交易表出場原因: S-M1&M2 / EOD / SL / 窗口結束
 //  【參數掃描 (⑨)】81 組 (買N×買k × 賣N×賣k, k∈1/1.5/2) 每一組都套上同一套三訊號買 / 雙訊號賣規則, 排名結果可直接填回 ④
+//   ※ 本版修正: Pine 的 int / int 不截斷 (回傳 float), 舊版索引解碼只有整除的幾組真的在跑, 其餘顯示 0 筆 — 已改用 math.floor, 81 組全部有效
 //  【回測期間】① 預設 方式 B 最近 30 天 (一個月); 亦可 方式 A 最近 21 個交易日 / 方式 C 指定起迄 — 全部在 Inputs 設定
 //       ※ 1 分 K 一個月約 8,200 根, TradingView 依方案只載入 5,000-20,000 根 → 實際回測從圖表最左那根開始, 報表標題顯示實際起始日
 //  【共用規則】只做多 · 全部本金 · 收盤確認下一根開盤成交 · 手續費 0.03%/邊 + 滑點 2 tick · 美股 09:30-16:00 NY · 15:45 後不開新倉 · 15:58 強平
@@ -32,7 +33,7 @@
 //  版本戳 TV-1M-macd-hist,cross&rsi_(MM月DD日; HH:MM), 括號內 = 建置時間 HKT; 檔名以 . 代替 : (Windows 檔名不接受冒號); 本檔零延續行
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("TV-1M-macd-hist,cross&rsi_(09月20日; 12:54)", shorttitle="TV-1M-macd-hist,cross&rsi_(09月20日; 12:54)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
+strategy("TV-1M-macd-hist,cross&rsi_(09月20日; 13:02)", shorttitle="TV-1M-macd-hist,cross&rsi_(09月20日; 13:02)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
 
 // ─────────────────────────── ① 回測期間 (預設最近 30 天 = 一個月) ───────────────────────────
 gBT        = "① 回測期間 — 全部在此設定, 不用改程式碼"
@@ -296,9 +297,9 @@ if inWindow and inSess
 swBase = thMode == "手動" ? minDepthIn : autoDepth    // 掃描用深度基準: 不含 ④b 校準 k, 令 81 組結果與現行輸入無關 (校準關閉時 = baseDepth)
 if showSweep
     for v1 = 0 to NV - 1
-        iNb  = v1 / 27
-        iKb  = (v1 / 9) % 3
-        iNs  = (v1 / 3) % 3
+        iNb  = math.floor(v1 / 27)                 // Pine 的 / 永遠回傳 float, 不截斷 → 一定要 floor, 否則 81 組只有整除的幾組會跑
+        iKb  = math.floor(v1 / 9) % 3
+        iNs  = math.floor(v1 / 3) % 3
         iKs  = v1 % 3
         Nb   = iNb + 1
         Ns   = iNs + 1
@@ -504,7 +505,7 @@ plotshape(showFillMarks and justClosed, "賣出成交(主圖)", style = shape.tr
 // ─────────────────────────── ⑬ 報表: 交易次數 / 每筆 P&L / Total P&L ───────────────────────────
 gRP      = "⑦ 報表"
 showRpt  = input.bool(true, "顯示圖上報表", group = gRP, display = display.none)
-maxRows  = input.int(25, "最多列出最近幾筆交易", minval = 1, maxval = 60, group = gRP, tooltip = "完整清單見 Strategy Tester → List of Trades (可匯出 CSV)", display = display.none)
+maxRows  = input.int(10, "最多列出最近幾筆交易 (本版 10, 表格矮一點)", minval = 1, maxval = 60, group = gRP, tooltip = "完整清單見 Strategy Tester → List of Trades (可匯出 CSV)", display = display.none)
 rptPos   = input.string("右上", "回測摘要位置 (主圖)", options = ["右下", "右上", "左下", "左上"], group = gRP, display = display.none)
 showPrm  = input.bool(true, "副圖顯示「觸發參數」表 (調整用)", group = gRP, display = display.none)
 prmPos   = input.string("右上", "觸發參數表位置 (副圖; 預設與主圖摘要同靠右對齊)", options = ["右下", "右上", "左下", "左上"], group = gRP, display = display.none)
@@ -599,22 +600,22 @@ if barstate.islast and showSweep
     tBg  = color.new(color.purple, 40)
     for c = 0 to 6
         table.cell(swp, c, 0, "", text_size = sizeV, bgcolor = tBg)
-    table.cell(swp, 0, 0, "參數掃描 · 同窗口 81 組 (買N×買k × 賣N×賣k, 全部套上 三訊號買 (M1&M2&M3) / 雙訊號賣 (M1&M2) 匹配) · 期內最大昇幅 " + str.tostring(maxRise, "#.##") + "% · 買入持有 " + str.tostring(bhRet, "#.##") + "% · 橙底 = 現行設定", text_size = sizeV, text_color = color.white, bgcolor = tBg, text_halign = text.align_left)
+    table.cell(swp, 0, 0, "掃描 81 組 (3a/3b 規則) · 最大昇幅 " + str.tostring(maxRise, "#.#") + "% · B&H " + str.tostring(bhRet, "#.#") + "% · 橙=現行", text_size = sizeV, text_color = color.white, bgcolor = tBg, text_halign = text.align_left)
     table.merge_cells(swp, 0, 0, 6, 0)
     table.cell(swp, 0, 1, "#", text_size = sizeV, bgcolor = sBg)
-    table.cell(swp, 1, 1, "買 N / k", text_size = sizeV, bgcolor = sBg)
-    table.cell(swp, 2, 1, "賣 N / k", text_size = sizeV, bgcolor = sBg)
+    table.cell(swp, 1, 1, "買N/k", text_size = sizeV, bgcolor = sBg)
+    table.cell(swp, 2, 1, "賣N/k", text_size = sizeV, bgcolor = sBg)
     table.cell(swp, 3, 1, "筆數", text_size = sizeV, bgcolor = sBg)
     table.cell(swp, 4, 1, "勝率", text_size = sizeV, bgcolor = sBg)
-    table.cell(swp, 5, 1, "報酬 %", text_size = sizeV, bgcolor = sBg)
-    table.cell(swp, 6, 1, "捕獲 % (報酬/最大昇幅)", text_size = sizeV, bgcolor = sBg)
+    table.cell(swp, 5, 1, "報酬%", text_size = sizeV, bgcolor = sBg)
+    table.cell(swp, 6, 1, "捕獲%", text_size = sizeV, bgcolor = sBg)
     nShow   = math.min(swpRows, NV)
     liveRank = 0
     for i2 = 0 to NV - 1
         vv   = array.get(rankIdx, i2)
-        Nb2  = vv / 27 + 1
-        kb2  = array.get(KG, (vv / 9) % 3)
-        Ns2  = (vv / 3) % 3 + 1
+        Nb2  = math.floor(vv / 27) + 1
+        kb2  = array.get(KG, math.floor(vv / 9) % 3)
+        Ns2  = math.floor(vv / 3) % 3 + 1
         ks2  = array.get(KG, vv % 3)
         isLive = Nb2 == fadeBuy and Ns2 == fadeSell and math.abs(kb2 - kBuy) < 0.001 and math.abs(ks2 - kSell) < 0.001
         if isLive
@@ -635,7 +636,7 @@ if barstate.islast and showSweep
             table.cell(swp, 6, i2 + 2, str.tostring(capV, "#") + "%", text_size = sizeV, text_color = rCol, bgcolor = rBg)
     for c = 0 to 6
         table.cell(swp, c, nShow + 2, "", text_size = sizeV, bgcolor = sBg)
-    table.cell(swp, 0, nShow + 2, "現行設定 買 N" + str.tostring(fadeBuy) + " k" + str.tostring(kBuy, "#.#") + " / 賣 N" + str.tostring(fadeSell) + " k" + str.tostring(kSell, "#.#") + " → " + (liveRank > 0 ? "第 " + str.tostring(liveRank) + " / 81 名" : "不在網格內 (k 需為 1/1.5/2, N 為 1-3 才有對應)") + " · 填回 ④ 即套用", text_size = sizeV, bgcolor = sBg, text_halign = text.align_left)
+    table.cell(swp, 0, nShow + 2, "現行 買N" + str.tostring(fadeBuy) + "k" + str.tostring(kBuy, "#.#") + " 賣N" + str.tostring(fadeSell) + "k" + str.tostring(kSell, "#.#") + " → " + (liveRank > 0 ? "第 " + str.tostring(liveRank) + "/81" : "不在網格 (k∈1/1.5/2, N∈1-3)"), text_size = sizeV, bgcolor = sBg, text_halign = text.align_left)
     table.merge_cells(swp, 0, nShow + 2, 6, nShow + 2)
 
 if barstate.islast and showRpt
@@ -672,10 +673,10 @@ if barstate.islast and showRpt
     table.cell(rpt, 6, 2, "PF " + (na(pf) ? "-" : str.tostring(pf, "#.##")), text_size = sizeV)
     table.cell(rpt, 0, 3, "毛利 / 毛損", text_size = sizeV, bgcolor = hdBg)
     table.cell(rpt, 1, 3, str.tostring(gpr, "#,###") + " / " + str.tostring(gls, "#,###"), text_size = sizeV)
-    table.cell(rpt, 2, 3, "最大回撤(佔本金)", text_size = sizeV, bgcolor = hdBg)
+    table.cell(rpt, 2, 3, "最大回撤", text_size = sizeV, bgcolor = hdBg)
     table.cell(rpt, 3, 3, str.tostring(strategy.max_drawdown / eq0 * 100.0, "#.##") + "%", text_size = sizeV, text_color = color.red)
     table.cell(rpt, 4, 3, "門檻(現值)", text_size = sizeV, bgcolor = hdBg)
-    table.cell(rpt, 5, 3, "M1 買 k" + str.tostring(kBuy, "#.#") + " N" + str.tostring(fadeBuy) + " 賣 k" + str.tostring(kSell, "#.#") + " N" + str.tostring(fadeSell) + " · M2 RSI " + str.tostring(rsiBuyLv, "#") + "↑ / " + (rsiSellMd == "上穿 中性值 (S05 原版)" ? str.tostring(rsiExitLv, "#") + "↑" : str.tostring(rsiOBLv, "#") + "↓") + " · M3 " + str.tostring(m3Fast) + "/" + str.tostring(m3Slow) + "/" + str.tostring(m3Sig) + (m3Def == "DIF 上穿 DEA (金叉)" ? " 金叉" : " 過0軸") + " · 買窗 " + str.tostring(matchWin) + " 賣窗 " + str.tostring(matchWinS), text_size = sizeV)
+    table.cell(rpt, 5, 3, "M1 k" + str.tostring(kBuy, "#.#") + "/N" + str.tostring(fadeBuy) + " · M2 " + str.tostring(rsiBuyLv, "#") + "↑" + (rsiSellMd == "上穿 中性值 (S05 原版)" ? str.tostring(rsiExitLv, "#") + "↑" : str.tostring(rsiOBLv, "#") + "↓") + " · M3 " + str.tostring(m3Fast) + "/" + str.tostring(m3Slow) + (m3Def == "DIF 上穿 DEA (金叉)" ? "金叉" : "0軸") + " · 窗" + str.tostring(matchWin) + "/" + str.tostring(matchWinS), text_size = sizeV)
     table.cell(rpt, 6, 3, thMode + (thMode != "手動" and targetTPD > 0 ? " k=" + str.tostring(kEff, "#.##") : ""), text_size = sizeV)
     // ── 盤中專屬列 ──
     tpd = nT * 1.0 / math.max(1, nDays)        // 同上: 先乘 1.0 提升為 float
@@ -695,13 +696,13 @@ if barstate.islast and showRpt
     table.cell(rpt, 1, 5, str.tostring(maxRise, "#.##") + "%", text_size = sizeV, text_color = color.green)
     table.cell(rpt, 2, 5, "買入持有", text_size = sizeV, bgcolor = hdBg)
     table.cell(rpt, 3, 5, str.tostring(bhRet2, "#.##") + "%", text_size = sizeV, text_color = bhRet2 >= 0 ? color.green : color.red)
-    table.cell(rpt, 4, 5, "策略捕獲率", text_size = sizeV, bgcolor = hdBg)
-    table.cell(rpt, 5, 5, str.tostring(capR, "#.#") + "% 的最大昇幅", text_size = sizeV, text_color = capR >= 50 ? color.green : color.orange)
+    table.cell(rpt, 4, 5, "捕獲率", text_size = sizeV, bgcolor = hdBg)
+    table.cell(rpt, 5, 5, str.tostring(capR, "#.#") + "%", text_size = sizeV, text_color = capR >= 50 ? color.green : color.orange)
     table.cell(rpt, 6, 5, winMode == "最近 N 個交易日" ? "窗口 " + str.tostring(tradDays) + " 個交易日" : winMode == "最近 N 天 (日曆)" ? "窗口 " + str.tostring(lookbackD) + " 天" : "窗口 指定日期", text_size = sizeV)
     // ── 逐筆交易表頭 ──
     table.cell(rpt, 0, 6, "#",       text_size = sizeV, bgcolor = hdBg)
     table.cell(rpt, 1, 6, "進場時間",  text_size = sizeV, bgcolor = hdBg)
-    table.cell(rpt, 2, 6, "出場時間 · 原因",  text_size = sizeV, bgcolor = hdBg)
+    table.cell(rpt, 2, 6, "出場·原因",  text_size = sizeV, bgcolor = hdBg)
     table.cell(rpt, 3, 6, "進場價",  text_size = sizeV, bgcolor = hdBg)
     table.cell(rpt, 4, 6, "出場價",  text_size = sizeV, bgcolor = hdBg)
     table.cell(rpt, 5, 6, "損益 $",  text_size = sizeV, bgcolor = hdBg)
@@ -727,7 +728,7 @@ if barstate.islast and showRpt
         if nT > maxRows
             for c = 0 to 6
                 table.cell(rpt, c, row, "", text_size = sizeV)
-            table.cell(rpt, 0, row, "…僅顯示最近 " + str.tostring(maxRows) + " 筆, 共 " + str.tostring(nT) + " 筆; 完整清單見 Strategy Tester → List of Trades", text_size = sizeV, text_color = color.gray, text_halign = text.align_left)
+            table.cell(rpt, 0, row, "最近 " + str.tostring(maxRows) + "/" + str.tostring(nT) + " 筆; 全部見 Strategy Tester", text_size = sizeV, text_color = color.gray, text_halign = text.align_left)
             table.merge_cells(rpt, 0, row, 6, row)
     else
         for c = 0 to 6
@@ -743,4 +744,4 @@ if barstate.islastconfirmedhistory and showRpt
     if strategy.closedtrades > 0
         for i = 0 to strategy.closedtrades - 1
             log.info("#{0} {1} → {2} {7} | {3} → {4} | P&L {5} ({6}%)", i + 1, str.format_time(strategy.closedtrades.entry_time(i), "yyyy-MM-dd HH:mm", tzStr), str.format_time(strategy.closedtrades.exit_time(i),  "yyyy-MM-dd HH:mm", tzStr), str.tostring(strategy.closedtrades.entry_price(i), format.mintick), str.tostring(strategy.closedtrades.exit_price(i),  format.mintick), str.tostring(strategy.closedtrades.profit(i), "#,###.##"), str.tostring((strategy.closedtrades.exit_price(i) / strategy.closedtrades.entry_price(i) - 1.0) * 100.0, "#.##"), strategy.closedtrades.exit_comment(i))
-// ═══ END OF FILE ═══ TV-1M-macd-hist,cross&rsi_(09月20日; 12:54) · 全檔共 746 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ TV-1M-macd-hist,cross&rsi_(09月20日; 13:02) · 全檔共 747 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
