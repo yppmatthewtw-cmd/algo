@@ -23,9 +23,11 @@ DEFAULTS = dict(
     ema_f=9, ema_m=21, ema_s=50, st_atr=10, st_mult=3.0,
     rsi_len=14, rsi_buy=30.0, rsi_exit=55.0, bb_len=20, bb_mult=2.0, vwap_k=1.5,
     orb_bars=15, brk_len=20, vol_mult=1.5, div_len=20, p_rand=0.004, hold_bars=30,
-    # S14: 模式 1 用調高後的下跌動能門檻 (k 1.5 / 最少根數 4), 模式 2 = S05, 匹配窗口 5 根
-    s14_k_buy=1.5, s14_mb_buy=4, s14_match_win=5, s14_rsi_sell="neutral",  # "neutral" = RSI 上穿 55; "overbought" = RSI 下穿 70
-    rsi_ob=70.0,
+    # S14: 模式 1 用調高後的下跌動能門檻 (k 1.5 / 最少根數 4), 匹配窗口 5 根
+    s14_k_buy=1.5, s14_mb_buy=4, s14_match_win=5,
+    # 模式 2 (S14 / S15 / S16 共用) = cRSI v4 轉勢 + 動態上下界, 與 TV-1M-dashboard ④c 一致:
+    #   可買 = cRSI 梯度由 ≤0 轉 >0 且 谷底 (前一根) 曾在 m2_reach 根內到達/低於下界; 可賣 = 相反
+    m2_domcycle=20, m2_vibration=10, m2_leveling=10.0, m2_reach=1,
     # S15: 模式 3 = 敏感 MACD (9/26/9) DIF 上穿 DEA, 只參與買入; 買三訊號匹配, 賣 = 模式 1 & 模式 2 匹配
     s15_fast=9, s15_slow=26, s15_sig=9, s15_def="dea",   # "dea" = DIF 上穿 DEA (金叉); "zero" = DIF 上穿 0 軸
     s15_match_win=5, s15_match_win_sell=5,
@@ -172,7 +174,17 @@ def build_signals(df: pd.DataFrame, p: dict = None) -> tuple:
     L[11], X[11] = (l <= p_low) & (hist > h_low), (h >= p_high) & (hist < h_high)
     L[12], X[12] = rnd < p['p_rand'], pd.Series(False, index=c.index)
 
-    # S14 雙訊號: 模式 1 = S01 但下跌動能門檻調高; 模式 2 = S05; 買需兩者在匹配窗口內同時成立, 賣任一即賣
+    # 模式 2 = cRSI v4 (whentotrade / Lars von Thienen) 轉勢 + 動態上下界 (舊的 RSI(14) 上穿 30 / 55 已刪除)
+    cr = ta.crsi(c, p['m2_domcycle'], p['m2_vibration'])
+    db, ub = ta.crsi_bands(cr, p['m2_domcycle'], p['m2_leveling'])
+    turn_up = (cr > cr.shift(1)) & (cr.shift(1) <= cr.shift(2))
+    turn_dn = (cr < cr.shift(1)) & (cr.shift(1) >= cr.shift(2))
+    reach_lo = ta.barssince(cr <= db).shift(1).fillna(99999) < p['m2_reach']
+    reach_hi = ta.barssince(cr >= ub).shift(1).fillna(99999) < p['m2_reach']
+    m2_buy = (turn_up & reach_lo).fillna(False)
+    m2_sell = (turn_dn & reach_hi).fillna(False)
+
+    # S14 雙訊號: 模式 1 = S01 但下跌動能門檻調高; 模式 2 = cRSI 可買; 買需兩者在匹配窗口內同時成立, 賣任一即賣
     d_buy14 = auto_depth * p['s14_k_buy']
     a_buy14 = d_buy14 * p['s14_mb_buy'] * p['area_fac']
     # Pine 的 Histogram / hist&rsi 版在「更新段統計之前」先拍快照 → 門檻用的是前一根為止的段統計; S14 對齊這個慣例。
@@ -185,24 +197,22 @@ def build_signals(df: pd.DataFrame, p: dict = None) -> tuple:
     m1_buy = ((n_fade_dn == p['fade_buy']) & (ss1 == -1) & ok_buy14).fillna(False)
     ok_sell14 = (p['k_sell'] <= 0) | ((sb1 >= p['mb_sell']) & (sd1 >= d_sell) & (sa1 >= a_sell))
     m1_sell = ((n_fade_up == p['fade_sell']) & (ss1 == 1) & ok_sell14).fillna(False)
-    m2_buy = L[4].fillna(False)
     m1_age = _age_since(m1_buy)
     m2_age = _age_since(m2_buy)
     win = p['s14_match_win']
     L[13] = (m1_age < win) & (m2_age < win) & (m1_buy | m2_buy)
-    m2_sell = X[4] if p['s14_rsi_sell'] == "neutral" else ta.crossunder(rsi, p['rsi_ob'])
-    X[13] = m1_sell | m2_sell.fillna(False)
+    X[13] = m1_sell | m2_sell
 
-    # S15 三訊號: 買 = 模式 1 (S14 的) & 模式 2 (S05) & 模式 3 (MACD 9/26/9 金叉) 在窗口內同時成立; 賣 = 模式 1 & 模式 2 賣訊同時成立
+    # S15 三訊號: 買 = 模式 1 (S14 的) & 模式 2 (cRSI 可買) & 模式 3 (MACD 9/26/9 金叉) 在窗口內同時成立; 賣 = 模式 1 & 模式 2 賣訊同時成立
     dif3, dea3, _ = ta.macd(c, p['s15_fast'], p['s15_slow'], p['s15_sig'])
     m3_buy = (ta.crossover(dif3, dea3) if p['s15_def'] == "dea" else ta.crossover(dif3, 0.0)).fillna(False)
     m3_age = _age_since(m3_buy)
     w15 = p['s15_match_win']
     L[14] = (m1_age < w15) & (m2_age < w15) & (m3_age < w15) & (m1_buy | m2_buy | m3_buy)
     s1_age = _age_since(m1_sell)
-    s2_age = _age_since(m2_sell.fillna(False))
+    s2_age = _age_since(m2_sell)
     ws15 = p['s15_match_win_sell']
-    X[14] = (s1_age < ws15) & (s2_age < ws15) & (m1_sell | m2_sell.fillna(False))
+    X[14] = (s1_age < ws15) & (s2_age < ws15) & (m1_sell | m2_sell)
 
     # S16 = S15 + 模式 4: EMA9 斜率為正 (現值 > N 根前) 才可買 — 與 TV-1M-dashboard ④e 一致
     e9 = ta.ema(c, p['m4_ema_len'])

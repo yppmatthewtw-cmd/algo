@@ -68,7 +68,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <header class="hero">
     <div>
       <div class="eyebrow">TradingView · Pine Script v6 · 1 分鐘日內策略 (市場預設 美股, Inputs 可切港股)</div>
-      <h1 id="scriptName">TV-1M-RSI-mode2_(09月20日; 15:52)</h1>
+      <h1 id="scriptName">TV-1M-RSI-mode2_(09月20日; 16:14)</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
     </div>
     <div class="card">
@@ -89,12 +89,12 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-RSI-mode2_(09月20日; 15:52)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-RSI-mode2_(09月20日; 16:14)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
       <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
     </ol>
     <div class="check">
       <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 10 行</span><code>indicator("TV-1M-RSI-mode2_(09月20日; 15:52)", shorttitle="TV-1M-RSI-mode2_(09月20日; 15:52)", …)</code></div>
+      <div><span class="k">第 11 行</span><code>indicator("TV-1M-RSI-mode2_(09月20日; 16:14)", shorttitle="TV-1M-RSI-mode2_(09月20日; 16:14)", …)</code></div>
       <div><span class="k">最後一行</span><code id="cLast">—</code></div>
     </div>
   </section>
@@ -117,7 +117,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <tr><td class="m">hist&amp;rsi (00:53)</td><td class="m">第 1 行 · CE10244 A strategy must contain…</td><td class="m">8192 剛好切在第 66 行 (註解) 開頭</td><td>前 65 行沒有任何輸出函式</td></tr>
     </table>
     </div>
-    <div class="warnbox" style="margin-top:12px">整份檔案約 13.6 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
+    <div class="warnbox" style="margin-top:12px">整份檔案約 13.2 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
   </section>
 
   <section class="card">
@@ -128,15 +128,16 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 
 <script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TV-1M-RSI-mode2_(09月20日; 15:52)  ·  模式 2 (RSI 超賣回歸 升級版) 專用副圖 · 配合主策略 TV-1M-dashboard_(mode 1-4) 一起掛
-//  升級 (消化 cRSI + RSI Swing): 超賣/超買門檻預設【動態】= 最近 120 根 RSI 的第 10 / 90 百分位 (固定 30 在 SOXL 1 分 K 幾乎碰不到);
-//  買訊 = RSI 上穿超賣界 且 結構過濾通過 (這次超賣區最低價高於上一次 = HL; 離開超賣區那一根定型, 不重繪); 可改不過濾或再加 HH
-//  顯示: 深棕粗線 RSI · 綠/紅細線 = 動態上下界 · ▲ 淺藍 = 過濾後買訊 · ▲ 灰小 = 被 HL 過濾掉 · ▼ 淺紅 = 賣訊 · HL/LL HH/LH 標在極值那根 K 上
-//  ② 的 RSI 長度 / 門檻方式 / 百分位 / 結構過濾 / 賣訊方式 必須與主策略 ④c 一致; 這支不下單; plot 的 title 必須是常數字串
-//  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 176 行, 最後一行是 END OF FILE
+//  TV-1M-RSI-mode2_(09月20日; 16:14)  ·  模式 2 (cRSI 轉勢 + 動態上下界) 專用副圖 · 配合主策略 TV-1M-dashboard_(mode 1-4) 一起掛
+//  參考 whentotrade / Lars von Thienen 的 cRSI v4: domcycle 20 → RSI 長度 10, vibration 10 相位補償平滑成 cRSI, 上下界 = 最近 40 根 cRSI 的第 10 / 90 百分位 (與原版逐格掃描等價, 可切回原版)
+//  可買 = cRSI 梯度由 ≤0 轉為 >0 且 轉勢的谷底到達或低於下界; 可賣 = 相反 (梯度由 ≥0 轉為 <0 且 峰頂到達或高於上界); 模式 2 只輸出這兩種; 收盤確認, 不重繪
+//  舊的 RSI(14) 固定 / 百分位門檻、S05 上穿 55 賣訊、HL 結構過濾已全部刪除
+//  顯示: 深棕粗線 cRSI · 綠/紅細線 = 下界/上界 · ▲ 淺藍 = 可買 · ▼ 淺紅 = 可賣 · 灰小三角 = 未到界的轉勢 (對照用, ③ 可關)
+//  ② 的 domcycle / vibration / leveling / 上下界算法 / 到界回看根數 必須與主策略 ④c 一致; 這支不下單; plot 的 title 必須是常數字串
+//  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 174 行, 最後一行是 END OF FILE
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-indicator("TV-1M-RSI-mode2_(09月20日; 15:52)", shorttitle="TV-1M-RSI-mode2_(09月20日; 15:52)", overlay = false, max_labels_count = 500, max_lines_count = 500)
+indicator("TV-1M-RSI-mode2_(09月20日; 16:14)", shorttitle="TV-1M-RSI-mode2_(09月20日; 16:14)", overlay = false, max_labels_count = 500, max_lines_count = 500)
 
 // ─────────────────────────── ① 回測期間 (與主策略同一套設定, 只用來畫底色) ───────────────────────────
 gBT        = "① 回測期間 (與主策略對齊)"
@@ -163,103 +164,98 @@ btStart    = winMode == "最近 N 個交易日" ? tdStart : winMode == "最近 N
 btEnd      = winMode == "指定日期" ? endIn : timenow
 inWindow   = time >= btStart and time <= btEnd
 
-// ─────────────────────────── ② 模式 2 · RSI 超賣回歸 (S05) — 與主策略 ④c 的設定必須一致 ───────────────────────────
-gR2        = "② 模式 2 · RSI 超賣回歸 (與主策略 ④c 保持一致)"
-rsiLen     = input.int(14, "RSI 長度", minval = 2, group = gR2, display = display.none)
-rsiBuyLv   = input.float(30, "買訊: RSI 上穿此值 (超賣回歸)", minval = 1, maxval = 50, step = 1, group = gR2, display = display.none)
-rsiSellMd  = input.string("上穿 中性值 (S05 原版)", "賣訊方式", options = ["上穿 中性值 (S05 原版)", "下穿 超買值 (超買回落)"], group = gR2, tooltip = "務必與主策略 ④c 的同名設定一致, 否則兩個副圖顯示的訊號會對不上。", display = display.none)
-rsiExitLv  = input.float(55, "賣訊: 中性值 (RSI 上穿即賣)", minval = 30, maxval = 90, step = 1, group = gR2, display = display.none)
-rsiOBLv    = input.float(70, "賣訊: 超買值 (RSI 下穿即賣)", minval = 50, maxval = 99, step = 1, group = gR2, display = display.none)
-
-// ── 門檻與結構 (消化自 cRSI 的動態上下界 與 RSI Swing 的 HH/HL/LH/LL) — 三項設定必須與主策略 ④c 一致 ──
-rsiThMd    = input.string("動態: 最近 N 根 RSI 的百分位", "超賣 / 超買門檻怎麼定", options = ["動態: 最近 N 根 RSI 的百分位", "固定: 30 / 70"], group = gR2, display = display.none)
-rsiPctLen  = input.int(120, "動態: 取樣根數 N", minval = 20, maxval = 1000, group = gR2, display = display.none)
-rsiPctLo   = input.float(10, "動態: 超賣 = 第幾百分位", minval = 1, maxval = 40, step = 1, group = gR2, display = display.none)
-rsiPctHi   = input.float(90, "動態: 超買 = 第幾百分位", minval = 60, maxval = 99, step = 1, group = gR2, display = display.none)
-rsiStruct  = input.string("需 HL (這次超賣低點高於上次)", "結構過濾 (RSI Swing)", options = ["不過濾", "需 HL (這次超賣低點高於上次)", "需 HL 且 前一個高點 HH"], group = gR2, display = display.none)
-// 所有 ta.* 在全域無條件計算 (Pine v6 的 and / or 是短路求值)
-rsiV       = ta.rsi(close, rsiLen)
-rsiPLo     = ta.percentile_linear_interpolation(rsiV, rsiPctLen, rsiPctLo)
-rsiPHi     = ta.percentile_linear_interpolation(rsiV, rsiPctLen, rsiPctHi)
-rsiLoBand  = rsiThMd == "固定: 30 / 70" ? rsiBuyLv : nz(rsiPLo, rsiBuyLv)
-rsiHiBand  = rsiThMd == "固定: 30 / 70" ? rsiOBLv  : nz(rsiPHi, rsiOBLv)
-rsiXupBuy  = ta.crossover(rsiV, rsiLoBand)
-rsiXupExit = ta.crossover(rsiV, rsiExitLv)
-rsiXdnOB   = ta.crossunder(rsiV, rsiHiBand)
-inOS       = rsiV <= rsiLoBand
-inOB       = rsiV >= rsiHiBand
-var float epLow = na
-var float epHigh = na
-var float swLow = na
-var float prevSwLow = na
-var float swHigh = na
-var float prevSwHigh = na
-var int   epLowBar = na
-var int   epHighBar = na
-if inOS
-    if na(epLow) or low < epLow
-        epLowBar := bar_index
-    epLow := na(epLow) ? low : math.min(epLow, low)
-if inOB
-    if na(epHigh) or high > epHigh
-        epHighBar := bar_index
-    epHigh := na(epHigh) ? high : math.max(epHigh, high)
-leftOS = not inOS and inOS[1] and not na(epLow)
-leftOB = not inOB and inOB[1] and not na(epHigh)
-lowTag  = ""
-highTag = ""
-if leftOS
-    prevSwLow := swLow
-    swLow     := epLow
-    lowTag    := na(prevSwLow) ? "L" : swLow > prevSwLow ? "HL" : "LL"
-    epLow     := na
-if leftOB
-    prevSwHigh := swHigh
-    swHigh     := epHigh
-    highTag    := na(prevSwHigh) ? "H" : swHigh > prevSwHigh ? "HH" : "LH"
-    epHigh     := na
-isHL     = not na(swLow) and not na(prevSwLow) and swLow > prevSwLow
-isHH     = not na(swHigh) and not na(prevSwHigh) and swHigh > prevSwHigh
-structOK = rsiStruct == "不過濾" ? true : rsiStruct == "需 HL (這次超賣低點高於上次)" ? isHL : (isHL and isHH)
-m2BuyRaw = rsiXupBuy
-m2Buy    = rsiXupBuy and structOK
-m2Sell   = rsiSellMd == "上穿 中性值 (S05 原版)" ? rsiXupExit : rsiXdnOB
+// ─────────────────────────── ② 模式 2 · cRSI 轉勢 + 動態上下界 (參考 whentotrade / Lars von Thienen · cRSI v4) — 與主策略 ④c 的設定必須一致 ───────────────────────────
+gR2        = "② 模式 2 · cRSI 轉勢 + 動態上下界 (與主策略 ④c 保持一致)"
+domCycle   = input.int(20, "主週期 domcycle (cRSI v4 預設 20; RSI 長度 = 主週期 ÷ 2, 記憶 = 主週期 × 2)", minval = 4, maxval = 200, group = gR2, tooltip = "務必與主策略 ④c 的同名設定一致, 否則兩個副圖顯示的訊號會對不上。", display = display.none)
+vibration  = input.int(10, "vibration (cRSI v4 預設 10)", minval = 1, maxval = 50, group = gR2, display = display.none)
+leveling   = input.float(10, "leveling (%): 下界 = 第 leveling 百分位, 上界 = 第 100-leveling 百分位", minval = 1, maxval = 49, step = 1, group = gR2, display = display.none)
+bandMd     = input.string("百分位 (與原版逐格掃描結果幾乎相同, 快)", "上下界算法", options = ["百分位 (與原版逐格掃描結果幾乎相同, 快)", "原版 cRSI v4 逐格掃描 (101 格 × 記憶根數, 慢)"], group = gR2, display = display.none)
+m2Reach    = input.int(1, "轉勢前幾根內曾到達 / 超過該界才算 (1 = 轉勢那根的極值本身要在界外)", minval = 1, maxval = 10, group = gR2, display = display.none)
+// cRSI v4 核心 — 所有 ta.* 在全域無條件計算 (Pine v6 的 and / or 是短路求值)
+cycleLen   = math.max(2, math.floor(domCycle / 2))
+cycMem     = domCycle * 2
+torque     = 2.0 / (vibration + 1)
+phaseLag   = math.max(0, math.floor((vibration - 1) / 2))
+cUpM       = ta.rma(math.max(ta.change(close), 0), cycleLen)
+cDnM       = ta.rma(-math.min(ta.change(close), 0), cycleLen)
+rsiC       = cDnM == 0 ? 100 : cUpM == 0 ? 0 : 100 - 100 / (1 + cUpM / cDnM)
+var float crsi = 0.0
+crsi      := torque * (2 * rsiC - rsiC[phaseLag]) + (1 - torque) * nz(crsi[1])
+crsiPLo    = ta.percentile_linear_interpolation(crsi, cycMem, leveling)
+crsiPHi    = ta.percentile_linear_interpolation(crsi, cycMem, 100 - leveling)
+lmax       = ta.highest(crsi, cycMem)
+lmin       = ta.lowest(crsi, cycMem)
+db         = nz(crsiPLo, 0.0)
+ub         = nz(crsiPHi, 100.0)
+if bandMd == "原版 cRSI v4 逐格掃描 (101 格 × 記憶根數, 慢)" and bar_index >= cycMem
+    mstep = (lmax - lmin) / 100
+    aperc = leveling / 100
+    dbF   = 0.0
+    for st = 0 to 100
+        tv = lmin + mstep * st
+        below = 0
+        for m = 0 to cycMem - 1
+            below += crsi[m] < tv ? 1 : 0
+        if below / cycMem >= aperc
+            dbF := tv
+            break
+    ubF   = 0.0
+    for st = 0 to 100
+        tv = lmax - mstep * st
+        above = 0
+        for m = 0 to cycMem - 1
+            above += crsi[m] >= tv ? 1 : 0
+        if above / cycMem >= aperc
+            ubF := tv
+            break
+    db := dbF
+    ub := ubF
+// 買區 / 賣區 (單根事件; 模式 2 的輸出只有「可買」或「可賣」)
+turnUp     = crsi > crsi[1] and crsi[1] <= crsi[2]        // 梯度由 ≤0 轉為 >0 (谷底在前一根, 本根收盤確認, 不重繪)
+turnDn     = crsi < crsi[1] and crsi[1] >= crsi[2]        // 梯度由 ≥0 轉為 <0 (峰頂在前一根)
+sinceLo    = ta.barssince(crsi <= db)
+sinceHi    = ta.barssince(crsi >= ub)
+reachLo    = nz(sinceLo[1], 99999) < m2Reach
+reachHi    = nz(sinceHi[1], 99999) < m2Reach
+m2BuyRaw   = turnUp
+m2SellRaw  = turnDn
+m2Buy      = turnUp and reachLo                           // 進入買區 = 可買
+m2Sell     = turnDn and reachHi                           // 進入賣區 = 可賣
+var string m2Zone = "-"
+m2Zone    := m2Buy ? "可買" : m2Sell ? "可賣" : m2Zone
 
 // ─────────────────────────── ③ 顯示 ───────────────────────────
 gDS        = "③ 顯示"
-lwRsi      = input.int(3, "RSI 線粗細", minval = 1, maxval = 6, group = gDS, display = display.none)
-showVL     = input.bool(true, "每個買賣訊號畫一條淺灰幼直線 (買 點線 / 賣 虛線)", group = gDS, display = display.none)
+lwRsi      = input.int(3, "cRSI 線粗細", minval = 1, maxval = 6, group = gDS, display = display.none)
+showRaw    = input.bool(true, "顯示未到界的轉勢 (灰色小三角, 只供對照)", group = gDS, display = display.none)
+showVL     = input.bool(true, "每個可買 / 可賣訊號畫一條淺灰幼直線 (買 點線 / 賣 虛線)", group = gDS, display = display.none)
 vlTransp   = input.int(78, "直線淡化 (透明度 %; 越大越淡)", minval = 30, maxval = 95, step = 2, group = gDS, display = display.none)
 showBg     = input.bool(true, "回測期間底色", group = gDS, display = display.none)
 showTbl    = input.bool(true, "右上顯示訊號統計", group = gDS, display = display.none)
 tblPos     = input.string("右上", "統計表位置", options = ["右上", "右下"], group = gDS, display = display.none)
 
 cBrown     = color.rgb(92, 51, 23)          // 模式 2: 深棕 (粗)
-cBuyTri    = color.rgb(120, 180, 255)       // 買訊 ▲ 淺藍
-cSellTri   = color.rgb(255, 120, 120)       // 賣訊 ▼ 淺紅
+cBuyTri    = color.rgb(120, 180, 255)       // 可買 ▲ 淺藍
+cSellTri   = color.rgb(255, 120, 120)       // 可賣 ▼ 淺紅
 
-plot(rsiV, "RSI", color = cBrown, linewidth = lwRsi, display = display.pane + display.price_scale)
-pLo   = plot(rsiLoBand, "超賣界 (動態或固定)", color = color.new(color.green, 40), linewidth = 1, display = display.pane)
-pHi   = plot(rsiHiBand, "超買界 (動態或固定)", color = color.new(color.red, 40), linewidth = 1, display = display.pane)
-pMid  = plot(rsiExitLv, "中性值", color = color.new(color.gray, 60), linewidth = 1, display = display.pane)
+plot(crsi, "cRSI", color = cBrown, linewidth = lwRsi, display = display.pane + display.price_scale)
+pLo   = plot(db, "下界 (lower band)", color = color.new(color.green, 40), linewidth = 1, display = display.pane)
+pHi   = plot(ub, "上界 (upper band)", color = color.new(color.red, 40), linewidth = 1, display = display.pane)
 p0    = plot(0, "0", color = color.new(color.gray, 90), display = display.pane)
 p100  = plot(100, "100", color = color.new(color.gray, 90), display = display.pane)
-fill(p0, pLo, color = color.new(color.green, 92), title = "超賣區")
-fill(pHi, p100, color = color.new(color.red, 92), title = "超買區")
+fill(p0, pLo, color = color.new(color.green, 92), title = "下界以下 (買區候選)")
+fill(pHi, p100, color = color.new(color.red, 92), title = "上界以上 (賣區候選)")
 bgcolor(showBg and inWindow ? color.new(color.blue, 94) : na, title = "回測期間底色")
 
-// 訊號直接標在 RSI 曲線上 (label, 最多保留最近 500 個): ▲ 淺藍 = 通過結構過濾的買訊; ▲ 灰小 = 被結構過濾掉的; ▼ 淺紅 = 賣訊
+// 訊號直接標在 cRSI 曲線上 (label, 最多保留最近 500 個): ▲ 淺藍 = 可買 (到下界後轉勢向上); ▼ 淺紅 = 可賣 (到上界後轉勢向下); 灰小三角 = 未到界的轉勢
 if m2Buy and inWindow
-    label.new(bar_index, rsiV, "", style = label.style_triangleup,   color = cBuyTri,  size = size.small, yloc = yloc.price)
-if m2BuyRaw and not m2Buy and inWindow
-    label.new(bar_index, rsiV, "", style = label.style_triangleup,   color = color.new(color.gray, 40), size = size.tiny, yloc = yloc.price)
+    label.new(bar_index, crsi, "", style = label.style_triangleup,   color = cBuyTri,  size = size.small, yloc = yloc.price)
 if m2Sell and inWindow
-    label.new(bar_index, rsiV, "", style = label.style_triangledown, color = cSellTri, size = size.small, yloc = yloc.price)
-// 擺動結構標籤: 離開超賣 / 超買區那一根定型, 標在該次極值出現的那根 K 上 (之後不再改, 不重繪)
-if leftOS and inWindow
-    label.new(epLowBar, rsiLoBand, lowTag, style = label.style_label_up, color = lowTag == "HL" ? color.new(color.green, 20) : color.new(color.gray, 30), textcolor = color.white, size = size.tiny)
-if leftOB and inWindow
-    label.new(epHighBar, rsiHiBand, highTag, style = label.style_label_down, color = highTag == "HH" ? color.new(color.green, 20) : color.new(color.gray, 30), textcolor = color.white, size = size.tiny)
+    label.new(bar_index, crsi, "", style = label.style_triangledown, color = cSellTri, size = size.small, yloc = yloc.price)
+if showRaw and m2BuyRaw and not m2Buy and inWindow
+    label.new(bar_index, crsi, "", style = label.style_triangleup,   color = color.new(color.gray, 55), size = size.tiny, yloc = yloc.price)
+if showRaw and m2SellRaw and not m2Sell and inWindow
+    label.new(bar_index, crsi, "", style = label.style_triangledown, color = color.new(color.gray, 55), size = size.tiny, yloc = yloc.price)
 
 // 淺灰幼直線: 與主策略同一個視覺語言 (買 點線 / 賣 虛線), 本副圖內貫通上下
 vlCol = color.new(color.gray, vlTransp)
@@ -268,41 +264,43 @@ if showVL and inWindow and m2Buy
 if showVL and inWindow and m2Sell
     line.new(bar_index, 0.0, bar_index, 100.0, extend = extend.both, color = vlCol, width = 1, style = line.style_dashed)
 
-// 左側線名標籤 (貼在可見範圍最左那根 K 的 RSI 值上)
+// 左側線名標籤 (貼在可見範圍最左那根 K 的 cRSI 值上)
 var float yRsi = na
 if time >= chart.left_visible_bar_time and na(yRsi)
-    yRsi := rsiV
+    yRsi := crsi
 var label lbR = na
 if barstate.islast
     label.delete(lbR)
-    lbR := label.new(chart.left_visible_bar_time, nz(yRsi, rsiV), "模式2 · RSI(" + str.tostring(rsiLen) + ") ▲買(過濾後) ▲灰=被HL過濾 ▼賣 · HL/LL HH/LH=擺動結構", xloc = xloc.bar_time, style = label.style_label_left, color = cBrown, textcolor = color.white, size = size.tiny)
+    lbR := label.new(chart.left_visible_bar_time, nz(yRsi, crsi), "模式2 · cRSI(" + str.tostring(domCycle) + ") ▲可買=到下界後轉勢向上 ▼可賣=到上界後轉勢向下 · 灰=未到界的轉勢", xloc = xloc.bar_time, style = label.style_label_left, color = cBrown, textcolor = color.white, size = size.tiny)
 
 // 訊號統計 (靠右, 與主策略的表格同側)
 var int nB = 0
 var int nBr = 0
 var int nS = 0
+var int nSr = 0
 if inWindow
     nB  += m2Buy ? 1 : 0
     nBr += m2BuyRaw ? 1 : 0
     nS  += m2Sell ? 1 : 0
+    nSr += m2SellRaw ? 1 : 0
 posT = tblPos == "右下" ? position.bottom_right : position.top_right
 var table tb = table.new(posT, 2, 6, border_width = 1, frame_width = 1, frame_color = color.gray)
 if barstate.islast and showTbl
     table.clear(tb, 0, 0, 1, 5)
     hBg = color.new(color.gray, 70)
-    table.cell(tb, 0, 0, "模式 2 · RSI 超賣回歸", text_size = size.tiny, text_color = color.white, bgcolor = cBrown)
-    table.cell(tb, 1, 0, "RSI " + str.tostring(rsiV, "#.#"), text_size = size.tiny, text_color = color.white, bgcolor = cBrown)
-    table.cell(tb, 0, 1, "超賣界 / 超買界", text_size = size.tiny, bgcolor = hBg)
-    table.cell(tb, 1, 1, str.tostring(rsiLoBand, "#.#") + " / " + str.tostring(rsiHiBand, "#.#") + (rsiThMd == "固定: 30 / 70" ? " 固定" : " 動態"), text_size = size.tiny)
-    table.cell(tb, 0, 4, "買訊 未過濾 → 過濾後", text_size = size.tiny, bgcolor = hBg)
-    table.cell(tb, 1, 4, str.tostring(nBr) + " → " + str.tostring(nB), text_size = size.tiny, text_color = color.blue)
-    table.cell(tb, 0, 5, "最近結構 低/高", text_size = size.tiny, bgcolor = hBg)
-    table.cell(tb, 1, 5, (isHL ? "HL" : na(prevSwLow) ? "-" : "LL") + " / " + (isHH ? "HH" : na(prevSwHigh) ? "-" : "LH"), text_size = size.tiny, text_color = isHL ? color.green : color.gray)
-    table.cell(tb, 0, 2, "賣訊 (" + (rsiSellMd == "上穿 中性值 (S05 原版)" ? "上穿 " + str.tostring(rsiExitLv, "#") : "下穿 " + str.tostring(rsiOBLv, "#")) + ")", text_size = size.tiny, bgcolor = hBg)
-    table.cell(tb, 1, 2, str.tostring(nS) + " 次", text_size = size.tiny, text_color = color.red)
-    table.cell(tb, 0, 3, "窗口", text_size = size.tiny, bgcolor = hBg)
-    table.cell(tb, 1, 3, winMode == "最近 N 個交易日" ? str.tostring(tradDays) + " 交易日" : winMode == "最近 N 天 (日曆)" ? str.tostring(lookbackD) + " 天" : "指定日期", text_size = size.tiny)
-// ═══ END OF FILE ═══ TV-1M-RSI-mode2_(09月20日; 15:52) · 全檔共 176 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+    table.cell(tb, 0, 0, "模式 2 · cRSI 轉勢 + 上下界", text_size = size.tiny, text_color = color.white, bgcolor = cBrown)
+    table.cell(tb, 1, 0, "cRSI " + str.tostring(crsi, "#.#") + " · 現況 " + m2Zone, text_size = size.tiny, text_color = color.white, bgcolor = cBrown)
+    table.cell(tb, 0, 1, "下界 / 上界 (L" + str.tostring(leveling, "#") + "%, 記憶 " + str.tostring(cycMem) + " 根)", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 1, str.tostring(db, "#.#") + " / " + str.tostring(ub, "#.#"), text_size = size.tiny)
+    table.cell(tb, 0, 2, "可買: 轉勢向上 → 到下界才算", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 2, str.tostring(nBr) + " → " + str.tostring(nB), text_size = size.tiny, text_color = color.blue)
+    table.cell(tb, 0, 3, "可賣: 轉勢向下 → 到上界才算", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 3, str.tostring(nSr) + " → " + str.tostring(nS), text_size = size.tiny, text_color = color.red)
+    table.cell(tb, 0, 4, "參數 (需與主策略 ④c 一致)", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 4, "domcycle " + str.tostring(domCycle) + " · vibration " + str.tostring(vibration) + " · 到界回看 " + str.tostring(m2Reach) + " 根", text_size = size.tiny)
+    table.cell(tb, 0, 5, "窗口", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 5, winMode == "最近 N 個交易日" ? str.tostring(tradDays) + " 交易日" : winMode == "最近 N 天 (日曆)" ? str.tostring(lookbackD) + " 天" : "指定日期", text_size = size.tiny)
+// ═══ END OF FILE ═══ TV-1M-RSI-mode2_(09月20日; 16:14) · 全檔共 174 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
 </script>
 <script>
 (function(){
@@ -311,7 +309,7 @@ if barstate.islast and showTbl
   src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
   var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
   var bytes = new TextEncoder().encode(src).length;
-  var name = "TV-1M-RSI-mode2_(09月20日; 15:52)";
+  var name = "TV-1M-RSI-mode2_(09月20日; 16:14)";
   document.getElementById('code').value = src;
   document.getElementById('mLines').textContent = lines.length + ' 行';
   document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';

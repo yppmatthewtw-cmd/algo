@@ -111,3 +111,46 @@ def crossover(a: pd.Series, b) -> pd.Series:
 def crossunder(a: pd.Series, b) -> pd.Series:
     b = pd.Series(b, index=a.index) if np.isscalar(b) else b
     return (a < b) & (a.shift(1) >= b.shift(1))
+
+
+def crsi(c: pd.Series, domcycle: int = 20, vibration: int = 10):
+    """cRSI v4 (whentotrade / Lars von Thienen) 與 Pine 版 ④c 逐項對齊:
+    RSI 長度 = domcycle // 2 (ta.rma 平滑), torque = 2/(vibration+1), phasingLag = (vibration-1)//2,
+    crsi = torque*(2*rsi - rsi[lag]) + (1-torque)*crsi[1] (Pine 的 nz(crsi[1]) 起始為 0)。"""
+    n = max(2, domcycle // 2)
+    d = c.diff()
+    up, dn = rma(d.clip(lower=0), n), rma((-d).clip(lower=0), n)
+    r = np.where(dn == 0, 100.0, np.where(up == 0, 0.0, 100.0 - 100.0 / (1.0 + up / dn.replace(0, np.nan))))
+    r = pd.Series(r, index=c.index)
+    torque = 2.0 / (vibration + 1)
+    lag = max(0, (vibration - 1) // 2)
+    x = (2.0 * r - r.shift(lag)).to_numpy(dtype=float)
+    out = np.zeros(len(x))
+    prev = 0.0
+    for i in range(len(x)):
+        xi = x[i]
+        if np.isnan(xi):
+            out[i] = np.nan
+            continue
+        prev = torque * xi + (1.0 - torque) * prev
+        out[i] = prev
+    return pd.Series(out, index=c.index)
+
+
+def crsi_bands(cr: pd.Series, domcycle: int = 20, leveling: float = 10.0):
+    """下界 / 上界 = 最近 domcycle*2 根 cRSI 的第 leveling / 100-leveling 百分位 (Pine 版預設的「百分位」算法)。"""
+    mem = domcycle * 2
+    return rolling_percentile(cr, mem, leveling), rolling_percentile(cr, mem, 100.0 - leveling)
+
+
+def barssince(cond: pd.Series) -> pd.Series:
+    """ta.barssince: 距上一次 cond 為真幾根 (那根 = 0); 從未為真 = NaN。"""
+    v = cond.fillna(False).to_numpy(dtype=bool)
+    out = np.full(len(v), np.nan)
+    last = -1
+    for i in range(len(v)):
+        if v[i]:
+            last = i
+        if last >= 0:
+            out[i] = i - last
+    return pd.Series(out, index=cond.index)
