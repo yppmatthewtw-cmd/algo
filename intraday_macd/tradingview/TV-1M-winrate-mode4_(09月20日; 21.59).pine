@@ -1,12 +1,12 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TV-1M-winrate-mode4_(09月20日; 16:59)  ·  模式 4 (EMA9 斜率) 專用副圖 · 配合主策略 TV-1M-dashboard_(mode 1-4) 一起掛
+//  TV-1M-winrate-mode4_(09月20日; 21:59)  ·  模式 4 (EMA9 斜率) 專用副圖 · 配合主策略 TV-1M-dashboard_(mode 1-4) 一起掛
 //  模式 4 唯一條件: EMA9 現值比 N 根前高 (預設 N = 1, ② 可改) = 趨勢向上 → 輸出可以買入; 斜率為負 = 不可
 //  顯示: 斜率柱 (% 表示; 綠 >0 可買 / 紅 <0 不可) + 0 軸 + 底色; 由不可轉可買的那一根標「可買」; 右上統計窗內向上 K 數比例
 //  ② 的 EMA 長度 / 斜率根數必須與主策略 ④e 一致; 這支不下單, 真正的閘門在主策略 ④e (買入需四模式同時)
 //  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 80 行, 最後一行是 END OF FILE
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-indicator("TV-1M-winrate-mode4_(09月20日; 16:59)", shorttitle="TV-1M-winrate-mode4_(09月20日; 16:59)", overlay = false, max_labels_count = 500)
+indicator("TV-1M-winrate-mode4_(09月20日; 21:59)", shorttitle="TV-1M-winrate-mode4_(09月20日; 21:59)", overlay = false, max_labels_count = 500)
 
 // ─────────────────────────── ① 回測期間 (與主策略對齊, 只用來畫底色) ───────────────────────────
 gBT       = "① 回測期間 (與主策略對齊)"
@@ -36,7 +36,7 @@ inWindow = time >= btStart and time <= btEnd
 // ─────────────────────────── ② 模式 4 · EMA9 斜率為正 = 可以買入 (與主策略 ④e 一致) ───────────────────────────
 gR4      = "② 模式 4 · EMA9 斜率 (與主策略 ④e 保持一致)"
 m4EmaLen = input.int(9, "EMA 長度", minval = 1, group = gR4, display = display.none)
-m4Look   = input.int(1, "斜率取幾根: EMA 現值 − N 根前的值 > 0 = 向上", minval = 1, maxval = 30, group = gR4, display = display.none)
+m4Look   = input.int(1, "斜率取幾根: EMA 現值 − N 根前的值 > 0 = 向上 (1 = 逐根比較)", minval = 1, maxval = 30, group = gR4, display = display.none)
 m4Ema    = ta.ema(close, m4EmaLen)
 m4Slope  = m4Ema[m4Look] == 0 ? 0.0 : (m4Ema - m4Ema[m4Look]) / m4Ema[m4Look] * 100.0
 m4Up     = m4Slope > 0
@@ -77,4 +77,4 @@ if barstate.islast
     table.cell(tb, 1, 2, str.tostring(nBar) + " / " + str.tostring(nBarUp), text_size = size.tiny)
     table.cell(tb, 0, 3, "向上比例", text_size = size.tiny, bgcolor = hBg)
     table.cell(tb, 1, 3, str.tostring(nBar > 0 ? nBarUp * 100.0 / nBar : 0.0, "#.#") + "%", text_size = size.tiny)
-// ═══ END OF FILE ═══ TV-1M-winrate-mode4_(09月20日; 16:59) · 全檔共 80 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ TV-1M-winrate-mode4_(09月20日; 21:59) · 全檔共 80 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══

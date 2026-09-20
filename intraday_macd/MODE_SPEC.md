@@ -1,6 +1,6 @@
 # TV-1M-dashboard_(mode 1-4) · 模式 1–4 完整規格 (每一項要求、參數、觸發點)
 
-對應版本: `TV-1M-dashboard_(mode 1-4)_(09月20日; 16.59)` / `TV-1M-RSI-mode2_(09月20日; 16.59)` / `TV-1M-winrate-mode4_(09月20日; 16.59)`。
+對應版本: `TV-1M-dashboard_(mode 1-4)_(09月20日; 21.59)` / `TV-1M-RSI-mode2_(09月20日; 21.59)` / `TV-1M-winrate-mode4_(09月20日; 21.59)`。
 Inputs 的分節編號 (①②③④④c④d④e⑤⑥⑦⑧⑨) 就是 TradingView 設定視窗裡的群組名稱。所有 ta.* 都在全域無條件計算, 所有判斷都在 K 線收盤後確認, 訊號不重繪; 訂單一律在下一根開盤成交。
 
 ---
@@ -89,7 +89,8 @@ minDepthS = baseDepth × kSell       上界深度 (%)      band1Up = +minDepthS 
 | 動態: 上界百分位 `rsiPctHi` | 90 | 上界 = 第 90 百分位 |
 | 固定: 下界 / 上界 `rsiFixLo / rsiFixHi` | 30 / 70 | 固定模式用; 動態模式暖身期間 (不足 120 根) 也用它們 |
 | 轉勢前幾根內曾到界 `m2Reach` | 1 | 1 = 轉勢那根的谷底 / 峰頂本身要在界外; 2–3 = 容許谷底前幾根曾到界 |
-| 可買區何時結束 `zoneEndMd` | RSI14 跌破 RSI28, 或 RSI14 在 RSI28 之下轉勢向下 (昇不上) | 另兩種: RSI14 轉勢向下 (區間最短) / RSI28 轉勢向下 (區間最長) |
+| 可買區何時結束 `zoneEndMd` | RSI14 跌破 RSI28, 或 RSI14 跌破進區時的谷底 (反彈失敗 = 昇不上) | 另兩種: RSI14 轉勢向下 (區間最短, 一個小回落就結束) / RSI28 轉勢向下 (區間最長) |
+| 每個交易日開始時清空區間 `m2ResetDay` | 開 | 不把昨日收市前的可買區 / 可賣區帶到今日開市 (RSI 會跨越隔夜跳空) |
 | 持倉中可買區結束 → 平倉 `m2ExitOnEnd` | 開 | 出場原因 M2區結束 |
 
 轉勢的定義 (梯度變號, 谷底 / 峰頂在前一根, 本根收盤確認):
@@ -101,6 +102,7 @@ turnUpS / turnDnS                                     RSI28 同樣定義
 reachLoF = (RSI14 上一次 ≤ 下界 距前一根幾根) < m2Reach   → m2Reach = 1 時就是「前一根 (谷底) 本身 ≤ 下界」
 reachHiF = (RSI14 上一次 ≥ 上界 距前一根幾根) < m2Reach   → 「前一根 (峰頂) 本身 ≥ 上界」
 xFSdn = RSI14 跌破 RSI28 (crossunder);  xFSup = RSI14 升穿 RSI28 (crossover)
+m2Trough = 進入可買區那一根的谷底 (rsiF[1]);  m2Peak = 進入可賣區那一根的峰頂
 ```
 
 ### 2.2 進入可買區 (單根事件 `m2BuyStart`)
@@ -109,7 +111,7 @@ xFSdn = RSI14 跌破 RSI28 (crossunder);  xFSup = RSI14 升穿 RSI28 (crossover)
 
 ### 2.3 可買區結束 (`buyEndRaw`, 「昇不上」)
 
-- 預設: `xFSdn or (rsiF < rsiS and turnDnF)` — RSI14 跌破 RSI28, 或 RSI14 仍在 RSI28 之下就轉勢向下 (反彈失敗)。
+- 預設: `xFSdn or rsiF < m2Trough` — RSI14 跌破 RSI28 (反彈後失守慢線), 或 RSI14 跌破進區那一根的谷底 (反彈失敗, 區間的前提已破)。單純一根小回落不會結束區間。
 - 選項 2: `turnDnF` — RSI14 一轉勢向下就結束。
 - 選項 3: `turnDnS` — RSI28 轉勢向下才結束。
 
@@ -119,14 +121,15 @@ xFSdn = RSI14 跌破 RSI28 (crossunder);  xFSup = RSI14 升穿 RSI28 (crossover)
 
 ### 2.5 可賣區結束 (`sellEndRaw`, 「跌不下」) — 相反原理
 
-- 預設: `xFSup or (rsiF > rsiS and turnUpF)`; 選項 2: `turnUpF`; 選項 3: `turnUpS`。
+- 預設: `xFSup or rsiF > m2Peak` (RSI14 升穿 RSI28, 或升破進區時的峰頂); 選項 2: `turnUpF`; 選項 3: `turnUpS`。
 
 ### 2.6 狀態機 (每根依序判斷, 先到先算)
 
 ```
 m2State: 1 = 可買區, −1 = 可賣區, 0 = 無
-if 進入可買區          → m2State := 1        (進入新區優先於現區結束)
-else if 進入可賣區     → m2State := −1
+if 新交易日第一根 且 m2ResetDay → m2State := 0   (先清空, 不算「結束」)
+if 進入可買區          → m2State := 1, 記下谷底 m2Trough   (進入新區優先於現區結束)
+else if 進入可賣區     → m2State := −1, 記下峰頂 m2Peak
 else if 在可買區 且 可買區結束條件 → 0
 else if 在可賣區 且 可賣區結束條件 → 0
 m2InBuy  = m2State == 1      模式 2 的輸出 (狀態)
@@ -134,7 +137,7 @@ m2InSell = m2State == −1
 m2BuyEnd = 上一根在可買區 而 本根不在 (含直接轉入可賣區)   → 觸發持倉平倉
 ```
 
-副圖 (TV-1M-RSI-mode2): 深棕粗線 RSI14、橙細線 RSI28、綠 / 紅細線 = 下界 / 上界、底色 淺藍 = 可買區 / 淺紅 = 可賣區、▲ 淺藍 = 進可買區、▼ 淺紅 = 進可賣區、「結束」標籤 = 區間結束、圓點 = 快慢線交叉 (藍 升穿 / 紅 跌破)。右上表: 現況、RSI14/28、上下界、轉勢向上 → 到下界才算 (次數)、窗內可買區 / 可賣區 K 數、交叉次數。
+副圖 (TV-1M-RSI-mode2): 深棕粗線 RSI14、橙細線 RSI28、綠 / 紅細線 = 下界 / 上界、底色 淺藍 = 可買區 / 淺紅 = 可賣區、▲ 淺藍 = 進可買區、▼ 淺紅 = 進可賣區、× 小叉 = 區間結束、圓點 = 快慢線交叉 (藍 升穿 / 紅 跌破)。右上表: 現況、RSI14/28、上下界、轉勢向上 → 到下界才算 (次數)、窗內可買區 / 可賣區 K 數、交叉次數。
 
 ---
 
@@ -191,8 +194,8 @@ buySig  = buyCore and m4OK and (buyEvt or m4Start) 再加 模式 4 向上 (EMA9 
 
 | 順序 | 條件 | 出場原因 (Strategy Tester / 逐筆表) |
 |:---|:---|:---|
-| 1 | `sellSig = s1Live and m2InSell and (m1Sell or m2SellStart)` — 模式 1 賣訊 (昇到上界後淺綠 N 根完成) 在 5 根內 且 模式 2 處於可賣區, 本根至少一個剛出現 | S-M1&M2 |
-| 2 | 否則 `m2ExitOnEnd and m2BuyEnd` — 模式 2 可買區結束 (整體出現了買點之後就要 stop out) | M2區結束 |
+| 1 | `sellSig = s1Live and m2InSell and (m1Sell or m2SellStart)` — 模式 1 賣訊 (昇到上界後淺綠 N 根完成) 在 5 根內 且 模式 2 處於可賣區, 本根至少一個剛出現 (15:58 那根不用此原因, 交給 EOD) | S-M1&M2 |
+| 2 | 否則 `m2ExitOnEnd and m2BuyEnd` — 模式 2 可買區結束 (整體出現了買點之後就要 stop out; 15:58 那根同樣交給 EOD) | M2區結束 |
 | 3 | 固定止損 (預設關) | SL |
 | 4 | 15:58 強制平倉 | EOD |
 | 5 | 回測窗結束 | 窗口結束 |

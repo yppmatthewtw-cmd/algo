@@ -68,7 +68,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <header class="hero">
     <div>
       <div class="eyebrow">TradingView · Pine Script v6 · 1 分鐘日內策略 (市場預設 美股, Inputs 可切港股)</div>
-      <h1 id="scriptName">TV-1M-RSI-mode2_(09月20日; 16:59)</h1>
+      <h1 id="scriptName">TV-1M-RSI-mode2_(09月20日; 21:59)</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
     </div>
     <div class="card">
@@ -89,12 +89,12 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-RSI-mode2_(09月20日; 16:59)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-RSI-mode2_(09月20日; 21:59)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
       <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
     </ol>
     <div class="check">
       <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 11 行</span><code>indicator("TV-1M-RSI-mode2_(09月20日; 16:59)", shorttitle="TV-1M-RSI-mode2_(09月20日; 16:59)", …)</code></div>
+      <div><span class="k">第 11 行</span><code>indicator("TV-1M-RSI-mode2_(09月20日; 21:59)", shorttitle="TV-1M-RSI-mode2_(09月20日; 21:59)", …)</code></div>
       <div><span class="k">最後一行</span><code id="cLast">—</code></div>
     </div>
   </section>
@@ -117,7 +117,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <tr><td class="m">hist&amp;rsi (00:53)</td><td class="m">第 1 行 · CE10244 A strategy must contain…</td><td class="m">8192 剛好切在第 66 行 (註解) 開頭</td><td>前 65 行沒有任何輸出函式</td></tr>
     </table>
     </div>
-    <div class="warnbox" style="margin-top:12px">整份檔案約 16.2 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
+    <div class="warnbox" style="margin-top:12px">整份檔案約 17.0 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
   </section>
 
   <section class="card">
@@ -128,16 +128,16 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 
 <script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TV-1M-RSI-mode2_(09月20日; 16:59)  ·  模式 2 (RSI 14/28 可買區 / 可賣區) 專用副圖 · 配合主策略 TV-1M-dashboard_(mode 1-4) 一起掛
+//  TV-1M-RSI-mode2_(09月20日; 21:59)  ·  模式 2 (RSI 14/28 可買區 / 可賣區) 專用副圖 · 配合主策略 TV-1M-dashboard_(mode 1-4) 一起掛
 //  模式 2 是「狀態」(像模式 4), 不形成絕對買賣點: 下界 / 上界 = 最近 120 根 RSI14 的第 10 / 90 百分位 (可切固定 30/70)
 //  進入可買區 = RSI14 梯度由 ≤0 轉 >0 (谷底在前一根) 且 谷底到達或低於下界; 一直持續直到「昇不上」= RSI14 跌破 RSI28, 或 RSI14 在 RSI28 之下就轉勢向下 (② 可改)
 //  進入可賣區 = 相反 (梯度由 ≥0 轉 <0 且 峰頂到達或高於上界), 結束條件相反; 進入另一區直接取代現區; 舊的 cRSI 已全部刪除
-//  顯示: 深棕粗線 RSI14 · 橙細線 RSI28 · 綠/紅細線 = 下界/上界 · 底色 淺藍 = 可買區 / 淺紅 = 可賣區 · ▲ 淺藍 = 進可買區 · ▼ 淺紅 = 進可賣區 · 「結束」= 區間結束 · 圓點 = 快慢線交叉
+//  顯示: 深棕粗線 RSI14 · 橙細線 RSI28 · 綠/紅細線 = 下界/上界 · 底色 淺藍 = 可買區 / 淺紅 = 可賣區 · ▲ 淺藍 = 進可買區 · ▼ 淺紅 = 進可賣區 · × = 區間結束 · 圓點 = 快慢線交叉
 //  ② 的 快慢線長度 / 下上界方式 / 百分位 / 到界回看根數 / 區間結束規則 必須與主策略 ④c 一致; 這支不下單; plot 的 title 必須是常數字串
-//  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 197 行, 最後一行是 END OF FILE
+//  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 203 行, 最後一行是 END OF FILE
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-indicator("TV-1M-RSI-mode2_(09月20日; 16:59)", shorttitle="TV-1M-RSI-mode2_(09月20日; 16:59)", overlay = false, max_labels_count = 500, max_lines_count = 500)
+indicator("TV-1M-RSI-mode2_(09月20日; 21:59)", shorttitle="TV-1M-RSI-mode2_(09月20日; 21:59)", overlay = false, max_labels_count = 500, max_lines_count = 500)
 
 // ─────────────────────────── ① 回測期間 (與主策略同一套設定, 只用來畫底色) ───────────────────────────
 gBT        = "① 回測期間 (與主策略對齊)"
@@ -175,7 +175,8 @@ rsiPctHi   = input.float(90, "動態: 上界 = 第幾百分位", minval = 60, ma
 rsiFixLo   = input.float(30, "固定: 下界", minval = 1, maxval = 50, step = 1, group = gR2, display = display.none)
 rsiFixHi   = input.float(70, "固定: 上界", minval = 50, maxval = 99, step = 1, group = gR2, display = display.none)
 m2Reach    = input.int(1, "轉勢前幾根內曾到達 / 超過該界才算 (1 = 轉勢那根的谷底 / 峰頂本身要在界外)", minval = 1, maxval = 10, group = gR2, display = display.none)
-zoneEndMd  = input.string("RSI14 跌破 RSI28, 或 RSI14 在 RSI28 之下轉勢向下 (昇不上)", "可買區何時結束 (可賣區用相反條件)", options = ["RSI14 跌破 RSI28, 或 RSI14 在 RSI28 之下轉勢向下 (昇不上)", "RSI14 轉勢向下 (梯度轉負)", "RSI28 轉勢向下 (梯度轉負)"], group = gR2, display = display.none)
+m2ResetDay = input.bool(true, "每個交易日開始時清空區間 (與主策略 ④c 一致)", group = gR2, display = display.none)
+zoneEndMd  = input.string("RSI14 跌破 RSI28, 或 RSI14 跌破進區時的谷底 (反彈失敗 = 昇不上)", "可買區何時結束 (可賣區用相反條件)", options = ["RSI14 跌破 RSI28, 或 RSI14 跌破進區時的谷底 (反彈失敗 = 昇不上)", "RSI14 轉勢向下 (梯度轉負)", "RSI28 轉勢向下 (梯度轉負)"], group = gR2, display = display.none)
 // 全部 ta.* 在全域無條件計算 (Pine v6 的 and / or 是短路求值)
 rsiF       = ta.rsi(close, rsiFastLen)
 rsiS       = ta.rsi(close, rsiSlowLen)
@@ -195,16 +196,23 @@ xFSdn      = ta.crossunder(rsiF, rsiS)                 // 快線跌破慢線
 xFSup      = ta.crossover(rsiF, rsiS)                  // 快線升穿慢線
 m2BuyStart  = turnUpF and reachLoF                     // 進入可買區
 m2SellStart = turnDnF and reachHiF                     // 進入可賣區
-endModeA   = zoneEndMd == "RSI14 跌破 RSI28, 或 RSI14 在 RSI28 之下轉勢向下 (昇不上)"
+endModeA   = zoneEndMd == "RSI14 跌破 RSI28, 或 RSI14 跌破進區時的谷底 (反彈失敗 = 昇不上)"
 endModeB   = zoneEndMd == "RSI14 轉勢向下 (梯度轉負)"
-buyEndRaw  = endModeA ? (xFSdn or (rsiF < rsiS and turnDnF)) : endModeB ? turnDnF : turnDnS
-sellEndRaw = endModeA ? (xFSup or (rsiF > rsiS and turnUpF)) : endModeB ? turnUpF : turnUpS
-var int m2State = 0                                    // 1 = 可買區, -1 = 可賣區, 0 = 無
+var int   m2State  = 0                                 // 1 = 可買區, -1 = 可賣區, 0 = 無
+var float m2Trough = na                                // 進入可買區那一根的谷底 (RSI14 值)
+var float m2Peak   = na                                // 進入可賣區那一根的峰頂
+buyEndRaw  = endModeA ? (xFSdn or rsiF < m2Trough) : endModeB ? turnDnF : turnDnS   // 「昇不上」: 跌破慢線 或 跌破進區谷底
+sellEndRaw = endModeA ? (xFSup or rsiF > m2Peak)   : endModeB ? turnUpF : turnUpS   // 相反: 「跌不下」
+newDay     = dayofmonth != dayofmonth[1]
+if m2ResetDay and newDay
+    m2State := 0
 m2Prev     = m2State
-if m2BuyStart
-    m2State := 1
+if m2BuyStart                                          // 進入新區優先於現區結束
+    m2State  := 1
+    m2Trough := rsiF[1]
 else if m2SellStart
     m2State := -1
+    m2Peak  := rsiF[1]
 else if m2State == 1 and buyEndRaw
     m2State := 0
 else if m2State == -1 and sellEndRaw
@@ -246,15 +254,13 @@ fill(pHi, p100, color = color.new(color.red, 92), title = "上界以上")
 bgcolor(showBg and m2InBuy ? cBuyZone : showBg and m2InSell ? cSellZone : na, title = "可買區 / 可賣區 底色")
 bgcolor(showBg and inWindow ? color.new(color.blue, 96) : na, title = "回測期間底色")
 
-// 進入區間那一根標在 RSI14 上: ▲ 淺藍 = 進入可買區 (到下界後轉勢向上); ▼ 淺紅 = 進入可賣區 (到上界後轉勢向下); 區間結束標小叉
+// 進入區間那一根標在 RSI14 上: ▲ 淺藍 = 進入可買區 (到下界後轉勢向上); ▼ 淺紅 = 進入可賣區 (到上界後轉勢向下); 區間結束 = 小叉 (plotshape, 不佔 label 上限 500)
 if m2BuyStart and inWindow
     label.new(bar_index, rsiF, "", style = label.style_triangleup,   color = cBuyTri,  size = size.small, yloc = yloc.price)
 if m2SellStart and inWindow
     label.new(bar_index, rsiF, "", style = label.style_triangledown, color = cSellTri, size = size.small, yloc = yloc.price)
-if m2BuyEnd and inWindow
-    label.new(bar_index, rsiF, "結束", style = label.style_label_down, color = color.new(cBuyTri, 30), textcolor = color.black, size = size.tiny)
-if m2SellEnd and inWindow
-    label.new(bar_index, rsiF, "結束", style = label.style_label_up, color = color.new(cSellTri, 30), textcolor = color.black, size = size.tiny)
+plotshape(m2BuyEnd  and inWindow ? rsiF : na, "可買區結束 ×", style = shape.xcross, location = location.absolute, color = color.new(color.blue, 30), size = size.tiny, display = display.pane)
+plotshape(m2SellEnd and inWindow ? rsiF : na, "可賣區結束 ×", style = shape.xcross, location = location.absolute, color = color.new(color.red, 30),  size = size.tiny, display = display.pane)
 if showRaw and m2BuyRaw and not m2BuyStart and inWindow
     label.new(bar_index, rsiF, "", style = label.style_triangleup,   color = color.new(color.gray, 55), size = size.tiny, yloc = yloc.price)
 if showRaw and m2SellRaw and not m2SellStart and inWindow
@@ -312,7 +318,7 @@ if barstate.islast and showTbl
     table.cell(tb, 0, 0, "模式 2 · RSI " + str.tostring(rsiFastLen) + "/" + str.tostring(rsiSlowLen) + " 可買區 / 可賣區", text_size = size.tiny, text_color = color.white, bgcolor = cBrown)
     table.cell(tb, 1, 0, "現況 " + m2Zone, text_size = size.tiny, text_color = color.white, bgcolor = m2InBuy ? color.rgb(40, 110, 220) : m2InSell ? color.rgb(200, 60, 60) : cBrown)
     table.cell(tb, 0, 1, "RSI14 / RSI28", text_size = size.tiny, bgcolor = hBg)
-    table.cell(tb, 1, 1, str.tostring(rsiF, "#.#") + " / " + str.tostring(rsiS, "#.#") + (rsiF > rsiS ? "  快>慢" : "  快<慢"), text_size = size.tiny)
+    table.cell(tb, 1, 1, str.tostring(rsiF, "#.#") + " / " + str.tostring(rsiS, "#.#") + (rsiF > rsiS ? "  快>慢" : rsiF < rsiS ? "  快<慢" : "  快=慢"), text_size = size.tiny)
     table.cell(tb, 0, 2, "下界 / 上界", text_size = size.tiny, bgcolor = hBg)
     table.cell(tb, 1, 2, str.tostring(rsiLoBand, "#.#") + " / " + str.tostring(rsiHiBand, "#.#") + (rsiBandMd == "固定: 30 / 70" ? " 固定" : " 動態 P" + str.tostring(rsiPctLo, "#") + "/P" + str.tostring(rsiPctHi, "#")), text_size = size.tiny)
     table.cell(tb, 0, 3, "進可買區: 轉勢向上 → 到下界才算", text_size = size.tiny, bgcolor = hBg)
@@ -322,8 +328,8 @@ if barstate.islast and showTbl
     table.cell(tb, 0, 5, "窗內 K 數: 可買區 / 可賣區 / 全部", text_size = size.tiny, bgcolor = hBg)
     table.cell(tb, 1, 5, str.tostring(nBarB) + " / " + str.tostring(nBarS) + " / " + str.tostring(nBarAll) + "  (可買區 " + str.tostring(nBarAll > 0 ? nBarB * 100.0 / nBarAll : 0.0, "#") + "%)", text_size = size.tiny)
     table.cell(tb, 0, 6, "快慢線交叉 升穿 / 跌破 · 區間結束規則", text_size = size.tiny, bgcolor = hBg)
-    table.cell(tb, 1, 6, str.tostring(nXup) + " / " + str.tostring(nXdn) + " · " + (endModeA ? "跌破慢線或慢線下轉勢" : endModeB ? "RSI14 轉勢" : "RSI28 轉勢"), text_size = size.tiny)
-// ═══ END OF FILE ═══ TV-1M-RSI-mode2_(09月20日; 16:59) · 全檔共 197 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+    table.cell(tb, 1, 6, str.tostring(nXup) + " / " + str.tostring(nXdn) + " · " + (endModeA ? "跌破慢線或跌破進區谷底" : endModeB ? "RSI14 轉勢" : "RSI28 轉勢"), text_size = size.tiny)
+// ═══ END OF FILE ═══ TV-1M-RSI-mode2_(09月20日; 21:59) · 全檔共 203 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
 </script>
 <script>
 (function(){
@@ -332,7 +338,7 @@ if barstate.islast and showTbl
   src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
   var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
   var bytes = new TextEncoder().encode(src).length;
-  var name = "TV-1M-RSI-mode2_(09月20日; 16:59)";
+  var name = "TV-1M-RSI-mode2_(09月20日; 21:59)";
   document.getElementById('code').value = src;
   document.getElementById('mLines').textContent = lines.length + ' 行';
   document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';

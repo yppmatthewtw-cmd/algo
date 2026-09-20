@@ -28,9 +28,9 @@ DEFAULTS = dict(
     s14_k_buy=1.5, s14_mb_buy=4, s14_match_win=5, s14_depth_pct=75, s14_use_area=False,
     # 模式 2 (S14 / S15 / S16 共用) = RSI 14/28 可買區 / 可賣區 (狀態), 與 TV-1M-dashboard ④c 一致:
     #   進可買區 = RSI14 梯度由 ≤0 轉 >0 且 谷底 (前一根) 曾在 m2_reach 根內到達/低於下界; 進可賣區 = 相反
-    #   可買區結束 (m2_end): "cross" = RSI14 跌破 RSI28 或 在 RSI28 之下轉勢向下; "fast" = RSI14 轉勢向下; "slow" = RSI28 轉勢向下
+    #   可買區結束 (m2_end): "cross" = RSI14 跌破 RSI28 或 跌破進區時的谷底; "fast" = RSI14 轉勢向下; "slow" = RSI28 轉勢向下; 每日開始清空 (m2_reset_day)
     m2_fast=14, m2_slow=28, m2_band="dynamic", m2_pct_len=120, m2_pct_lo=10.0, m2_pct_hi=90.0, m2_fix_lo=30.0, m2_fix_hi=70.0,
-    m2_reach=1, m2_end="cross", m2_exit_on_end=True,
+    m2_reach=1, m2_end="cross", m2_exit_on_end=True, m2_reset_day=True,
     # S15: 模式 3 = 敏感 MACD (9/26/9) DIF 上穿 DEA, 只參與買入; 買三訊號匹配, 賣 = 模式 1 & 模式 2 匹配
     s15_fast=9, s15_slow=26, s15_sig=9, s15_def="dea",   # "dea" = DIF 上穿 DEA (金叉); "zero" = DIF 上穿 0 軸
     s15_match_win=5, s15_match_win_sell=5,
@@ -194,24 +194,30 @@ def build_signals(df: pd.DataFrame, p: dict = None) -> tuple:
     x_dn, x_up = ta.crossunder(rf, rs), ta.crossover(rf, rs)
     m2_buy_start = (turn_up_f & reach_lo).fillna(False)
     m2_sell_start = (turn_dn_f & reach_hi).fillna(False)
-    if p['m2_end'] == "cross":
-        buy_end_raw = (x_dn | ((rf < rs) & turn_dn_f)).fillna(False)
-        sell_end_raw = (x_up | ((rf > rs) & turn_up_f)).fillna(False)
-    elif p['m2_end'] == "fast":
+    if p['m2_end'] == "fast":
         buy_end_raw, sell_end_raw = turn_dn_f.fillna(False), turn_up_f.fillna(False)
-    else:
+    elif p['m2_end'] == "slow":
         buy_end_raw, sell_end_raw = turn_dn_s.fillna(False), turn_up_s.fillna(False)
+    else:                                          # "cross": 跌破慢線 或 跌破進區谷底 (谷底在迴圈內補上)
+        buy_end_raw, sell_end_raw = x_dn.fillna(False), x_up.fillna(False)
     bs, ss_, be, se = (m2_buy_start.to_numpy(), m2_sell_start.to_numpy(), buy_end_raw.to_numpy(), sell_end_raw.to_numpy())
+    rfv = rf.to_numpy(dtype=float)
+    nd = new_sess.to_numpy(dtype=bool) if p['m2_reset_day'] else np.zeros(len(bs), dtype=bool)
     st = np.zeros(len(bs), dtype=int)
-    cur = 0
+    cur, trough, peak = 0, np.nan, np.nan
+    cross_rule = p['m2_end'] == "cross"
     for i in range(len(bs)):                       # 進入新區優先於現區結束 (與 Pine 的 if / else if 順序一致)
-        if bs[i]:
-            cur = 1
-        elif ss_[i]:
-            cur = -1
-        elif cur == 1 and be[i]:
+        if nd[i]:
             cur = 0
-        elif cur == -1 and se[i]:
+        b_end = be[i] or (cross_rule and rfv[i] < trough)
+        s_end = se[i] or (cross_rule and rfv[i] > peak)
+        if bs[i]:
+            cur, trough = 1, rfv[i - 1] if i > 0 else np.nan
+        elif ss_[i]:
+            cur, peak = -1, rfv[i - 1] if i > 0 else np.nan
+        elif cur == 1 and b_end:
+            cur = 0
+        elif cur == -1 and s_end:
             cur = 0
         st[i] = cur
     m2_state = pd.Series(st, index=c.index)
