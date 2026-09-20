@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TV-1M-dashboard_(mode 1-4)_(09月20日; 15:35)  ·  主策略 (dashboard): 模式 1 MACD 柱動能減弱 + 模式 2 RSI 超賣回歸 + 模式 3 敏感 MACD 金叉 + 模式 4 EMA9 斜率向上 · 1 分鐘 · 一個月回測 · Pine v6
+//  TV-1M-dashboard_(mode 1-4)_(09月20日; 15:52)  ·  主策略 (dashboard): 模式 1 MACD 柱動能減弱 + 模式 2 RSI 超賣回歸 + 模式 3 敏感 MACD 金叉 + 模式 4 EMA9 斜率向上 · 1 分鐘 · 一個月回測 · Pine v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
-//  本檔共 755 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
+//  本檔共 801 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或按【下載 .pine.txt】用純文字編輯器開啟 → Ctrl+A → Ctrl+C
 //  ★ 看到 CE10244 "A strategy must contain at least one of the following: any strategy.*() … plot*() …" = 貼上的內容被截斷在 8 KB
 //     (前 8 KB 只有表頭 + strategy() + Inputs, 第一個 plot 在很後面) — 這不是程式錯誤, 請改用貼上工具網頁複製, 貼完確認最後一行
@@ -9,7 +9,9 @@
 //  【本版規則 — 四個模式, 兩條合格條件】
 //   模式 1 (MACD 12/26/9 柱動能減弱, ④): 負柱段先「儲夠下跌動能」(門檻倍數 k 1.5, 負柱段最少 4 根 — 已調高), 再連續 2 根淺紅柱完成 → 模式 1 買訊
 //       賣訊 = 正柱段儲夠上昇動能後連續 2 根淺綠完成
-//   模式 2 (RSI 超賣回歸 = S05, ④c): RSI(14) 上穿 30 → 模式 2 買訊; 賣訊 = RSI 上穿 55 (S05 原版) 或 下穿 70 (可選)
+//   模式 2 (RSI 超賣回歸 升級版, ④c): 超賣/超買門檻預設【動態】= 最近 120 根 RSI 的第 10 / 90 百分位 (消化自 cRSI; 固定 30 在 SOXL 1 分 K 幾乎碰不到);
+//       買訊 = RSI 上穿超賣界 且【結構過濾】通過: 這次超賣區的最低價高於上一次 (HL, 消化自 RSI Swing; 離開超賣區那一根定型, 不重繪); 可改成不過濾或再加 HH
+//       賣訊 = RSI 上穿 55 (S05 原版) 或 下穿超買界 (可選)
 //   模式 3 (敏感 MACD 9/26/9 金叉, ④d): 快線 EMA 由 12 改 9 更敏感; DIF 上穿 DEA (金叉) → 模式 3 買訊。模式 3【不參與賣出】
 //       ※「快線 cross 慢線」預設解讀為 DIF 上穿 DEA (中文常說的金叉, 與本專案 ④「快慢線交叉」同一定義); ④d 可切成 DIF 上穿 0 軸 (= EMA9 上穿 EMA26)
 //   模式 4 (EMA9 斜率, ④e): EMA9 現值比 N 根前高 (預設 N=1) = 趨勢向上 → 可以買入; 斜率為負則不可。舊版的時段 / 開市方向條件已全部移除
@@ -35,7 +37,7 @@
 //  版本戳 TV-1M-dashboard_(mode 1-4)_(MM月DD日; HH:MM), 第二個括號 = 建置時間 HKT; 檔名以 . 代替 : (Windows 檔名不接受冒號); 本檔零延續行
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("TV-1M-dashboard_(mode 1-4)_(09月20日; 15:35)", shorttitle="TV-1M-dashboard_(mode 1-4)_(09月20日; 15:35)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
+strategy("TV-1M-dashboard_(mode 1-4)_(09月20日; 15:52)", shorttitle="TV-1M-dashboard_(mode 1-4)_(09月20日; 15:52)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
 
 // ─────────────────────────── ① 回測期間 (預設最近 30 天 = 一個月) ───────────────────────────
 gBT        = "① 回測期間 — 全部在此設定, 不用改程式碼"
@@ -130,14 +132,55 @@ rsiLen     = input.int(14, "RSI 長度", minval = 2, group = gR2, display = disp
 rsiBuyLv   = input.float(30, "模式 2 買訊: RSI 上穿此值 (超賣回歸)", minval = 1, maxval = 50, step = 1, group = gR2, display = display.none)
 rsiSellMd  = input.string("上穿 中性值 (S05 原版)", "模式 2 賣訊方式", options = ["上穿 中性值 (S05 原版)", "下穿 超買值 (超買回落)"], group = gR2, tooltip = "S05 原版: RSI 回到中性值 (預設 55) 就賣, 出場早、持倉短。超買回落: 等 RSI 先衝上超買值 (預設 70) 再跌回來才賣, 能吃到更多升幅但回吐較多。", display = display.none)
 rsiExitLv  = input.float(55, "模式 2 賣訊: 中性值 (RSI 上穿即賣)", minval = 30, maxval = 90, step = 1, group = gR2, display = display.none)
-rsiOBLv    = input.float(70, "模式 2 賣訊: 超買值 (RSI 下穿即賣)", minval = 50, maxval = 99, step = 1, group = gR2, display = display.none)
+rsiOBLv    = input.float(70, "模式 2 賣訊: 超買值 (RSI 下穿即賣; 門檻用動態時以動態上界為準)", minval = 50, maxval = 99, step = 1, group = gR2, display = display.none)
 matchWin   = input.int(5, "買: 三訊號匹配窗口 (根) — 模式 1 / 2 / 3 的買訊在此根數內先後出現即算「同時」; 1 = 必須同一根", minval = 1, maxval = 60, group = gR2, tooltip = "三個買訊都是「單根事件」(第 N 根淺紅完成 / RSI 上穿 30 / MACD 9-26-9 金叉), 要求剛好落在同一根幾乎不可能發生, 所以用匹配窗口: 任一訊號觸發後保持 N 根有效, 三者同時有效且本根至少一個剛觸發 → 才是合格買點 (3a)。", display = display.none)
 matchWinS  = input.int(5, "賣: 雙訊號匹配窗口 (根) — 模式 1 與模式 2 的賣訊在此根數內先後出現即算「同時」 (3b); 模式 3 不參與賣出", minval = 1, maxval = 60, group = gR2, tooltip = "賣出要模式 1 (儲夠上昇動能後淺綠 N 根完成) 與模式 2 (RSI 賣訊) 同時成立。兩者常常相隔很遠 (RSI 上穿 55 在漲勢初段, MACD 柱減弱在漲勢末段), 窗口太窄會幾乎全靠收市強平出場; 可把模式 2 賣訊改成「下穿超買值」讓兩者靠近, 或把此窗口放寬。", display = display.none)
+// ── 模式 2 升級: 門檻與結構 (消化自 cRSI 的動態上下界 與 RSI Swing 的 HH/HL/LH/LL) ──
+rsiThMd    = input.string("動態: 最近 N 根 RSI 的百分位", "超賣 / 超買門檻怎麼定", options = ["動態: 最近 N 根 RSI 的百分位", "固定: 30 / 70"], group = gR2, tooltip = "固定 30 在 SOXL 1 分鐘圖上很少碰到 (RSI 常常最低只到 32), 模式 2 買訊因此極少。動態門檻 = 最近 N 根 RSI 的低百分位, 會自己貼著這隻股票的實際分佈走 (cRSI 的做法)。", display = display.none)
+rsiPctLen  = input.int(120, "動態: 取樣根數 N", minval = 20, maxval = 1000, group = gR2, display = display.none)
+rsiPctLo   = input.float(10, "動態: 超賣 = 第幾百分位", minval = 1, maxval = 40, step = 1, group = gR2, display = display.none)
+rsiPctHi   = input.float(90, "動態: 超買 = 第幾百分位", minval = 60, maxval = 99, step = 1, group = gR2, display = display.none)
+rsiStruct  = input.string("需 HL (這次超賣低點高於上次)", "結構過濾 (RSI Swing)", options = ["不過濾", "需 HL (這次超賣低點高於上次)", "需 HL 且 前一個高點 HH"], group = gR2, tooltip = "RSI 進入超賣區期間追蹤最低價, 離開超賣區那一根把它定型為擺動低點 (之後不再改, 不重繪)。HL = 這次低點高於上一次 = 底部墊高, 只在這種結構下承認模式 2 買訊。再加 HH = 上一個超買區的高點也高於再上一個, 就是完整的上升結構, 最嚴。", display = display.none)
 rsiV       = ta.rsi(close, rsiLen)
-rsiXupBuy  = ta.crossover(rsiV, rsiBuyLv)      // 全部 ta.* 在全域無條件計算 (v6 的 and/or 是短路求值, 不可放在條件後面)
+rsiPLo     = ta.percentile_linear_interpolation(rsiV, rsiPctLen, rsiPctLo)   // 全部 ta.* 在全域無條件計算
+rsiPHi     = ta.percentile_linear_interpolation(rsiV, rsiPctLen, rsiPctHi)
+rsiLoBand  = rsiThMd == "固定: 30 / 70" ? rsiBuyLv : nz(rsiPLo, rsiBuyLv)
+rsiHiBand  = rsiThMd == "固定: 30 / 70" ? rsiOBLv  : nz(rsiPHi, rsiOBLv)
+rsiXupBuy  = ta.crossover(rsiV, rsiLoBand)
 rsiXupExit = ta.crossover(rsiV, rsiExitLv)
-rsiXdnOB   = ta.crossunder(rsiV, rsiOBLv)
-m2Buy      = rsiXupBuy
+rsiXdnOB   = ta.crossunder(rsiV, rsiHiBand)
+// 擺動結構: 超賣區內追蹤最低價, 離開時定型; 超買區同理
+inOS       = rsiV <= rsiLoBand
+inOB       = rsiV >= rsiHiBand
+var float epLow     = na
+var float epHigh    = na
+var float swLow     = na
+var float prevSwLow = na
+var float swHigh    = na
+var float prevSwHigh = na
+var string swLowTag  = ""
+var string swHighTag = ""
+if inOS
+    epLow := na(epLow) ? low : math.min(epLow, low)
+if inOB
+    epHigh := na(epHigh) ? high : math.max(epHigh, high)
+leftOS = not inOS and inOS[1] and not na(epLow)
+leftOB = not inOB and inOB[1] and not na(epHigh)
+if leftOS
+    prevSwLow := swLow
+    swLow     := epLow
+    swLowTag  := na(prevSwLow) ? "L" : swLow > prevSwLow ? "HL" : "LL"
+    epLow     := na
+if leftOB
+    prevSwHigh := swHigh
+    swHigh     := epHigh
+    swHighTag  := na(prevSwHigh) ? "H" : swHigh > prevSwHigh ? "HH" : "LH"
+    epHigh     := na
+isHL  = not na(swLow) and not na(prevSwLow) and swLow > prevSwLow
+isHH  = not na(swHigh) and not na(prevSwHigh) and swHigh > prevSwHigh
+structOK = rsiStruct == "不過濾" ? true : rsiStruct == "需 HL (這次超賣低點高於上次)" ? isHL : (isHL and isHH)
+m2BuyRaw   = rsiXupBuy                                   // 未過濾的模式 2 買訊 (只用來計數比較)
+m2Buy      = rsiXupBuy and structOK                      // 模式 2 買訊 = 上穿超賣門檻 + 結構過濾
 m2Sell     = rsiSellMd == "上穿 中性值 (S05 原版)" ? rsiXupExit : rsiXdnOB
 var int m2Age = 999                              // 模式 2 買訊距今幾根 (0 = 本根剛觸發)
 m2Age     := m2Buy ? 0 : math.min(m2Age + 1, 999)
@@ -493,6 +536,7 @@ if barstate.islast
         yq  = math.max(array.get(mFam, ixq), prevLb + gapLb)
         array.set(adjLb, ixq, yq)
         prevLb := yq
+    mTag  = str.tostring(fastLen) + "/" + str.tostring(slowLen) + "/" + str.tostring(sigLen)
     m3Tag = str.tostring(m3Fast) + "/" + str.tostring(m3Slow) + "/" + str.tostring(m3Sig)
     lbHist := label.new(tL, array.get(adjLb, 0), "MACD 柱 12/26/9 (模式1)", xloc = xloc.bar_time, style = label.style_label_left, color = color.new(color.gray, 30), textcolor = color.white, size = size.tiny)
     if showM3
@@ -524,6 +568,7 @@ var int cUpOK = 0
 var int cDn = 0
 var int cDnOK = 0
 var int cM2B  = 0
+var int cM2Raw = 0
 var int cBoth = 0
 var int cS1   = 0
 var int cS2   = 0
@@ -536,6 +581,7 @@ if inWindow and inSess
     cDn   += rawSell ? 1 : 0
     cDnOK += m1Sell ? 1 : 0
     cM2B  += m2Buy ? 1 : 0
+    cM2Raw += m2BuyRaw ? 1 : 0
     cBoth += buySig and m4OK ? 1 : 0
     cS1   += m1Sell ? 1 : 0
     cS2   += m2Sell ? 1 : 0
@@ -565,7 +611,7 @@ if barstate.islast and showPrm
     table.cell(prm, 0, 6, "現段 (符號·根數·面積·深度)", text_size = sizeV, bgcolor = pBg)
     table.cell(prm, 1, 6, (curSign > 0 ? "正 " : curSign < 0 ? "負 " : "- ") + str.tostring(curBars) + "根 · " + str.tostring(curArea, "#.####") + " · " + str.tostring(curDepth, "#.####") + (curOK ? "  儲夠 ✓" : "  未儲夠"), text_size = sizeV, text_color = curOK ? color.green : color.gray)
     table.cell(prm, 0, 13, "模式 2 · RSI", text_size = sizeV, bgcolor = pBg)
-    table.cell(prm, 1, 13, "RSI(" + str.tostring(rsiLen) + ") 現值 " + str.tostring(rsiV, "#.#") + " · 買: 上穿 " + str.tostring(rsiBuyLv, "#") + " · 賣: " + (rsiSellMd == "上穿 中性值 (S05 原版)" ? "上穿 " + str.tostring(rsiExitLv, "#") : "下穿 " + str.tostring(rsiOBLv, "#")), text_size = sizeV, text_color = m2Live ? color.green : color.gray)
+    table.cell(prm, 1, 13, "RSI(" + str.tostring(rsiLen) + ") " + str.tostring(rsiV, "#.#") + " · 超賣界 " + str.tostring(rsiLoBand, "#.#") + " / 超買界 " + str.tostring(rsiHiBand, "#.#") + (rsiThMd == "固定: 30 / 70" ? " (固定)" : " (動態 P" + str.tostring(rsiPctLo, "#") + "/P" + str.tostring(rsiPctHi, "#") + ")") + " · 結構 " + (swLowTag == "" ? "-" : swLowTag) + "/" + (swHighTag == "" ? "-" : swHighTag) + " · 買訊 未過濾 " + str.tostring(cM2Raw) + " → 過濾後 " + str.tostring(cM2B), text_size = sizeV, text_color = m2Live ? color.green : color.gray)
     table.cell(prm, 0, 14, "模式 3 · MACD " + str.tostring(m3Fast) + "/" + str.tostring(m3Slow) + "/" + str.tostring(m3Sig), text_size = sizeV, bgcolor = pBg)
     table.cell(prm, 1, 14, "DIF " + str.tostring(dif3, "#.####") + " / DEA " + str.tostring(dea3, "#.####") + " / 柱 " + str.tostring(hist3, "#.####") + " · " + m3Def + " · 只參與買入", text_size = sizeV, text_color = m3Live ? color.green : color.gray)
     table.cell(prm, 0, 15, "買: 三訊號匹配 (窗口 " + str.tostring(matchWin) + " 根)", text_size = sizeV, bgcolor = pBg)
@@ -752,4 +798,4 @@ if barstate.islastconfirmedhistory and showRpt
     if strategy.closedtrades > 0
         for i = 0 to strategy.closedtrades - 1
             log.info("#{0} {1} → {2} {7} | {3} → {4} | P&L {5} ({6}%)", i + 1, str.format_time(strategy.closedtrades.entry_time(i), "yyyy-MM-dd HH:mm", tzStr), str.format_time(strategy.closedtrades.exit_time(i),  "yyyy-MM-dd HH:mm", tzStr), str.tostring(strategy.closedtrades.entry_price(i), format.mintick), str.tostring(strategy.closedtrades.exit_price(i),  format.mintick), str.tostring(strategy.closedtrades.profit(i), "#,###.##"), str.tostring((strategy.closedtrades.exit_price(i) / strategy.closedtrades.entry_price(i) - 1.0) * 100.0, "#.##"), strategy.closedtrades.exit_comment(i))
-// ═══ END OF FILE ═══ TV-1M-dashboard_(mode 1-4)_(09月20日; 15:35) · 全檔共 755 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ TV-1M-dashboard_(mode 1-4)_(09月20日; 15:52) · 全檔共 801 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
