@@ -68,7 +68,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <header class="hero">
     <div>
       <div class="eyebrow">TradingView · Pine Script v6 · 1 分鐘日內策略 (市場預設 美股, Inputs 可切港股)</div>
-      <h1 id="scriptName">TV-1M-winrate-mode4_(09月20日; 15:20)</h1>
+      <h1 id="scriptName">TV-1M-winrate-mode4_(09月20日; 15:35)</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
     </div>
     <div class="card">
@@ -89,12 +89,12 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-winrate-mode4_(09月20日; 15:20)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-winrate-mode4_(09月20日; 15:35)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
       <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
     </ol>
     <div class="check">
       <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 9 行</span><code>indicator("TV-1M-winrate-mode4_(09月20日; 15:20)", shorttitle="TV-1M-winrate-mode4_(09月20日; 15:20)", …)</code></div>
+      <div><span class="k">第 9 行</span><code>indicator("TV-1M-winrate-mode4_(09月20日; 15:35)", shorttitle="TV-1M-winrate-mode4_(09月20日; 15:35)", …)</code></div>
       <div><span class="k">最後一行</span><code id="cLast">—</code></div>
     </div>
   </section>
@@ -117,7 +117,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <tr><td class="m">hist&amp;rsi (00:53)</td><td class="m">第 1 行 · CE10244 A strategy must contain…</td><td class="m">8192 剛好切在第 66 行 (註解) 開頭</td><td>前 65 行沒有任何輸出函式</td></tr>
     </table>
     </div>
-    <div class="warnbox" style="margin-top:12px">整份檔案約 6.7 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
+    <div class="warnbox" style="margin-top:12px">整份檔案約 6.6 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
   </section>
 
   <section class="card">
@@ -128,14 +128,14 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 
 <script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TV-1M-winrate-mode4_(09月20日; 15:20)  ·  模式 4 (EMA9 斜率) 專用副圖 · 配合主策略 TV-1M-dashboard_(mode 1-4) 一起掛
-//  模式 4 唯一條件: EMA9 現值比 N 根前高 (預設 N = 1, ② 可改) = 趨勢向上 → 輸出可以買入; 斜率為負 = 不可。舊版的時段 / 開市方向條件已全部移除
+//  TV-1M-winrate-mode4_(09月20日; 15:35)  ·  模式 4 (EMA9 斜率) 專用副圖 · 配合主策略 TV-1M-dashboard_(mode 1-4) 一起掛
+//  模式 4 唯一條件: EMA9 現值比 N 根前高 (預設 N = 1, ② 可改) = 趨勢向上 → 輸出可以買入; 斜率為負 = 不可
 //  顯示: 斜率柱 (% 表示; 綠 >0 可買 / 紅 <0 不可) + 0 軸 + 底色; 由不可轉可買的那一根標「可買」; 右上統計窗內向上 K 數比例
 //  ② 的 EMA 長度 / 斜率根數必須與主策略 ④e 一致; 這支不下單, 真正的閘門在主策略 ④e (買入需四模式同時)
 //  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 80 行, 最後一行是 END OF FILE
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-indicator("TV-1M-winrate-mode4_(09月20日; 15:20)", shorttitle="TV-1M-winrate-mode4_(09月20日; 15:20)", overlay = false, max_labels_count = 500)
+indicator("TV-1M-winrate-mode4_(09月20日; 15:35)", shorttitle="TV-1M-winrate-mode4_(09月20日; 15:35)", overlay = false, max_labels_count = 500)
 
 // ─────────────────────────── ① 回測期間 (與主策略對齊, 只用來畫底色) ───────────────────────────
 gBT       = "① 回測期間 (與主策略對齊)"
@@ -206,7 +206,7 @@ if barstate.islast
     table.cell(tb, 1, 2, str.tostring(nBar) + " / " + str.tostring(nBarUp), text_size = size.tiny)
     table.cell(tb, 0, 3, "向上比例", text_size = size.tiny, bgcolor = hBg)
     table.cell(tb, 1, 3, str.tostring(nBar > 0 ? nBarUp * 100.0 / nBar : 0.0, "#.#") + "%", text_size = size.tiny)
-// ═══ END OF FILE ═══ TV-1M-winrate-mode4_(09月20日; 15:20) · 全檔共 80 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ TV-1M-winrate-mode4_(09月20日; 15:35) · 全檔共 80 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
 </script>
 <script>
 (function(){
@@ -215,7 +215,7 @@ if barstate.islast
   src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
   var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
   var bytes = new TextEncoder().encode(src).length;
-  var name = "TV-1M-winrate-mode4_(09月20日; 15:20)";
+  var name = "TV-1M-winrate-mode4_(09月20日; 15:35)";
   document.getElementById('code').value = src;
   document.getElementById('mLines').textContent = lines.length + ' 行';
   document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';

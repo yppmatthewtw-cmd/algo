@@ -485,12 +485,16 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 
 ## TV-1M-dashboard_(mode 1-4) · 模式 4 改為 EMA9 斜率 (2026-09-20 15:20)
 
-主策略改名為 `TV-1M-dashboard_(mode 1-4)_(09月20日; 15.20).pine` (767 行)。模式 4 的時段與開市方向邏輯**全部刪除**, 換成一個條件: **EMA9 現值比 N 根前高 (預設 N = 1) = 趨勢向上 → 可以買入**; 斜率為負則不可。買入仍需四模式同時 (模式 1、2、3 三訊號匹配 且 買入那一根模式 4 成立); 賣出不變。EMA9 以細綠線畫在主圖上。
+主策略改名為 `TV-1M-dashboard_(mode 1-4)_(09月20日; 15.35).pine` (767 行)。模式 4 的時段與開市方向邏輯**全部刪除**, 換成一個條件: **EMA9 現值比 N 根前高 (預設 N = 1) = 趨勢向上 → 可以買入**; 斜率為負則不可。買入仍需四模式同時 (模式 1、2、3 三訊號匹配 且 買入那一根模式 4 成立); 賣出不變。EMA9 以細綠線畫在主圖上。
 
 | 腳本 | 內容 | 貼上工具 |
 |:---|:---|:---|
-| `TV-1M-dashboard_(mode 1-4)_(09月20日; 15.20).pine` | 主策略, 下單與報表 | https://claude.ai/artifact/KgJkRDEyys75bsjW3HerXu |
-| `TV-1M-RSI-mode2_(09月20日; 15.20).pine` | 模式 2 副圖 (只換版本戳) | https://claude.ai/artifact/GzebPs3jwTA9xgC31KTUCE |
-| `TV-1M-winrate-mode4_(09月20日; 15.20).pine` | 模式 4 副圖 (80 行): EMA9 斜率柱, 綠 >0 可買 / 紅 <0 不可, 右上統計向上 K 數比例 | https://claude.ai/artifact/UBhypAstvwhcQkii6SKAuU |
+| `TV-1M-dashboard_(mode 1-4)_(09月20日; 15.35).pine` | 主策略, 下單與報表 | https://claude.ai/artifact/KgJkRDEyys75bsjW3HerXu |
+| `TV-1M-RSI-mode2_(09月20日; 15.35).pine` | 模式 2 副圖 (只換版本戳) | https://claude.ai/artifact/GzebPs3jwTA9xgC31KTUCE |
+| `TV-1M-winrate-mode4_(09月20日; 15.35).pine` | 模式 4 副圖 (80 行): EMA9 斜率柱, 綠 >0 可買 / 紅 <0 不可, 右上統計向上 K 數比例 | https://claude.ai/artifact/UBhypAstvwhcQkii6SKAuU |
 
 副圖 ② 的 EMA 長度 / 斜率根數必須與主策略 ④e 一致。離線引擎 S16 同步改為 EMA9 斜率條件。
+
+### 15:35 版: 副圖只留模式 3 的 9/26/9 曲線
+
+12/26/9 的 DIF 與 DEA 線從副圖移除 (柱保留, 模式 1 靠它); 模式 3 的 9/26/9 快慢線改為實色, 金叉 ▲ / 死叉 ▼ 仍標在它的交叉點。左側標籤剩三個: MACD 柱 12/26/9、DIF 9/26/9、DEA 9/26/9。買賣邏輯不變, 買入仍需四模式同時。RSI 與模式 4 副圖只換版本戳。
