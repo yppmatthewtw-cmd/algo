@@ -68,7 +68,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <header class="hero">
     <div>
       <div class="eyebrow">TradingView · Pine Script v6 · 1 分鐘日內策略 (市場預設 美股, Inputs 可切港股)</div>
-      <h1 id="scriptName">TV-1M-macd-hist,cross&rsi_(09月20日; 09:25)</h1>
+      <h1 id="scriptName">TV-1M-macd-hist,cross&rsi_(09月20日; 09:36)</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
     </div>
     <div class="card">
@@ -89,12 +89,12 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-macd-hist,cross&rsi_(09月20日; 09:25)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-macd-hist,cross&rsi_(09月20日; 09:36)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
       <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
     </ol>
     <div class="check">
       <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 32 行</span><code>strategy("TV-1M-macd-hist,cross&rsi_(09月20日; 09:25)", shorttitle="TV-1M-macd-hist,cross&rsi_(09月20日; 09:25)", …)</code></div>
+      <div><span class="k">第 32 行</span><code>strategy("TV-1M-macd-hist,cross&rsi_(09月20日; 09:36)", shorttitle="TV-1M-macd-hist,cross&rsi_(09月20日; 09:36)", …)</code></div>
       <div><span class="k">最後一行</span><code id="cLast">—</code></div>
     </div>
   </section>
@@ -117,7 +117,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <tr><td class="m">hist&amp;rsi (00:53)</td><td class="m">第 1 行 · CE10244 A strategy must contain…</td><td class="m">8192 剛好切在第 66 行 (註解) 開頭</td><td>前 65 行沒有任何輸出函式</td></tr>
     </table>
     </div>
-    <div class="warnbox" style="margin-top:12px">整份檔案約 65.5 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
+    <div class="warnbox" style="margin-top:12px">整份檔案約 67.6 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
   </section>
 
   <section class="card">
@@ -128,9 +128,9 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 
 <script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TV-1M-macd-hist,cross&rsi_(09月20日; 09:25)  ·  MACD 柱動能減弱 + 敏感 MACD 金叉 + RSI 超賣回歸 三訊號策略 · 1 分鐘 · 一個月回測 · TradingView Pine Script v6
+//  TV-1M-macd-hist,cross&rsi_(09月20日; 09:36)  ·  MACD 柱動能減弱 + 敏感 MACD 金叉 + RSI 超賣回歸 三訊號策略 · 1 分鐘 · 一個月回測 · TradingView Pine Script v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
-//  本檔共 705 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
+//  本檔共 740 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或按【下載 .pine.txt】用純文字編輯器開啟 → Ctrl+A → Ctrl+C
 //  ★ 看到 CE10244 "A strategy must contain at least one of the following: any strategy.*() … plot*() …" = 貼上的內容被截斷在 8 KB
 //     (前 8 KB 只有表頭 + strategy() + Inputs, 第一個 plot 在很後面) — 這不是程式錯誤, 請改用貼上工具網頁複製, 貼完確認最後一行
@@ -146,7 +146,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 //       ※ 模式 1 賣訊 (漲勢末段柱減弱) 與模式 2 的 S05 賣訊 (RSI 上穿 55, 漲勢初段) 常相隔很遠 → 多數出場會是收市強平。
 //         想讓兩者靠近: ④c 把模式 2 賣訊改「下穿超買值 70」, 或放寬賣窗口。副圖參數表會顯示「賣: M1 幾筆 · M2 幾筆 → 同時幾筆」
 //
-//  【圖示】副圖最下方三條粗線 (⑧b): 模式 1 深綠 / 模式 2 棕 / 模式 3 紫, 各自【單獨運作】時的訊號: ○ (線同色) = 該模式買訊, × 紅 = 該模式賣訊; 左邊有線名標籤
+//  【圖示】副圖最下方三條粗線 (⑧b): 模式 1 深綠 / 模式 2 棕 / 模式 3 紫, 各自【單獨運作】時的訊號: ○ (線同色) = 該模式買訊, × 紅 = 該模式賣訊; 副圖每一條線 (DIF / DEA / 柱 / 模式3 DIF DEA / 三條訊號線) 左邊都有線名標籤
 //        純顯示, 不影響策略買賣; 右側有標籤。另有底部小圓點 / 菱形 / 方塊 = 模式 1 / 2 / 3 買訊; 藍三角 B = 真正成交
 //        副圖另畫模式 3 的 DIF / DEA 細線 (半透明, ④d 可關); 逐筆交易表出場原因: S-M1&M2 / EOD / SL / 窗口結束
 //  【參數掃描 (⑨)】81 組 (買N×買k × 賣N×賣k, k∈1/1.5/2) 每一組都套上同一套三訊號買 / 雙訊號賣規則, 排名結果可直接填回 ④
@@ -158,7 +158,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 //  版本戳 TV-1M-macd-hist,cross&rsi_(MM月DD日; HH:MM), 括號內 = 建置時間 HKT; 檔名以 . 代替 : (Windows 檔名不接受冒號); 本檔零延續行
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("TV-1M-macd-hist,cross&rsi_(09月20日; 09:25)", shorttitle="TV-1M-macd-hist,cross&rsi_(09月20日; 09:25)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
+strategy("TV-1M-macd-hist,cross&rsi_(09月20日; 09:36)", shorttitle="TV-1M-macd-hist,cross&rsi_(09月20日; 09:36)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
 
 // ─────────────────────────── ① 回測期間 (預設最近 30 天 = 一個月) ───────────────────────────
 gBT        = "① 回測期間 — 全部在此設定, 不用改程式碼"
@@ -571,17 +571,52 @@ plot(showLanes and m2Buy      and inWindow ? lane2 : na, "模式2 單獨買", st
 plot(showLanes and m2Sell     and inWindow ? lane2 : na, "模式2 單獨賣", style = plot.style_cross,   color = color.new(color.red, 0), linewidth = 4, display = display.pane)
 plot(showLanes and m3Buy      and inWindow ? lane3 : na, "模式3 單獨買", style = plot.style_circles, color = cLane3, linewidth = 4, display = display.pane)
 plot(showLanes and m3SellSolo and inWindow ? lane3 : na, "模式3 單獨賣 (死叉, 策略不用)", style = plot.style_cross, color = color.new(color.red, 0), linewidth = 4, display = display.pane)
-// 左邊的線名標籤: 貼在目前可見範圍的最左邊那根 K, 捲動圖表會跟著移
-var label lbL1 = na
-var label lbL2 = na
-var label lbL3 = na
-if barstate.islast and showLanes
+// 左邊的線名標籤: 每一條線都在目前可見範圍最左邊那根 K 上標名 (用該根 K 的實際數值定位; 捲動圖表會重算, 標籤跟著移)
+var float yDif  = na
+var float yDea  = na
+var float yDif3 = na
+var float yDea3 = na
+var float yHist = na
+var float yL1   = na
+var float yL2   = na
+var float yL3   = na
+if time >= chart.left_visible_bar_time and na(yL1)
+    yDif  := dif
+    yDea  := dea
+    yDif3 := dif3
+    yDea3 := dea3
+    yHist := hist
+    yL1   := lane1
+    yL2   := lane2
+    yL3   := lane3
+var label lbDif  = na
+var label lbDea  = na
+var label lbDif3 = na
+var label lbDea3 = na
+var label lbHist = na
+var label lbL1   = na
+var label lbL2   = na
+var label lbL3   = na
+if barstate.islast
+    tL = chart.left_visible_bar_time
+    label.delete(lbDif)
+    label.delete(lbDea)
+    label.delete(lbDif3)
+    label.delete(lbDea3)
+    label.delete(lbHist)
     label.delete(lbL1)
     label.delete(lbL2)
     label.delete(lbL3)
-    lbL1 := label.new(chart.left_visible_bar_time, lane1, "模式1 · MACD柱 淺紅買 / 淺綠賣", xloc = xloc.bar_time, style = label.style_label_left, color = cLane1, textcolor = color.white, size = size.small)
-    lbL2 := label.new(chart.left_visible_bar_time, lane2, "模式2 · RSI 上穿" + str.tostring(rsiBuyLv, "#") + " 買 / " + (rsiSellMd == "上穿 中性值 (S05 原版)" ? "上穿" + str.tostring(rsiExitLv, "#") : "下穿" + str.tostring(rsiOBLv, "#")) + " 賣", xloc = xloc.bar_time, style = label.style_label_left, color = cLane2, textcolor = color.white, size = size.small)
-    lbL3 := label.new(chart.left_visible_bar_time, lane3, "模式3 · MACD " + str.tostring(m3Fast) + "/" + str.tostring(m3Slow) + "/" + str.tostring(m3Sig) + " 金叉買 / 死叉 (只顯示, 不參與賣出)", xloc = xloc.bar_time, style = label.style_label_left, color = cLane3, textcolor = color.white, size = size.small)
+    lbDif  := label.new(tL, nz(yDif, dif),   "DIF 快線 (MACD " + str.tostring(fastLen) + "/" + str.tostring(slowLen) + "/" + str.tostring(sigLen) + ", 模式1 用)", xloc = xloc.bar_time, style = label.style_label_left, color = color.new(color.orange, 0), textcolor = color.white, size = size.small)
+    lbDea  := label.new(tL, nz(yDea, dea),   "DEA 慢線 (MACD " + str.tostring(fastLen) + "/" + str.tostring(slowLen) + "/" + str.tostring(sigLen) + ")", xloc = xloc.bar_time, style = label.style_label_left, color = color.new(color.aqua, 0), textcolor = color.black, size = size.small)
+    lbHist := label.new(tL, nz(yHist, hist), "MACD 柱 = DIF − DEA (模式1 淺紅/淺綠看這個)", xloc = xloc.bar_time, style = label.style_label_left, color = color.new(color.gray, 30), textcolor = color.white, size = size.small)
+    if showM3
+        lbDif3 := label.new(tL, nz(yDif3, dif3), "DIF 模式3 (MACD " + str.tostring(m3Fast) + "/" + str.tostring(m3Slow) + "/" + str.tostring(m3Sig) + ", 淡橙細線)", xloc = xloc.bar_time, style = label.style_label_left, color = color.new(color.orange, 50), textcolor = color.white, size = size.small)
+        lbDea3 := label.new(tL, nz(yDea3, dea3), "DEA 模式3 (MACD " + str.tostring(m3Fast) + "/" + str.tostring(m3Slow) + "/" + str.tostring(m3Sig) + ", 淡藍細線)", xloc = xloc.bar_time, style = label.style_label_left, color = color.new(color.aqua, 50), textcolor = color.black, size = size.small)
+    if showLanes
+        lbL1 := label.new(tL, nz(yL1, lane1), "模式1 · MACD柱 淺紅買 / 淺綠賣", xloc = xloc.bar_time, style = label.style_label_left, color = cLane1, textcolor = color.white, size = size.small)
+        lbL2 := label.new(tL, nz(yL2, lane2), "模式2 · RSI 上穿" + str.tostring(rsiBuyLv, "#") + " 買 / " + (rsiSellMd == "上穿 中性值 (S05 原版)" ? "上穿" + str.tostring(rsiExitLv, "#") : "下穿" + str.tostring(rsiOBLv, "#")) + " 賣", xloc = xloc.bar_time, style = label.style_label_left, color = cLane2, textcolor = color.white, size = size.small)
+        lbL3 := label.new(tL, nz(yL3, lane3), "模式3 · MACD " + str.tostring(m3Fast) + "/" + str.tostring(m3Slow) + "/" + str.tostring(m3Sig) + " 金叉買 / 死叉 (只顯示, 不參與賣出)", xloc = xloc.bar_time, style = label.style_label_left, color = cLane3, textcolor = color.white, size = size.small)
 plotshape(showFillMarks and m1Buy and inWindow, "模式1 買訊 (淺紅N根完成)", style = shape.circle,  location = location.bottom, color = color.new(color.aqua, 40),   size = size.tiny, display = display.pane)
 plotshape(showFillMarks and m2Buy and inWindow, "模式2 買訊 (RSI 上穿)",   style = shape.diamond, location = location.bottom, color = color.new(color.yellow, 30), size = size.tiny, display = display.pane)
 plotshape(showFillMarks and m3Buy and inWindow, "模式3 買訊 (MACD 9/26/9 金叉)", style = shape.square, location = location.bottom, color = color.new(color.orange, 30), size = size.tiny, display = display.pane)
@@ -831,7 +866,7 @@ if barstate.islastconfirmedhistory and showRpt
     if strategy.closedtrades > 0
         for i = 0 to strategy.closedtrades - 1
             log.info("#{0} {1} → {2} {7} | {3} → {4} | P&L {5} ({6}%)", i + 1, str.format_time(strategy.closedtrades.entry_time(i), "yyyy-MM-dd HH:mm", tzStr), str.format_time(strategy.closedtrades.exit_time(i),  "yyyy-MM-dd HH:mm", tzStr), str.tostring(strategy.closedtrades.entry_price(i), format.mintick), str.tostring(strategy.closedtrades.exit_price(i),  format.mintick), str.tostring(strategy.closedtrades.profit(i), "#,###.##"), str.tostring((strategy.closedtrades.exit_price(i) / strategy.closedtrades.entry_price(i) - 1.0) * 100.0, "#.##"), strategy.closedtrades.exit_comment(i))
-// ═══ END OF FILE ═══ TV-1M-macd-hist,cross&rsi_(09月20日; 09:25) · 全檔共 705 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ TV-1M-macd-hist,cross&rsi_(09月20日; 09:36) · 全檔共 740 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
 </script>
 <script>
 (function(){
@@ -840,7 +875,7 @@ if barstate.islastconfirmedhistory and showRpt
   src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
   var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
   var bytes = new TextEncoder().encode(src).length;
-  var name = "TV-1M-macd-hist,cross&rsi_(09月20日; 09:25)";
+  var name = "TV-1M-macd-hist,cross&rsi_(09月20日; 09:36)";
   document.getElementById('code').value = src;
   document.getElementById('mLines').textContent = lines.length + ' 行';
   document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';
