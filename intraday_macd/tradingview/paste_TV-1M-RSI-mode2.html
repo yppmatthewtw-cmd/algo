@@ -68,7 +68,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <header class="hero">
     <div>
       <div class="eyebrow">TradingView · Pine Script v6 · 1 分鐘日內策略 (市場預設 美股, Inputs 可切港股)</div>
-      <h1 id="scriptName">TV-1M-RSI-mode2_(09月20日; 14:31)</h1>
+      <h1 id="scriptName">TV-1M-RSI-mode2_(09月20日; 15:20)</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
     </div>
     <div class="card">
@@ -89,12 +89,12 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-RSI-mode2_(09月20日; 14:31)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-RSI-mode2_(09月20日; 15:20)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
       <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
     </ol>
     <div class="check">
       <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 9 行</span><code>indicator("TV-1M-RSI-mode2_(09月20日; 14:31)", shorttitle="TV-1M-RSI-mode2_(09月20日; 14:31)", …)</code></div>
+      <div><span class="k">第 9 行</span><code>indicator("TV-1M-RSI-mode2_(09月20日; 15:20)", shorttitle="TV-1M-RSI-mode2_(09月20日; 15:20)", …)</code></div>
       <div><span class="k">最後一行</span><code id="cLast">—</code></div>
     </div>
   </section>
@@ -128,14 +128,14 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 
 <script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TV-1M-RSI-mode2_(09月20日; 14:31)  ·  模式 2 (RSI 超賣回歸 / S05) 專用副圖 · 配合主策略 TV-1M-macd-hist,cross&rsi 一起掛
-//  一支 Pine 只能佔一個副圖: 模式 1/3 (MACD) 在主策略副圖, 模式 2 (RSI 0-100) 在這支, 模式 4 (閘門) 在 TV-1M-winrate-mode4; 三支一起 Add to chart
+//  TV-1M-RSI-mode2_(09月20日; 15:20)  ·  模式 2 (RSI 超賣回歸 / S05) 專用副圖 · 配合主策略 TV-1M-dashboard_(mode 1-4) 一起掛
+//  一支 Pine 只能佔一個副圖: 模式 1/3 (MACD) 在主策略副圖, 模式 2 (RSI 0-100) 在這支, 模式 4 (EMA9 斜率) 在 TV-1M-winrate-mode4; 三支一起 Add to chart
 //  深棕粗線 = RSI(14) · ▲ 淺藍 = 買訊 (RSI 上穿 30) · ▼ 淺紅 = 賣訊 (上穿 55 或改下穿 70), 以 label 標在曲線上; 買訊要 RSI 先跌破 30 再回升, 一天可能只有幾次甚至沒有
 //  ② 的 RSI 長度 / 買訊門檻 / 賣訊方式 必須與主策略 ④c 一致; 這支不下單; plot 的 title 必須是常數字串 (CE10123)
 //  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 116 行, 最後一行是 END OF FILE
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-indicator("TV-1M-RSI-mode2_(09月20日; 14:31)", shorttitle="TV-1M-RSI-mode2_(09月20日; 14:31)", overlay = false, max_labels_count = 500, max_lines_count = 500)
+indicator("TV-1M-RSI-mode2_(09月20日; 15:20)", shorttitle="TV-1M-RSI-mode2_(09月20日; 15:20)", overlay = false, max_labels_count = 500, max_lines_count = 500)
 
 // ─────────────────────────── ① 回測期間 (與主策略同一套設定, 只用來畫底色) ───────────────────────────
 gBT        = "① 回測期間 (與主策略對齊)"
@@ -242,7 +242,7 @@ if barstate.islast and showTbl
     table.cell(tb, 1, 2, str.tostring(nS) + " 次", text_size = size.tiny, text_color = color.red)
     table.cell(tb, 0, 3, "窗口", text_size = size.tiny, bgcolor = hBg)
     table.cell(tb, 1, 3, winMode == "最近 N 個交易日" ? str.tostring(tradDays) + " 交易日" : winMode == "最近 N 天 (日曆)" ? str.tostring(lookbackD) + " 天" : "指定日期", text_size = size.tiny)
-// ═══ END OF FILE ═══ TV-1M-RSI-mode2_(09月20日; 14:31) · 全檔共 116 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ TV-1M-RSI-mode2_(09月20日; 15:20) · 全檔共 116 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
 </script>
 <script>
 (function(){
@@ -251,7 +251,7 @@ if barstate.islast and showTbl
   src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
   var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
   var bytes = new TextEncoder().encode(src).length;
-  var name = "TV-1M-RSI-mode2_(09月20日; 14:31)";
+  var name = "TV-1M-RSI-mode2_(09月20日; 15:20)";
   document.getElementById('code').value = src;
   document.getElementById('mLines').textContent = lines.length + ' 行';
   document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';

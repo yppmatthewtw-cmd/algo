@@ -1,136 +1,7 @@
-<title>TV-1M-macd-hist,cross&rsi 貼上工具</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<style>
-:root{
-  --bg:#F4F6F3;--surface:#FFFFFF;--ink:#17211C;--muted:#5D6B64;--line:#D9E0DB;
-  --accent:#0E6F6B;--accent-ink:#FFFFFF;--accent-soft:#DDEEEC;
-  --ok:#1E7F3E;--ok-soft:#DFF2E4;--warn:#9A6A0B;--warn-soft:#FBF0D3;--bad:#B3362A;--bad-soft:#F9E1DD;
-  --code-bg:#0F1614;--code-ink:#D8E4DE;
-  --sans:"IBM Plex Sans","PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0F1513;--surface:#171F1B;--ink:#E4EBE6;--muted:#95A59C;--line:#2A3630;
-    --accent:#4CC3B8;--accent-ink:#06211E;--accent-soft:#163430;
-    --ok:#5BCB7C;--ok-soft:#173824;--warn:#E3B24C;--warn-soft:#3A2E10;--bad:#F07A6C;--bad-soft:#40201B;
-    --code-bg:#0A0F0D;--code-ink:#CDD9D2;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#0F1513;--surface:#171F1B;--ink:#E4EBE6;--muted:#95A59C;--line:#2A3630;
-  --accent:#4CC3B8;--accent-ink:#06211E;--accent-soft:#163430;
-  --ok:#5BCB7C;--ok-soft:#173824;--warn:#E3B24C;--warn-soft:#3A2E10;--bad:#F07A6C;--bad-soft:#40201B;
-  --code-bg:#0A0F0D;--code-ink:#CDD9D2;
-}
-*{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;margin:0;padding-inline:16px;padding-block:28px 56px}
-.wrap{max-width:900px;margin:0 auto;display:grid;gap:22px}
-.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
-h1{font-family:var(--mono);font-size:clamp(20px,4.2vw,30px);font-weight:500;margin:4px 0 6px;letter-spacing:-.01em;text-wrap:balance;word-break:break-all}
-h2{font-size:17px;font-weight:600;margin:0 0 10px}
-p{margin:0}
-.lead{color:var(--muted);max-width:68ch}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
-.hero{display:grid;gap:14px}
-.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid transparent;padding:12px 18px;font-weight:600}
-button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.primary{background:var(--accent);color:var(--accent-ink);font-size:17px;padding:14px 22px}
-.secondary{background:var(--accent-soft);color:var(--ink);border-color:var(--line)}
-.meta{font-family:var(--mono);font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 18px;font-variant-numeric:tabular-nums}
-.status{min-height:24px;font-size:14px;padding:8px 12px;border-radius:6px;display:none}
-.status.ok{display:block;background:var(--ok-soft);color:var(--ok)}
-.status.bad{display:block;background:var(--bad-soft);color:var(--bad)}
-.name{font-family:var(--mono);background:var(--accent-soft);padding:2px 6px;border-radius:4px;word-break:break-all}
-ol.steps{margin:0;padding-left:0;list-style:none;display:grid;gap:12px;counter-reset:s}
-ol.steps li{display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:start}
-ol.steps li::before{counter-increment:s;content:counter(s);width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:600;display:grid;place-items:center;font-size:14px;margin-top:1px}
-ol.steps b{font-weight:600}
-.check{display:grid;gap:8px;margin-top:10px}
-.check div{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:10px 12px;border-radius:6px;background:var(--bg);font-size:14px}
-.check .k{font-family:var(--mono);color:var(--muted);white-space:nowrap}
-.check code{font-family:var(--mono);font-size:13px;word-break:break-all}
-.warnbox{border-left:4px solid var(--warn);background:var(--warn-soft);padding:12px 14px;border-radius:6px;font-size:14px}
-table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
-th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
-td.m{font-family:var(--mono);font-size:13px}
-.tablewrap{overflow-x:auto}
-textarea{width:100%;height:62vh;min-height:320px;resize:vertical;background:var(--code-bg);color:var(--code-ink);border:1px solid var(--line);border-radius:8px;padding:14px;font-family:var(--mono);font-size:12.5px;line-height:1.5;white-space:pre;overflow:auto;tab-size:4}
-textarea:focus-visible{outline:3px solid var(--accent)}
-.small{font-size:13px;color:var(--muted)}
-@media (prefers-reduced-motion: no-preference){ .status{transition:opacity .2s} }
-</style>
-
-<div class="wrap">
-  <header class="hero">
-    <div>
-      <div class="eyebrow">TradingView · Pine Script v6 · 1 分鐘日內策略 (市場預設 美股, Inputs 可切港股)</div>
-      <h1 id="scriptName">TV-1M-macd-hist,cross&rsi_(09月20日; 14:49)</h1>
-      <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
-    </div>
-    <div class="card">
-      <div class="actions">
-        <button class="primary" id="copyAll" type="button">複製全部程式碼</button>
-        <button class="secondary" id="copyName" type="button">複製腳本名稱</button>
-        <button class="secondary" id="dlFile" type="button">下載 .pine.txt 檔</button>
-        <span class="meta"><span id="mLines">— 行</span><span id="mBytes">— KB</span><span>最後一行 = END OF FILE</span></span>
-      </div>
-      <div class="status" id="status" role="status" aria-live="polite" style="margin-top:12px"></div>
-    </div>
-  </header>
-
-  <section class="card">
-    <h2>貼上步驟</h2>
-    <ol class="steps">
-      <li><span><b>圖表週期切 1 分鐘</b>, 開要測的標的 (例如 AMEX:SOXL)。交易時段與市場預設在 Inputs 的「時段」群組裡改。</span></li>
-      <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
-      <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
-      <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-macd-hist,cross&rsi_(09月20日; 14:49)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
-      <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
-    </ol>
-    <div class="check">
-      <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 38 行</span><code>strategy("TV-1M-macd-hist,cross&rsi_(09月20日; 14:49)", shorttitle="TV-1M-macd-hist,cross&rsi_(09月20日; 14:49)", …)</code></div>
-      <div><span class="k">最後一行</span><code id="cLast">—</code></div>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>貼上前自我檢查 <span class="small">(不確定剪貼簿裡是不是完整的? 先貼到這裡驗)</span></h2>
-    <p class="small" style="margin-bottom:10px">按了複製之後, 先在下面這個框 Ctrl+V 一次。它會告訴你剪貼簿裡有幾個 byte、幾行、有沒有 END OF FILE。這裡通過了, 再去 Pine Editor 貼。</p>
-    <textarea id="selfcheck" spellcheck="false" style="height:120px;min-height:80px" placeholder="在這裡 Ctrl+V, 貼上剪貼簿的內容 (貼完自動檢查)"></textarea>
-    <div class="status" id="scStatus" role="status" aria-live="polite" style="margin-top:10px"></div>
-  </section>
-
-  <section class="card">
-    <h2>之前為什麼一直報 Missing closing parenthesis / CE10244</h2>
-    <p class="small" style="margin-bottom:10px">三次報錯都指向同一件事: 複製過程只帶走了前 8192 個 byte。切在句子中間就報 Missing closing parenthesis; 切在註解行的開頭 (剛好整行乾淨) 就沒有語法錯誤, 但前 8 KB 裡一個 plot / 下單函式都沒有, 於是報 CE10244。檔案本身兩種情況都沒有問題。</p>
-    <div class="tablewrap">
-    <table>
-      <tr><th>版本</th><th>TradingView 報錯的行</th><th>那一行在原檔的 byte 位置</th><th>結論</th></tr>
-      <tr><td class="m">(09.19;12:34)</td><td class="m">showClusterBox = input.bool(…</td><td class="m">8150 – 8245</td><td>8192 落在句子中間</td></tr>
-      <tr><td class="m">(09.19;13:02)</td><td class="m">depthPctl = input.float(…</td><td class="m">7171 – 7289 (+ 編輯器頂端多出 13 行 ≈ 900 bytes)</td><td>8192 落在句子中間</td></tr>
-      <tr><td class="m">hist&amp;rsi (00:53)</td><td class="m">第 1 行 · CE10244 A strategy must contain…</td><td class="m">8192 剛好切在第 66 行 (註解) 開頭</td><td>前 65 行沒有任何輸出函式</td></tr>
-    </table>
-    </div>
-    <div class="warnbox" style="margin-top:12px">整份檔案約 71.6 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
-  </section>
-
-  <section class="card">
-    <h2>完整程式碼 <span class="small">(備用: 點進框內 Ctrl+A → Ctrl+C)</span></h2>
-    <textarea id="code" readonly spellcheck="false" aria-label="Pine Script 完整程式碼"></textarea>
-  </section>
-</div>
-
-<script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TV-1M-macd-hist,cross&rsi_(09月20日; 14:49)  ·  MACD 柱動能減弱 + 敏感 MACD 金叉 + RSI 超賣回歸 三訊號策略 · 1 分鐘 · 一個月回測 · TradingView Pine Script v6
+//  TV-1M-dashboard_(mode 1-4)_(09月20日; 15:20)  ·  主策略 (dashboard): 模式 1 MACD 柱動能減弱 + 模式 2 RSI 超賣回歸 + 模式 3 敏感 MACD 金叉 + 模式 4 EMA9 斜率向上 · 1 分鐘 · 一個月回測 · Pine v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
-//  本檔共 788 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
+//  本檔共 767 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或按【下載 .pine.txt】用純文字編輯器開啟 → Ctrl+A → Ctrl+C
 //  ★ 看到 CE10244 "A strategy must contain at least one of the following: any strategy.*() … plot*() …" = 貼上的內容被截斷在 8 KB
 //     (前 8 KB 只有表頭 + strategy() + Inputs, 第一個 plot 在很後面) — 這不是程式錯誤, 請改用貼上工具網頁複製, 貼完確認最後一行
@@ -141,14 +12,14 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 //   模式 2 (RSI 超賣回歸 = S05, ④c): RSI(14) 上穿 30 → 模式 2 買訊; 賣訊 = RSI 上穿 55 (S05 原版) 或 下穿 70 (可選)
 //   模式 3 (敏感 MACD 9/26/9 金叉, ④d): 快線 EMA 由 12 改 9 更敏感; DIF 上穿 DEA (金叉) → 模式 3 買訊。模式 3【不參與賣出】
 //       ※「快線 cross 慢線」預設解讀為 DIF 上穿 DEA (中文常說的金叉, 與本專案 ④「快慢線交叉」同一定義); ④d 可切成 DIF 上穿 0 軸 (= EMA9 上穿 EMA26)
-//   模式 4 (高勝率時段, ④e): 只看時段, 不考慮當天高開或低開 (開市方向條件預設「不考慮」, 要的話可切回跳空或開盤段);
-//       只在 10:00-10:20 / 10:30-11:00 / 11:50-12:30 / 13:30-14:00 (紐約時間) 可以買入 (④e 可改)。模式 4 是「狀態」, 只限制買入, 不參與賣出
+//   模式 4 (EMA9 斜率, ④e): EMA9 現值比 N 根前高 (預設 N=1) = 趨勢向上 → 可以買入; 斜率為負則不可。舊版的時段 / 開市方向條件已全部移除
+//       模式 4 是「狀態」, 只限制買入, 不參與賣出; EMA9 以細綠線畫在主圖上, 斜率柱在 TV-1M-winrate-mode4 副圖
 //   3a 合格買入 = 模式 1、2、3 的買訊【同時】成立 (匹配窗口 ④c 預設 5 根) 且買入那一根模式 4 閘門為開 → 四模式同時
 //   3b 合格賣出 = 模式 1 與 模式 2 的賣訊【同時】成立 (賣的匹配窗口 ④c 預設 5 根); 另有 15:58 收市強平 / 可選固定止損
 //       ※ 模式 1 賣訊 (漲勢末段柱減弱) 與模式 2 的 S05 賣訊 (RSI 上穿 55, 漲勢初段) 常相隔很遠 → 多數出場會是收市強平。
 //         想讓兩者靠近: ④c 把模式 2 賣訊改「下穿超買值 70」, 或放寬賣窗口。副圖參數表會顯示「賣: M1 幾筆 · M2 幾筆 → 同時幾筆」
 //
-//  【副圖分工】一支 Pine 腳本只能佔一個副圖。模式 1 與 3 (MACD 尺度) 在本腳本副圖; 模式 2 (RSI) 在 TV-1M-RSI-mode2; 模式 4 (閘門) 在 TV-1M-winrate-mode4; 三支一起 Add to chart, 同名設定要一致
+//  【副圖分工】一支 Pine 腳本只能佔一個副圖。模式 1 與 3 (MACD 尺度) 在本腳本副圖; 模式 2 (RSI) 在 TV-1M-RSI-mode2; 模式 4 (EMA9 斜率) 在 TV-1M-winrate-mode4; 三支一起 Add to chart, 同名設定要一致
 //  【圖示】每個模式的每個買賣訊號 = 一條淺灰幼直線貫通主圖與副圖 (買 點線 / 賣 虛線, ⑧b 可關可調淡化); 模式 1 的 ▲ 淺藍買訊標在負柱底下, ▼ 淺紅賣訊標在正柱頂上;
 //        模式 3 的金叉 ▲ / 死叉 ▼ (只顯示) 標在它自己的 DIF 9/26/9 線的交叉點; 每條線左邊都有線名標籤 (擠在 0 軸附近的會自動上下拉開, 不再互相疊住)
 //  【版面】主圖右上一張合併表格: 左 7 欄 回測摘要 (藍, 預設不列逐筆交易, ⑦ maxRows 可開) + 右 7 欄 參數掃描 (紫, 列 8 名), 同一表格永不重疊; 副圖右上為觸發參數表
@@ -161,10 +32,10 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 //  【共用規則】只做多 · 全部本金 · 收盤確認下一根開盤成交 · 手續費 0.03%/邊 + 滑點 2 tick · 美股 09:30-16:00 NY · 15:45 後不開新倉 · 15:58 強平
 //   margin_long = 0 (v6 預設 100% 會令全部本金下單被拒); 所有 ta.* 在全域無條件計算 (v6 的 and/or 是短路求值)
 //  【使用】圖表切【SOXL · 1 分鐘】→ Pine Editor 貼上 → 檢查最後一行 → Save (輸入同名) → Add to chart → 主圖右上摘要 + 副圖右上參數表 + Strategy Tester
-//  版本戳 TV-1M-macd-hist,cross&rsi_(MM月DD日; HH:MM), 括號內 = 建置時間 HKT; 檔名以 . 代替 : (Windows 檔名不接受冒號); 本檔零延續行
+//  版本戳 TV-1M-dashboard_(mode 1-4)_(MM月DD日; HH:MM), 第二個括號 = 建置時間 HKT; 檔名以 . 代替 : (Windows 檔名不接受冒號); 本檔零延續行
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("TV-1M-macd-hist,cross&rsi_(09月20日; 14:49)", shorttitle="TV-1M-macd-hist,cross&rsi_(09月20日; 14:49)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
+strategy("TV-1M-dashboard_(mode 1-4)_(09月20日; 15:20)", shorttitle="TV-1M-dashboard_(mode 1-4)_(09月20日; 15:20)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
 
 // ─────────────────────────── ① 回測期間 (預設最近 30 天 = 一個月) ───────────────────────────
 gBT        = "① 回測期間 — 全部在此設定, 不用改程式碼"
@@ -375,34 +246,16 @@ blockNew  = isIntra and not na(time(timeframe.period, noEntry, tzStr))
 eodBar    = isIntra and not na(time(timeframe.period, eodSess, tzStr))
 tzMatch   = tzStr == syminfo.timezone   // 策略時區 vs 此商品交易所時區
 
-// ─────────────────────────── ④e 模式 4: 高勝率閘門 — 開市向下不做; 只做高開或平開; 只在高勝率時段開倉 ───────────────────────────
-gR4       = "④e 模式 4 · 高勝率時段 (只限制買入; 開市方向預設不考慮)"
-openDef   = input.string("不考慮 (只看時段)", "開市方向條件 (本版預設不考慮; 模式 4 只看高勝率時段)", options = ["不考慮 (只看時段)", "跳空: 09:30 開盤 vs 前一日收盤", "開盤段: 09:30 → 09:50 方向"], group = gR4, tooltip = "跳空 = 今天 09:30 開盤價相對昨天最後一根盤中 K 收盤價的變動 (常說的 gap up / gap down)。開盤段 = 09:30 到 09:50 的方向, 要等到 09:50 才知道 (時段最早 10:00 開始, 來得及)。", display = display.none)
-flatBand  = input.float(0.3, "平開的範圍 ±% (在此範圍內算平開, 可做)", minval = 0, step = 0.1, group = gR4, display = display.none)
-zoneSess  = input.session("1000-1020,1030-1100,1150-1230,1330-1400", "高勝率時段 (只在這些時段開倉; 紐約時間, 逗號分隔)", group = gR4, display = display.none)
-useM4     = input.bool(true, "啟用模式 4 閘門 (關掉 = 回到三模式)", group = gR4, display = display.none)
-// 前一日收盤: 昨天最後一根盤中 K 的收盤 (自行追蹤, 不用 request.security, 與 RSI / 模式 4 副圖腳本同一算法)
-var float dayCloseRun = na
-var float prevClose   = na
-var float gapPct      = na
-var float px0930      = na
-var float px0950      = na
-newSess = inSess and not inSess[1]
-if newSess
-    prevClose := dayCloseRun
-    gapPct    := na(prevClose) or prevClose == 0 ? na : (open - prevClose) / prevClose * 100.0
-    px0930    := open
-    px0950    := na
-if inSess
-    dayCloseRun := close
-is0950 = isIntra and not na(time(timeframe.period, "0950-0951", tzStr))
-if is0950 and na(px0950)
-    px0950 := open
-driveOK  = not na(px0950) and not na(px0930) and px0930 != 0 and (px0950 - px0930) / px0930 * 100.0 >= -flatBand
-gapOK    = not na(gapPct) and gapPct >= -flatBand
-dayOK    = openDef == "不考慮 (只看時段)" ? true : openDef == "跳空: 09:30 開盤 vs 前一日收盤" ? gapOK : driveOK   // 預設不考慮開市方向
-inZone   = isIntra and not na(time(timeframe.period, zoneSess, tzStr))
-m4OK     = not useM4 or (dayOK and inZone)                                     // 模式 4 是「狀態」不是事件: 買入那一根必須同時成立
+// ─────────────────────────── ④e 模式 4: EMA9 斜率為正 (趨勢向上) 才可以買入 — 只限制買入, 不參與賣出 ───────────────────────────
+gR4      = "④e 模式 4 · EMA9 斜率 (趨勢向上才可買; 只限制買入)"
+m4EmaLen = input.int(9, "EMA 長度", minval = 1, group = gR4, display = display.none)
+m4Look   = input.int(1, "斜率取幾根: EMA 現值 − N 根前的值 > 0 = 向上 (1 = 逐根比較)", minval = 1, maxval = 30, group = gR4, tooltip = "1 = 只要這一根 EMA 比上一根高就算向上, 最敏感; 3 或 5 = 要連續幾根的淨變動為正, 較穩。", display = display.none)
+useM4    = input.bool(true, "啟用模式 4 (關掉 = 回到三模式)", group = gR4, display = display.none)
+m4Ema    = ta.ema(close, m4EmaLen)                    // 全域無條件計算
+m4Slope  = m4Ema[m4Look] == 0 ? 0.0 : (m4Ema - m4Ema[m4Look]) / m4Ema[m4Look] * 100.0   // 斜率, 以 % 表示
+m4Up     = m4Slope > 0
+m4OK     = not useM4 or m4Up                          // 模式 4 是「狀態」: 買入那一根必須成立
+plot(m4Ema, "EMA9 (模式4, 主圖)", color = color.new(color.rgb(0, 130, 60), 30), linewidth = 1, force_overlay = true, display = display.pane)
 
 // ─────────────────────────── ⑧ 風控 ───────────────────────────
 gR      = "⑥ 風控"
@@ -688,7 +541,6 @@ var int cS1   = 0
 var int cS2   = 0
 var int cM3B  = 0
 var int cSBoth = 0
-var int cM4Day = 0
 var int cM4Bar = 0
 if inWindow and inSess
     cUp   += rawBuy ? 1 : 0
@@ -702,8 +554,6 @@ if inWindow and inSess
     cM3B  += m3Buy ? 1 : 0
     cSBoth += sellSig ? 1 : 0
     cM4Bar += m4OK ? 1 : 0
-if inWindow and newSess and dayOK
-    cM4Day += 1
 
 if barstate.islast and showPrm
     table.clear(prm, 0, 0, 1, 17)
@@ -732,8 +582,8 @@ if barstate.islast and showPrm
     table.cell(prm, 1, 14, "DIF " + str.tostring(dif3, "#.####") + " / DEA " + str.tostring(dea3, "#.####") + " / 柱 " + str.tostring(hist3, "#.####") + " · " + m3Def + " · 只參與買入", text_size = sizeV, text_color = m3Live ? color.green : color.gray)
     table.cell(prm, 0, 15, "買: 三訊號匹配 (窗口 " + str.tostring(matchWin) + " 根)", text_size = sizeV, bgcolor = pBg)
     table.cell(prm, 1, 15, "M1 " + str.tostring(cUpOK) + " · M2 " + str.tostring(cM2B) + " · M3 " + str.tostring(cM3B) + " → 同時 " + str.tostring(cBoth) + "  (現況: M1 " + (m1Age >= 999 ? "-" : str.tostring(m1Age) + " 根前") + " / M2 " + (m2Age >= 999 ? "-" : str.tostring(m2Age) + " 根前") + " / M3 " + (m3Age >= 999 ? "-" : str.tostring(m3Age) + " 根前") + ")", text_size = sizeV, text_color = cBoth > 0 ? color.blue : color.gray)
-    table.cell(prm, 0, 17, "模式 4 · 高勝率閘門", text_size = sizeV, bgcolor = pBg)
-    table.cell(prm, 1, 17, (useM4 ? "開" : "關") + (openDef == "不考慮 (只看時段)" ? " · 只看時段" : " · 今日 " + (na(gapPct) ? "跳空 n/a" : "跳空 " + str.tostring(gapPct, "#.##") + "%") + " → " + (dayOK ? "可做" : "不做")) + " · 現在" + (inZone ? "在時段內 → 可買" : "不在時段") + " · 窗內可開倉根數 " + str.tostring(cM4Bar), text_size = sizeV, text_color = dayOK and inZone ? color.green : color.gray)
+    table.cell(prm, 0, 17, "模式 4 · EMA9 斜率", text_size = sizeV, bgcolor = pBg)
+    table.cell(prm, 1, 17, (useM4 ? "開" : "關") + " · EMA" + str.tostring(m4EmaLen) + " 斜率 " + str.tostring(m4Slope, "#.####") + "% (" + str.tostring(m4Look) + " 根) → " + (m4Up ? "向上, 可買" : "向下, 不可") + " · 窗內可買根數 " + str.tostring(cM4Bar), text_size = sizeV, text_color = m4Up ? color.green : color.gray)
     table.cell(prm, 0, 16, "賣: 雙訊號匹配 (窗口 " + str.tostring(matchWinS) + " 根)", text_size = sizeV, bgcolor = pBg)
     table.cell(prm, 1, 16, "M1 淺綠N根 " + str.tostring(cS1) + " · M2 RSI " + str.tostring(cS2) + " → 同時 " + str.tostring(cSBoth) + "  (現況: S1 " + (s1Age >= 999 ? "-" : str.tostring(s1Age) + " 根前") + " / S2 " + (s2Age >= 999 ? "-" : str.tostring(s2Age) + " 根前") + ")", text_size = sizeV, text_color = cSBoth > 0 ? color.blue : color.gray)
     table.cell(prm, 0, 7, "模式 1 買訊: 淺紅N根 → 動能合格", text_size = sizeV, bgcolor = pBg)
@@ -747,7 +597,7 @@ if barstate.islast and showPrm
     table.cell(prm, 0, 11, "MACD", text_size = sizeV, bgcolor = pBg)
     table.cell(prm, 1, 11, str.tostring(fastLen) + " / " + str.tostring(slowLen) + " / " + str.tostring(sigLen) + " · 1× 柱 (牛牛/Webull 顯示 2×)", text_size = sizeV)
     table.cell(prm, 0, 12, "觸發方式", text_size = sizeV, bgcolor = pBg)
-    table.cell(prm, 1, 12, (useFade ? "模式1 動能減弱: 買 " + str.tostring(fadeBuy) + " 根淺紅 / 賣 " + str.tostring(fadeSell) + " 根淺綠" : "模式1 DIF/DEA 交叉") + " + 模式2 RSI + 模式3 金叉 + 模式4 閘門 · 買需四者同時, 賣需 M1&M2 匹配 · 窗口 " + (winMode == "最近 N 個交易日" ? str.tostring(tradDays) + " 個交易日" : winMode == "最近 N 天 (日曆)" ? str.tostring(lookbackD) + " 天" : "指定日期"), text_size = sizeV)
+    table.cell(prm, 1, 12, (useFade ? "模式1 動能減弱: 買 " + str.tostring(fadeBuy) + " 根淺紅 / 賣 " + str.tostring(fadeSell) + " 根淺綠" : "模式1 DIF/DEA 交叉") + " + 模式2 RSI + 模式3 金叉 + 模式4 EMA9向上 · 買需四者同時, 賣需 M1&M2 匹配 · 窗口 " + (winMode == "最近 N 個交易日" ? str.tostring(tradDays) + " 個交易日" : winMode == "最近 N 天 (日曆)" ? str.tostring(lookbackD) + " 天" : "指定日期"), text_size = sizeV)
 
 // ── 參數掃描表 (主圖): 最後一根收盤 mark-to-market 排名 ──
 if barstate.islast and showSweep
@@ -914,83 +764,4 @@ if barstate.islastconfirmedhistory and showRpt
     if strategy.closedtrades > 0
         for i = 0 to strategy.closedtrades - 1
             log.info("#{0} {1} → {2} {7} | {3} → {4} | P&L {5} ({6}%)", i + 1, str.format_time(strategy.closedtrades.entry_time(i), "yyyy-MM-dd HH:mm", tzStr), str.format_time(strategy.closedtrades.exit_time(i),  "yyyy-MM-dd HH:mm", tzStr), str.tostring(strategy.closedtrades.entry_price(i), format.mintick), str.tostring(strategy.closedtrades.exit_price(i),  format.mintick), str.tostring(strategy.closedtrades.profit(i), "#,###.##"), str.tostring((strategy.closedtrades.exit_price(i) / strategy.closedtrades.entry_price(i) - 1.0) * 100.0, "#.##"), strategy.closedtrades.exit_comment(i))
-// ═══ END OF FILE ═══ TV-1M-macd-hist,cross&rsi_(09月20日; 14:49) · 全檔共 788 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
-</script>
-<script>
-(function(){
-  var src = document.getElementById('pine-src').textContent;
-  // <script type="text/plain"> 內的換行原樣保留; 只去掉包裝時多出的首尾換行
-  src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
-  var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
-  var bytes = new TextEncoder().encode(src).length;
-  var name = "TV-1M-macd-hist,cross&rsi_(09月20日; 14:49)";
-  document.getElementById('code').value = src;
-  document.getElementById('mLines').textContent = lines.length + ' 行';
-  document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';
-  document.getElementById('cLines').textContent = lines.length;
-  document.getElementById('cFirst').textContent = lines[0];
-  document.getElementById('cLast').textContent = lines[lines.length-1];
-  var st = document.getElementById('status');
-  function show(ok, msg){ st.className = 'status ' + (ok ? 'ok' : 'bad'); st.textContent = msg; }
-  function fallbackCopy(text){
-    var ta = document.getElementById('code');
-    if (text !== src) { ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); }
-    ta.focus(); ta.select(); ta.setSelectionRange(0, text.length);
-    var ok = false; try { ok = document.execCommand('copy'); } catch(e) { ok = false; }
-    if (ta !== document.getElementById('code')) document.body.removeChild(ta);
-    return ok;
-  }
-  function copy(text, label){
-    var done = function(){ show(true, '已複製 ' + label + ' ✓  → 到 Pine Editor 按 Ctrl+A 再 Ctrl+V, 然後檢查最後一行'); };
-    var fail = function(){ show(false, '瀏覽器擋住了自動複製。請點進下方程式碼框, 按 Ctrl+A 再 Ctrl+C (Mac 用 ⌘), 內容一樣完整。'); };
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(done, function(){ fallbackCopy(text) ? done() : fail(); });
-    } else { fallbackCopy(text) ? done() : fail(); }
-  }
-  document.getElementById('copyAll').addEventListener('click', function(){ copy(src, '全部程式碼 (' + lines.length + ' 行, ' + bytes + ' bytes)'); });
-  document.getElementById('copyName').addEventListener('click', function(){ copy(name, '腳本名稱 ' + name); });
-  // 下載: 檔名用 .pine.txt (檢視器的下載白名單沒有 .pine); 在 claude.ai 檢視器內必須經由 downloads 能力儲存,
-  //       在一般瀏覽器 (本機開啟) 則直接用 Blob 下載。兩條路都不經過對話附件的預覽視窗。
-  var dlBtn = document.getElementById('dlFile');
-  var dlName = name.replace(/:/g, '.') + '.pine.txt';
-  var inViewer = !!(window.claude && typeof window.claude.use === 'function');
-  function afterSave(){ show(true, '已儲存 ' + dlName + ' (' + bytes + ' bytes) → 用記事本 / VS Code 開啟, Ctrl+A → Ctrl+C, 再貼到 Pine Editor'); }
-  function localDownload(){
-    var blob = new Blob([src], {type: 'text/plain;charset=utf-8'});
-    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = dlName;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
-    afterSave();
-  }
-  if (inViewer) {
-    window.claude.use('downloads').then(function(ns){ if (!ns) dlBtn.hidden = true; });
-  }
-  dlBtn.addEventListener('click', function(){
-    if (!inViewer) { localDownload(); return; }
-    window.claude.use('downloads').then(function(ns){
-      if (!ns) { show(false, '這個檢視器不提供下載, 請改用【複製全部程式碼】。'); return; }
-      ns.save({filename: dlName, data: src}).then(afterSave, function(err){
-        var c = err && err.code;
-        if (c === 'declined') show(false, '已取消下載。要的話再按一次, 或改用【複製全部程式碼】。');
-        else if (c === 'rate_limited') show(false, '上一個下載提示還開著, 請先處理它再按。');
-        else show(false, '這個檢視器無法下載 (' + (c || '未知') + '), 請改用【複製全部程式碼】。');
-      });
-    });
-  });
-  // 貼上前自我檢查: 比對剪貼簿內容與本頁原始碼
-  var sc = document.getElementById('selfcheck'), scs = document.getElementById('scStatus');
-  function scShow(ok, msg){ scs.className = 'status ' + (ok ? 'ok' : 'bad'); scs.textContent = msg; }
-  function selfCheck(){
-    var t = sc.value.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-    if (!t.trim()) { scs.className = 'status'; scs.textContent = ''; return; }
-    var tt = t.replace(/\n+$/, '') + '\n';
-    var tb = new TextEncoder().encode(tt).length, tl = tt.split('\n').length - 1;
-    var last = tt.replace(/\n$/, '').split('\n').pop();
-    if (tt === src) { scShow(true, '完整 ✓  ' + tl + ' 行 / ' + tb + ' bytes, 與本頁原始碼完全一致, 最後一行是 END OF FILE。可以去 Pine Editor 貼了。'); return; }
-    if (Math.abs(tb - 8192) <= 4) { scShow(false, '被截斷 ✗  剪貼簿只有 ' + tb + ' bytes (剛好 8 KB), ' + tl + ' 行 — 這就是 CE10244 的原因。請改按本頁的【複製全部程式碼】或【下載 .pine.txt 檔】。'); return; }
-    if (last.indexOf('END OF FILE') < 0) { scShow(false, '不完整 ✗  ' + tl + ' 行 / ' + tb + ' bytes (應為 ' + lines.length + ' 行 / ' + bytes + ' bytes), 最後一行不是 END OF FILE。'); return; }
-    scShow(false, '有 END OF FILE 但內容與本頁不完全一致 (' + tl + ' 行 / ' + tb + ' bytes, 應為 ' + lines.length + ' 行 / ' + bytes + ' bytes) — 可能是編輯器自動改了縮排或空白, 建議重新複製。');
-  }
-  sc.addEventListener('input', selfCheck); sc.addEventListener('paste', function(){ setTimeout(selfCheck, 0); });
-})();
-</script>
+// ═══ END OF FILE ═══ TV-1M-dashboard_(mode 1-4)_(09月20日; 15:20) · 全檔共 767 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══

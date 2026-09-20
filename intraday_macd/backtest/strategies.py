@@ -14,7 +14,7 @@ NAMES = [
     "S01 MACD柱動能減弱", "S02 MACD DIF/DEA交叉", "S03 EMA 9/21 交叉", "S04 Supertrend 轉向",
     "S05 RSI 超賣回歸", "S06 布林下軌回歸", "S07 VWAP 偏離回歸", "S08 開盤區間突破",
     "S09 動能突破+量能", "S10 三EMA+ST共振", "S11 ATR標準化MACD", "S12 MACD柱背離",
-    "S13 隨機進場(安慰劑)", "S14 MACD柱+RSI 雙訊號", "S15 MACD柱+金叉+RSI 三訊號", "S16 四模式 (三訊號+高勝率閘門)",
+    "S13 隨機進場(安慰劑)", "S14 MACD柱+RSI 雙訊號", "S15 MACD柱+金叉+RSI 三訊號", "S16 四模式 (三訊號+EMA9向上)",
 ]
 
 DEFAULTS = dict(
@@ -30,7 +30,7 @@ DEFAULTS = dict(
     s15_fast=9, s15_slow=26, s15_sig=9, s15_def="dea",   # "dea" = DIF 上穿 DEA (金叉); "zero" = DIF 上穿 0 軸
     s15_match_win=5, s15_match_win_sell=5,
     # S16: 模式 4 閘門 — 跳空 >= -flat_band 才做; 只在指定時段 (NY) 開倉
-    m4_flat_band=0.3, m4_zones=(("10:00","10:20"),("10:30","11:00"),("11:50","12:30"),("13:30","14:00")),
+    m4_ema_len=9, m4_look=1,
 )
 
 
@@ -204,19 +204,10 @@ def build_signals(df: pd.DataFrame, p: dict = None) -> tuple:
     ws15 = p['s15_match_win_sell']
     X[14] = (s1_age < ws15) & (s2_age < ws15) & (m1_sell | m2_sell.fillna(False))
 
-    # S16 = S15 + 模式 4 閘門 (狀態): 當日跳空 >= -flat_band 且 K 時間落在高勝率時段
-    day = pd.Series(df.index.tz_convert("America/New_York").normalize(), index=df.index)
-    sess_close = c.where(in_sess).groupby(day).transform("last")
-    prev_close = sess_close.groupby(day).first().shift(1)
-    day_open = o.where(in_sess).groupby(day).transform("first")
-    gap = (day_open / day.map(prev_close) - 1.0) * 100.0
-    day_ok = gap >= -p['m4_flat_band']
-    mins = pd.Series([t.hour * 60 + t.minute for t in df.index.tz_convert("America/New_York").time], index=df.index)
-    tm = lambda s: int(s[:2]) * 60 + int(s[3:])
-    in_zone = pd.Series(False, index=df.index)
-    for a, b in p['m4_zones']:
-        in_zone |= (mins >= tm(a)) & (mins < tm(b))
-    L[15] = L[14] & day_ok.fillna(False) & in_zone
+    # S16 = S15 + 模式 4: EMA9 斜率為正 (現值 > N 根前) 才可買 — 與 TV-1M-dashboard ④e 一致
+    e9 = ta.ema(c, p['m4_ema_len'])
+    m4_up = ((e9 - e9.shift(p['m4_look'])) > 0).fillna(False)
+    L[15] = L[14] & m4_up
     X[15] = X[14]
 
     longs = pd.DataFrame({NAMES[i]: L[i].fillna(False).astype(bool) for i in range(16)})
