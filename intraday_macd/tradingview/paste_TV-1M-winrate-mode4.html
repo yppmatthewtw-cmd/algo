@@ -68,7 +68,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <header class="hero">
     <div>
       <div class="eyebrow">TradingView · Pine Script v6 · 1 分鐘日內策略 (市場預設 美股, Inputs 可切港股)</div>
-      <h1 id="scriptName">TV-1M-winrate-mode4_(09月20日; 14:31)</h1>
+      <h1 id="scriptName">TV-1M-winrate-mode4_(09月20日; 14:49)</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
     </div>
     <div class="card">
@@ -89,12 +89,12 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-winrate-mode4_(09月20日; 14:31)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-winrate-mode4_(09月20日; 14:49)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
       <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
     </ol>
     <div class="check">
       <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 10 行</span><code>indicator("TV-1M-winrate-mode4_(09月20日; 14:31)", shorttitle="TV-1M-winrate-mode4_(09月20日; 14:31)", …)</code></div>
+      <div><span class="k">第 9 行</span><code>indicator("TV-1M-winrate-mode4_(09月20日; 14:49)", shorttitle="TV-1M-winrate-mode4_(09月20日; 14:49)", …)</code></div>
       <div><span class="k">最後一行</span><code id="cLast">—</code></div>
     </div>
   </section>
@@ -117,7 +117,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <tr><td class="m">hist&amp;rsi (00:53)</td><td class="m">第 1 行 · CE10244 A strategy must contain…</td><td class="m">8192 剛好切在第 66 行 (註解) 開頭</td><td>前 65 行沒有任何輸出函式</td></tr>
     </table>
     </div>
-    <div class="warnbox" style="margin-top:12px">整份檔案約 9.4 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
+    <div class="warnbox" style="margin-top:12px">整份檔案約 7.2 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
   </section>
 
   <section class="card">
@@ -128,15 +128,14 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 
 <script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TV-1M-winrate-mode4_(09月20日; 14:31)  ·  模式 4 (高勝率閘門) 專用副圖 · 配合主策略 TV-1M-macd-hist,cross&rsi 一起掛
-//  規則: 開市向下 → 整天不做; 只做高開或平開 (09:30 開盤 vs 前一日收盤, ±0.3% 內算平開; ② 可切成 09:30→09:50 開盤段方向);
-//        可做的日子只在 10:00-10:20 / 10:30-11:00 / 11:50-12:30 / 13:30-14:00 開倉 (② 可改, 紐約時間)
-//  顯示: 階梯線 1 = 可開倉 (綠底) / 0.5 = 可做的日子但不在時段 (灰底) / 0 = 開市向下不做 (紅底); 每天開市一個標籤寫當日判定; 右上統計表
-//  ② 的三項設定必須與主策略 ④e 一致, 否則兩邊判定會對不上; 這支不下單, 真正的閘門在主策略 ④e 生效 (買入需四模式同時)
-//  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 118 行, 最後一行是 END OF FILE
+//  TV-1M-winrate-mode4_(09月20日; 14:49)  ·  模式 4 (高勝率時段) 專用副圖 · 配合主策略 TV-1M-macd-hist,cross&rsi 一起掛
+//  模式 4 只有一個條件: 時間落在高勝率時段 10:00-10:20 / 10:30-11:00 / 11:50-12:30 / 13:30-14:00 (紐約時間) → 輸出 1 = 可以買入; 否則 0
+//  不考慮當天高開或低開 (本版已移除); 時段在 ② 可改, 必須與主策略 ④e 的 zoneSess 一致
+//  顯示: 階梯線 1 (綠底) / 0 (灰); 每個時段開始標「可買」; 右上統計窗內交易日與可買 K 數; 這支不下單, 真正的閘門在主策略 ④e (買入需四模式同時)
+//  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 86 行, 最後一行是 END OF FILE
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-indicator("TV-1M-winrate-mode4_(09月20日; 14:31)", shorttitle="TV-1M-winrate-mode4_(09月20日; 14:31)", overlay = false, max_labels_count = 500)
+indicator("TV-1M-winrate-mode4_(09月20日; 14:49)", shorttitle="TV-1M-winrate-mode4_(09月20日; 14:49)", overlay = false, max_labels_count = 500)
 
 // ─────────────────────────── ① 回測期間 / 時段 (與主策略對齊) ───────────────────────────
 gBT       = "① 回測期間 / 時段 (與主策略對齊)"
@@ -171,80 +170,49 @@ isIntra  = timeframe.isintraday
 inSess   = not isIntra or not na(time(timeframe.period, sessStr, tzStr))
 newSess  = inSess and not inSess[1]
 
-// ─────────────────────────── ② 模式 4 · 高勝率閘門 — 三項設定必須與主策略 ④e 一致 ───────────────────────────
-gR4      = "② 模式 4 · 高勝率閘門 (與主策略 ④e 保持一致)"
-openDef  = input.string("跳空: 09:30 開盤 vs 前一日收盤", "「開市向下 / 高開 / 平開」的定義", options = ["跳空: 09:30 開盤 vs 前一日收盤", "開盤段: 09:30 → 09:50 方向"], group = gR4, display = display.none)
-flatBand = input.float(0.3, "平開的範圍 ±%", minval = 0, step = 0.1, group = gR4, display = display.none)
-zoneSess = input.session("1000-1020,1030-1100,1150-1230,1330-1400", "高勝率時段 (紐約時間, 逗號分隔)", group = gR4, display = display.none)
-
-var float dayCloseRun = na
-var float prevClose   = na
-var float gapPct      = na
-var float px0930      = na
-var float px0950      = na
-if newSess
-    prevClose := dayCloseRun
-    gapPct    := na(prevClose) or prevClose == 0 ? na : (open - prevClose) / prevClose * 100.0
-    px0930    := open
-    px0950    := na
-if inSess
-    dayCloseRun := close
-is0950  = isIntra and not na(time(timeframe.period, "0950-0951", tzStr))
-if is0950 and na(px0950)
-    px0950 := open
-drivePct = na(px0950) or na(px0930) or px0930 == 0 ? na : (px0950 - px0930) / px0930 * 100.0
-driveOK  = not na(drivePct) and drivePct >= -flatBand
-gapOK    = not na(gapPct) and gapPct >= -flatBand
-dayOK    = openDef == "跳空: 09:30 開盤 vs 前一日收盤" ? gapOK : driveOK
+// ─────────────────────────── ② 模式 4 · 高勝率時段 — 唯一條件; 不考慮當天高開或低開 ───────────────────────────
+gR4      = "② 模式 4 · 高勝率時段 (唯一條件; 與主策略 ④e 保持一致)"
+zoneSess = input.session("1000-1020,1030-1100,1150-1230,1330-1400", "高勝率時段 (只在這些時段可以買入; 紐約時間, 逗號分隔)", group = gR4, display = display.none)
 inZone   = isIntra and not na(time(timeframe.period, zoneSess, tzStr))
-gateOn   = inSess and dayOK and inZone
-openTxt  = openDef == "跳空: 09:30 開盤 vs 前一日收盤" ? (na(gapPct) ? "跳空 n/a" : (gapPct > flatBand ? "高開 " : gapPct < -flatBand ? "低開 " : "平開 ") + str.tostring(gapPct, "#.##") + "%") : (na(drivePct) ? "開盤段 未定 (等 09:50)" : (drivePct > flatBand ? "開盤上衝 " : drivePct < -flatBand ? "開盤下殺 " : "開盤平 ") + str.tostring(drivePct, "#.##") + "%")
+gateOn   = inSess and inZone                      // 模式 4 輸出: 1 = 可以買入, 0 = 不可
 
-// ─────────────────────────── ③ 顯示: 階梯線 1 = 可開倉 / 0.5 = 可做的日子但不在時段 / 0 = 開市向下整天不做 ───────────────────────────
+// ─────────────────────────── ③ 顯示: 階梯線 1 = 可買 (綠底) / 0 = 不可 (灰) ───────────────────────────
 cOn   = color.rgb(0, 130, 60)
-cHalf = color.rgb(150, 150, 150)
-cOff  = color.rgb(200, 60, 60)
-gateV = not inSess ? na : not dayOK ? 0.0 : inZone ? 1.0 : 0.5
-gateC = not dayOK ? cOff : inZone ? cOn : cHalf
-plot(gateV, "模式4 閘門 (1 可開倉 / 0.5 不在時段 / 0 不做)", style = plot.style_stepline, linewidth = 3, color = gateC, display = display.pane + display.price_scale)
-bgcolor(not inSess ? na : not dayOK ? color.new(cOff, 88) : inZone ? color.new(cOn, 85) : color.new(cHalf, 93), title = "閘門底色")
+cOff  = color.rgb(150, 150, 150)
+gateV = not inSess ? na : gateOn ? 1.0 : 0.0
+plot(gateV, "模式4 (1 可買 / 0 不可)", style = plot.style_stepline, linewidth = 3, color = gateOn ? cOn : cOff, display = display.pane + display.price_scale)
+bgcolor(not inSess ? na : gateOn ? color.new(cOn, 85) : color.new(cOff, 94), title = "時段底色")
 bgcolor(inWindow ? color.new(color.blue, 96) : na, title = "回測期間底色")
-hline(1.0, "可開倉", color = color.new(cOn, 60), linestyle = hline.style_dotted)
-hline(0.5, "不在時段", color = color.new(cHalf, 60), linestyle = hline.style_dotted)
-hline(0.0, "不做", color = color.new(cOff, 60), linestyle = hline.style_dotted)
-// 每天開市在線上標出當日判定
-if newSess and inWindow
-    label.new(bar_index, dayOK ? 1.05 : -0.05, openTxt + (dayOK ? " → 可做" : " → 不做"), style = dayOK ? label.style_label_down : label.style_label_up, color = dayOK ? color.new(cOn, 20) : color.new(cOff, 20), textcolor = color.white, size = size.tiny)
-// 左側線名標籤
+hline(1.0, "可買", color = color.new(cOn, 60), linestyle = hline.style_dotted)
+hline(0.0, "不可", color = color.new(cOff, 60), linestyle = hline.style_dotted)
+// 每個時段開始那一根標一下 (只在回測窗內)
+if inWindow and gateOn and not gateOn[1]
+    label.new(bar_index, 1.05, "可買", style = label.style_label_down, color = color.new(cOn, 30), textcolor = color.white, size = size.tiny)
 var label lbG = na
 if barstate.islast
     label.delete(lbG)
-    lbG := label.new(chart.left_visible_bar_time, 1.0, "模式4 · 高勝率閘門: 綠 = 可開倉, 灰 = 可做但不在時段, 紅 = 開市向下不做", xloc = xloc.bar_time, style = label.style_label_left, color = color.new(cOn, 30), textcolor = color.white, size = size.tiny)
+    lbG := label.new(chart.left_visible_bar_time, 1.0, "模式4 · 高勝率時段: 綠 = 可買入 (10:00-10:20 / 10:30-11:00 / 11:50-12:30 / 13:30-14:00 NY), 灰 = 不可", xloc = xloc.bar_time, style = label.style_label_left, color = color.new(cOn, 30), textcolor = color.white, size = size.tiny)
 
 // ─────────────────────────── ④ 統計表 (靠右) ───────────────────────────
 var int nDays  = 0
-var int nOK    = 0
 var int nBarOn = 0
 if newSess and inWindow
     nDays += 1
-    nOK   += dayOK ? 1 : 0
 if inWindow and gateOn
     nBarOn += 1
-var table tb = table.new(position.top_right, 2, 5, border_width = 1, frame_width = 1, frame_color = color.gray)
+var table tb = table.new(position.top_right, 2, 4, border_width = 1, frame_width = 1, frame_color = color.gray)
 if barstate.islast
-    table.clear(tb, 0, 0, 1, 4)
+    table.clear(tb, 0, 0, 1, 3)
     hBg = color.new(color.gray, 70)
-    table.cell(tb, 0, 0, "模式 4 · 高勝率閘門", text_size = size.tiny, text_color = color.white, bgcolor = cOn)
-    table.cell(tb, 1, 0, gateOn ? "現在可開倉" : dayOK ? "今日可做 · 不在時段" : "今日不做", text_size = size.tiny, text_color = color.white, bgcolor = gateOn ? cOn : dayOK ? cHalf : cOff)
-    table.cell(tb, 0, 1, "今日開市", text_size = size.tiny, bgcolor = hBg)
-    table.cell(tb, 1, 1, openTxt, text_size = size.tiny, text_color = dayOK ? color.green : color.red)
-    table.cell(tb, 0, 2, "窗內交易日 / 可做日", text_size = size.tiny, bgcolor = hBg)
-    table.cell(tb, 1, 2, str.tostring(nDays) + " / " + str.tostring(nOK), text_size = size.tiny)
-    table.cell(tb, 0, 3, "可開倉 K 數", text_size = size.tiny, bgcolor = hBg)
-    table.cell(tb, 1, 3, str.tostring(nBarOn), text_size = size.tiny)
-    table.cell(tb, 0, 4, "時段", text_size = size.tiny, bgcolor = hBg)
-    table.cell(tb, 1, 4, zoneSess, text_size = size.tiny)
-// ═══ END OF FILE ═══ TV-1M-winrate-mode4_(09月20日; 14:31) · 全檔共 118 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+    table.cell(tb, 0, 0, "模式 4 · 高勝率時段", text_size = size.tiny, text_color = color.white, bgcolor = cOn)
+    table.cell(tb, 1, 0, gateOn ? "現在可買" : "現在不可", text_size = size.tiny, text_color = color.white, bgcolor = gateOn ? cOn : cOff)
+    table.cell(tb, 0, 1, "時段 (NY)", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 1, zoneSess, text_size = size.tiny)
+    table.cell(tb, 0, 2, "窗內交易日", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 2, str.tostring(nDays), text_size = size.tiny)
+    table.cell(tb, 0, 3, "窗內可買 K 數", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 3, str.tostring(nBarOn) + " (每日 " + str.tostring(nDays > 0 ? nBarOn / nDays : 0.0, "#.#") + ")", text_size = size.tiny)
+// ═══ END OF FILE ═══ TV-1M-winrate-mode4_(09月20日; 14:49) · 全檔共 86 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
 </script>
 <script>
 (function(){
@@ -253,7 +221,7 @@ if barstate.islast
   src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
   var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
   var bytes = new TextEncoder().encode(src).length;
-  var name = "TV-1M-winrate-mode4_(09月20日; 14:31)";
+  var name = "TV-1M-winrate-mode4_(09月20日; 14:49)";
   document.getElementById('code').value = src;
   document.getElementById('mLines').textContent = lines.length + ' 行';
   document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';
