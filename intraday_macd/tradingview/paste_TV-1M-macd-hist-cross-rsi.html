@@ -68,7 +68,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <header class="hero">
     <div>
       <div class="eyebrow">TradingView · Pine Script v6 · 1 分鐘日內策略 (市場預設 美股, Inputs 可切港股)</div>
-      <h1 id="scriptName">TV-1M-macd-hist,cross&rsi_(09月20日; 13:12)</h1>
+      <h1 id="scriptName">TV-1M-macd-hist,cross&rsi_(09月20日; 14:31)</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
     </div>
     <div class="card">
@@ -89,12 +89,12 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-macd-hist,cross&rsi_(09月20日; 13:12)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-macd-hist,cross&rsi_(09月20日; 14:31)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
       <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
     </ol>
     <div class="check">
       <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 36 行</span><code>strategy("TV-1M-macd-hist,cross&rsi_(09月20日; 13:12)", shorttitle="TV-1M-macd-hist,cross&rsi_(09月20日; 13:12)", …)</code></div>
+      <div><span class="k">第 38 行</span><code>strategy("TV-1M-macd-hist,cross&rsi_(09月20日; 14:31)", shorttitle="TV-1M-macd-hist,cross&rsi_(09月20日; 14:31)", …)</code></div>
       <div><span class="k">最後一行</span><code id="cLast">—</code></div>
     </div>
   </section>
@@ -117,7 +117,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <tr><td class="m">hist&amp;rsi (00:53)</td><td class="m">第 1 行 · CE10244 A strategy must contain…</td><td class="m">8192 剛好切在第 66 行 (註解) 開頭</td><td>前 65 行沒有任何輸出函式</td></tr>
     </table>
     </div>
-    <div class="warnbox" style="margin-top:12px">整份檔案約 68.0 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
+    <div class="warnbox" style="margin-top:12px">整份檔案約 71.6 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
   </section>
 
   <section class="card">
@@ -128,25 +128,27 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 
 <script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TV-1M-macd-hist,cross&rsi_(09月20日; 13:12)  ·  MACD 柱動能減弱 + 敏感 MACD 金叉 + RSI 超賣回歸 三訊號策略 · 1 分鐘 · 一個月回測 · TradingView Pine Script v6
+//  TV-1M-macd-hist,cross&rsi_(09月20日; 14:31)  ·  MACD 柱動能減弱 + 敏感 MACD 金叉 + RSI 超賣回歸 三訊號策略 · 1 分鐘 · 一個月回測 · TradingView Pine Script v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
-//  本檔共 750 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
+//  本檔共 788 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或按【下載 .pine.txt】用純文字編輯器開啟 → Ctrl+A → Ctrl+C
 //  ★ 看到 CE10244 "A strategy must contain at least one of the following: any strategy.*() … plot*() …" = 貼上的內容被截斷在 8 KB
 //     (前 8 KB 只有表頭 + strategy() + Inputs, 第一個 plot 在很後面) — 這不是程式錯誤, 請改用貼上工具網頁複製, 貼完確認最後一行
 //
-//  【本版規則 — 三個模式, 兩條合格條件】
+//  【本版規則 — 四個模式, 兩條合格條件】
 //   模式 1 (MACD 12/26/9 柱動能減弱, ④): 負柱段先「儲夠下跌動能」(門檻倍數 k 1.5, 負柱段最少 4 根 — 已調高), 再連續 2 根淺紅柱完成 → 模式 1 買訊
 //       賣訊 = 正柱段儲夠上昇動能後連續 2 根淺綠完成
 //   模式 2 (RSI 超賣回歸 = S05, ④c): RSI(14) 上穿 30 → 模式 2 買訊; 賣訊 = RSI 上穿 55 (S05 原版) 或 下穿 70 (可選)
 //   模式 3 (敏感 MACD 9/26/9 金叉, ④d): 快線 EMA 由 12 改 9 更敏感; DIF 上穿 DEA (金叉) → 模式 3 買訊。模式 3【不參與賣出】
 //       ※「快線 cross 慢線」預設解讀為 DIF 上穿 DEA (中文常說的金叉, 與本專案 ④「快慢線交叉」同一定義); ④d 可切成 DIF 上穿 0 軸 (= EMA9 上穿 EMA26)
-//   3a 合格買入 = 模式 1、2、3 的買訊【同時】成立 (匹配窗口 ④c 預設 5 根: 三者都在窗口內且本根至少一個剛觸發)
+//   模式 4 (高勝率閘門, ④e): 開市向下整天不做; 只做高開或平開 (09:30 開盤 vs 前一日收盤, ±0.3% 內算平開; 可切成 09:30→09:50 開盤段方向);
+//       可做的日子只在 10:00-10:20 / 10:30-11:00 / 11:50-12:30 / 13:30-14:00 開倉 (④e 可改)。模式 4 是「狀態」, 只限制買入, 不參與賣出
+//   3a 合格買入 = 模式 1、2、3 的買訊【同時】成立 (匹配窗口 ④c 預設 5 根) 且買入那一根模式 4 閘門為開 → 四模式同時
 //   3b 合格賣出 = 模式 1 與 模式 2 的賣訊【同時】成立 (賣的匹配窗口 ④c 預設 5 根); 另有 15:58 收市強平 / 可選固定止損
 //       ※ 模式 1 賣訊 (漲勢末段柱減弱) 與模式 2 的 S05 賣訊 (RSI 上穿 55, 漲勢初段) 常相隔很遠 → 多數出場會是收市強平。
 //         想讓兩者靠近: ④c 把模式 2 賣訊改「下穿超買值 70」, 或放寬賣窗口。副圖參數表會顯示「賣: M1 幾筆 · M2 幾筆 → 同時幾筆」
 //
-//  【副圖分工】一支 Pine 腳本只能佔一個副圖。模式 1 與模式 3 都是 MACD 數值 (同尺度) → 留在本腳本的副圖; 模式 2 是 RSI 0-100, 尺度不同 → 另一支 TV-1M-RSI-mode2 放它自己的副圖, 兩支一起 Add to chart
+//  【副圖分工】一支 Pine 腳本只能佔一個副圖。模式 1 與 3 (MACD 尺度) 在本腳本副圖; 模式 2 (RSI) 在 TV-1M-RSI-mode2; 模式 4 (閘門) 在 TV-1M-winrate-mode4; 三支一起 Add to chart, 同名設定要一致
 //  【圖示】每個模式的每個買賣訊號 = 一條淺灰幼直線貫通主圖與副圖 (買 點線 / 賣 虛線, ⑧b 可關可調淡化); 模式 1 的 ▲ 淺藍買訊標在負柱底下, ▼ 淺紅賣訊標在正柱頂上;
 //        模式 3 的金叉 ▲ / 死叉 ▼ (只顯示) 標在它自己的 DIF 9/26/9 線的交叉點; 每條線左邊都有線名標籤 (擠在 0 軸附近的會自動上下拉開, 不再互相疊住)
 //  【版面】主圖右上一張合併表格: 左 7 欄 回測摘要 (藍, 預設不列逐筆交易, ⑦ maxRows 可開) + 右 7 欄 參數掃描 (紫, 列 8 名), 同一表格永不重疊; 副圖右上為觸發參數表
@@ -162,7 +164,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 //  版本戳 TV-1M-macd-hist,cross&rsi_(MM月DD日; HH:MM), 括號內 = 建置時間 HKT; 檔名以 . 代替 : (Windows 檔名不接受冒號); 本檔零延續行
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("TV-1M-macd-hist,cross&rsi_(09月20日; 13:12)", shorttitle="TV-1M-macd-hist,cross&rsi_(09月20日; 13:12)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
+strategy("TV-1M-macd-hist,cross&rsi_(09月20日; 14:31)", shorttitle="TV-1M-macd-hist,cross&rsi_(09月20日; 14:31)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
 
 // ─────────────────────────── ① 回測期間 (預設最近 30 天 = 一個月) ───────────────────────────
 gBT        = "① 回測期間 — 全部在此設定, 不用改程式碼"
@@ -335,7 +337,7 @@ s1Age  := m1Sell ? 0 : math.min(s1Age + 1, 999)
 s2Age  := m2Sell ? 0 : math.min(s2Age + 1, 999)
 s1Live  = s1Age < matchWinS
 s2Live  = s2Age < matchWinS
-buySig  = m1Live and m2Live and m3Live and (m1Buy or m2Buy or m3Buy)   // 3a 合格買點: 三模式買訊都在窗口內, 且本根至少一個剛觸發
+buySig  = m1Live and m2Live and m3Live and (m1Buy or m2Buy or m3Buy)   // 3a 三模式買訊都在窗口內且本根至少一個剛觸發; 模式 4 閘門 (④e, 宣告在 ⑦ 之後) 在下單與掃描處再套上
 sellSig = s1Live and s2Live and (m1Sell or m2Sell)                     // 3b 合格賣點: 模式 1 與模式 2 賣訊都在窗口內, 且本根至少一個剛觸發; 模式 3 不參與
 
 // 合格動能段框 — 預設關閉。這是「訊號條件」, 不代表有成交, 只作對照用 (減弱模式下框到觸發前一根)
@@ -373,6 +375,35 @@ blockNew  = isIntra and not na(time(timeframe.period, noEntry, tzStr))
 eodBar    = isIntra and not na(time(timeframe.period, eodSess, tzStr))
 tzMatch   = tzStr == syminfo.timezone   // 策略時區 vs 此商品交易所時區
 
+// ─────────────────────────── ④e 模式 4: 高勝率閘門 — 開市向下不做; 只做高開或平開; 只在高勝率時段開倉 ───────────────────────────
+gR4       = "④e 模式 4 · 高勝率閘門 (開市方向 + 時段; 只限制買入)"
+openDef   = input.string("跳空: 09:30 開盤 vs 前一日收盤", "「開市向下 / 高開 / 平開」的定義", options = ["跳空: 09:30 開盤 vs 前一日收盤", "開盤段: 09:30 → 09:50 方向"], group = gR4, tooltip = "跳空 = 今天 09:30 開盤價相對昨天最後一根盤中 K 收盤價的變動 (常說的 gap up / gap down)。開盤段 = 09:30 到 09:50 的方向, 要等到 09:50 才知道 (時段最早 10:00 開始, 來得及)。", display = display.none)
+flatBand  = input.float(0.3, "平開的範圍 ±% (在此範圍內算平開, 可做)", minval = 0, step = 0.1, group = gR4, display = display.none)
+zoneSess  = input.session("1000-1020,1030-1100,1150-1230,1330-1400", "高勝率時段 (只在這些時段開倉; 紐約時間, 逗號分隔)", group = gR4, display = display.none)
+useM4     = input.bool(true, "啟用模式 4 閘門 (關掉 = 回到三模式)", group = gR4, display = display.none)
+// 前一日收盤: 昨天最後一根盤中 K 的收盤 (自行追蹤, 不用 request.security, 與 RSI / 模式 4 副圖腳本同一算法)
+var float dayCloseRun = na
+var float prevClose   = na
+var float gapPct      = na
+var float px0930      = na
+var float px0950      = na
+newSess = inSess and not inSess[1]
+if newSess
+    prevClose := dayCloseRun
+    gapPct    := na(prevClose) or prevClose == 0 ? na : (open - prevClose) / prevClose * 100.0
+    px0930    := open
+    px0950    := na
+if inSess
+    dayCloseRun := close
+is0950 = isIntra and not na(time(timeframe.period, "0950-0951", tzStr))
+if is0950 and na(px0950)
+    px0950 := open
+driveOK  = not na(px0950) and not na(px0930) and px0930 != 0 and (px0950 - px0930) / px0930 * 100.0 >= -flatBand
+gapOK    = not na(gapPct) and gapPct >= -flatBand
+dayOK    = openDef == "跳空: 09:30 開盤 vs 前一日收盤" ? gapOK : driveOK      // 高開或平開 = 可做; 向下 = 整天不做
+inZone   = isIntra and not na(time(timeframe.period, zoneSess, tzStr))
+m4OK     = not useM4 or (dayOK and inZone)                                     // 模式 4 是「狀態」不是事件: 買入那一根必須同時成立
+
 // ─────────────────────────── ⑧ 風控 ───────────────────────────
 gR      = "⑥ 風控"
 useStop = input.bool(false, "啟用固定止損 (原題不設)", group = gR, display = display.none)
@@ -382,7 +413,7 @@ stopPct = input.float(1.0, "止損 % (1分鐘刻度; 日線版用 5%)", step = 0
 qty     = sizeMode == "全部本金" ? strategy.equity / close : sizeMode == "固定金額" ? fixedCash / close : fixedQty
 entryOK = inWindow and inSess and not blockNew and not eodBar
 
-if buySig and entryOK and strategy.position_size == 0
+if buySig and m4OK and entryOK and strategy.position_size == 0   // 四模式同時: 三訊號匹配 + 模式 4 閘門
     if sizeMode == "全部本金"
         strategy.entry("L", strategy.long, comment = "BUY")          // 用 default_qty_type=percent_of_equity 100%
     else
@@ -476,7 +507,7 @@ if showSweep
         s1c  = (useFade ? nFadeUp == Ns : crossDn) and segSign ==  1 and okS
         ageS = s1c ? 0 : math.min(array.get(vAgeS, v1) + 1, 999)
         array.set(vAgeS, v1, ageS)
-        bSig = ageC < matchWin and m2Live and m3Live and (m1c or m2Buy or m3Buy)   // 3a 與真單同一條匹配規則
+        bSig = ageC < matchWin and m2Live and m3Live and (m1c or m2Buy or m3Buy) and m4OK   // 3a + 模式 4 閘門, 與真單同一條規則
         sSig = ageS < matchWinS and s2Live and (s1c or m2Sell)                     // 3b
         if posV1 == 0 and bSig and entryOK
             array.set(vPend, v1, 1)
@@ -644,7 +675,7 @@ sizeV = txtSize == "tiny" ? size.tiny : txtSize == "small" ? size.small : size.n
 
 var table rpt = table.new(posV, 14, 70, border_width = 1, frame_width = 1, frame_color = color.gray, force_overlay = true)   // 一張表: 左 7 欄 回測摘要 (藍) + 右 7 欄 參數掃描 (紫), 同一表格永不重疊
 posP = prmPos == "右下" ? position.bottom_right : prmPos == "右上" ? position.top_right : prmPos == "左下" ? position.bottom_left : position.top_left
-var table prm = table.new(posP, 2, 17, border_width = 1, frame_width = 1, frame_color = color.gray)   // 觸發參數 → 副圖
+var table prm = table.new(posP, 2, 18, border_width = 1, frame_width = 1, frame_color = color.gray)   // 觸發參數 → 副圖
 
 // 訊號漏斗計數 (回測窗內 + 盤中): 交叉總數 → 動能合格數, 看門檻濾掉多少
 var int cUp = 0
@@ -657,20 +688,25 @@ var int cS1   = 0
 var int cS2   = 0
 var int cM3B  = 0
 var int cSBoth = 0
+var int cM4Day = 0
+var int cM4Bar = 0
 if inWindow and inSess
     cUp   += rawBuy ? 1 : 0
     cUpOK += m1Buy ? 1 : 0
     cDn   += rawSell ? 1 : 0
     cDnOK += m1Sell ? 1 : 0
     cM2B  += m2Buy ? 1 : 0
-    cBoth += buySig ? 1 : 0
+    cBoth += buySig and m4OK ? 1 : 0
     cS1   += m1Sell ? 1 : 0
     cS2   += m2Sell ? 1 : 0
     cM3B  += m3Buy ? 1 : 0
     cSBoth += sellSig ? 1 : 0
+    cM4Bar += m4OK ? 1 : 0
+if inWindow and newSess and dayOK
+    cM4Day += 1
 
 if barstate.islast and showPrm
-    table.clear(prm, 0, 0, 1, 16)
+    table.clear(prm, 0, 0, 1, 17)
     pBg = color.new(color.gray, 70)
     curOKB = kBuy  <= 0 or (curBars >= mbBuy  and curArea >= minAreaB and curDepth >= minDepthB)
     curOKS = kSell <= 0 or (curBars >= mbSell and curArea >= minAreaS and curDepth >= minDepthS)
@@ -696,6 +732,8 @@ if barstate.islast and showPrm
     table.cell(prm, 1, 14, "DIF " + str.tostring(dif3, "#.####") + " / DEA " + str.tostring(dea3, "#.####") + " / 柱 " + str.tostring(hist3, "#.####") + " · " + m3Def + " · 只參與買入", text_size = sizeV, text_color = m3Live ? color.green : color.gray)
     table.cell(prm, 0, 15, "買: 三訊號匹配 (窗口 " + str.tostring(matchWin) + " 根)", text_size = sizeV, bgcolor = pBg)
     table.cell(prm, 1, 15, "M1 " + str.tostring(cUpOK) + " · M2 " + str.tostring(cM2B) + " · M3 " + str.tostring(cM3B) + " → 同時 " + str.tostring(cBoth) + "  (現況: M1 " + (m1Age >= 999 ? "-" : str.tostring(m1Age) + " 根前") + " / M2 " + (m2Age >= 999 ? "-" : str.tostring(m2Age) + " 根前") + " / M3 " + (m3Age >= 999 ? "-" : str.tostring(m3Age) + " 根前") + ")", text_size = sizeV, text_color = cBoth > 0 ? color.blue : color.gray)
+    table.cell(prm, 0, 17, "模式 4 · 高勝率閘門", text_size = sizeV, bgcolor = pBg)
+    table.cell(prm, 1, 17, (useM4 ? "開" : "關") + " · 今日 " + (na(gapPct) ? "跳空 n/a" : "跳空 " + str.tostring(gapPct, "#.##") + "%") + " → " + (dayOK ? "可做" : "不做 (開市向下)") + " · 現在" + (inZone ? "在時段內" : "不在時段") + " · 窗內可做日 " + str.tostring(cM4Day) + " / 可開倉根數 " + str.tostring(cM4Bar), text_size = sizeV, text_color = dayOK and inZone ? color.green : color.gray)
     table.cell(prm, 0, 16, "賣: 雙訊號匹配 (窗口 " + str.tostring(matchWinS) + " 根)", text_size = sizeV, bgcolor = pBg)
     table.cell(prm, 1, 16, "M1 淺綠N根 " + str.tostring(cS1) + " · M2 RSI " + str.tostring(cS2) + " → 同時 " + str.tostring(cSBoth) + "  (現況: S1 " + (s1Age >= 999 ? "-" : str.tostring(s1Age) + " 根前") + " / S2 " + (s2Age >= 999 ? "-" : str.tostring(s2Age) + " 根前") + ")", text_size = sizeV, text_color = cSBoth > 0 ? color.blue : color.gray)
     table.cell(prm, 0, 7, "模式 1 買訊: 淺紅N根 → 動能合格", text_size = sizeV, bgcolor = pBg)
@@ -709,7 +747,7 @@ if barstate.islast and showPrm
     table.cell(prm, 0, 11, "MACD", text_size = sizeV, bgcolor = pBg)
     table.cell(prm, 1, 11, str.tostring(fastLen) + " / " + str.tostring(slowLen) + " / " + str.tostring(sigLen) + " · 1× 柱 (牛牛/Webull 顯示 2×)", text_size = sizeV)
     table.cell(prm, 0, 12, "觸發方式", text_size = sizeV, bgcolor = pBg)
-    table.cell(prm, 1, 12, (useFade ? "模式1 動能減弱: 買 " + str.tostring(fadeBuy) + " 根淺紅 / 賣 " + str.tostring(fadeSell) + " 根淺綠" : "模式1 DIF/DEA 交叉") + " + 模式2 RSI + 模式3 金叉 · 買需三者匹配, 賣需 M1&M2 匹配 · 窗口 " + (winMode == "最近 N 個交易日" ? str.tostring(tradDays) + " 個交易日" : winMode == "最近 N 天 (日曆)" ? str.tostring(lookbackD) + " 天" : "指定日期"), text_size = sizeV)
+    table.cell(prm, 1, 12, (useFade ? "模式1 動能減弱: 買 " + str.tostring(fadeBuy) + " 根淺紅 / 賣 " + str.tostring(fadeSell) + " 根淺綠" : "模式1 DIF/DEA 交叉") + " + 模式2 RSI + 模式3 金叉 + 模式4 閘門 · 買需四者同時, 賣需 M1&M2 匹配 · 窗口 " + (winMode == "最近 N 個交易日" ? str.tostring(tradDays) + " 個交易日" : winMode == "最近 N 天 (日曆)" ? str.tostring(lookbackD) + " 天" : "指定日期"), text_size = sizeV)
 
 // ── 參數掃描表 (主圖): 最後一根收盤 mark-to-market 排名 ──
 if barstate.islast and showSweep
@@ -876,7 +914,7 @@ if barstate.islastconfirmedhistory and showRpt
     if strategy.closedtrades > 0
         for i = 0 to strategy.closedtrades - 1
             log.info("#{0} {1} → {2} {7} | {3} → {4} | P&L {5} ({6}%)", i + 1, str.format_time(strategy.closedtrades.entry_time(i), "yyyy-MM-dd HH:mm", tzStr), str.format_time(strategy.closedtrades.exit_time(i),  "yyyy-MM-dd HH:mm", tzStr), str.tostring(strategy.closedtrades.entry_price(i), format.mintick), str.tostring(strategy.closedtrades.exit_price(i),  format.mintick), str.tostring(strategy.closedtrades.profit(i), "#,###.##"), str.tostring((strategy.closedtrades.exit_price(i) / strategy.closedtrades.entry_price(i) - 1.0) * 100.0, "#.##"), strategy.closedtrades.exit_comment(i))
-// ═══ END OF FILE ═══ TV-1M-macd-hist,cross&rsi_(09月20日; 13:12) · 全檔共 750 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ TV-1M-macd-hist,cross&rsi_(09月20日; 14:31) · 全檔共 788 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
 </script>
 <script>
 (function(){
@@ -885,7 +923,7 @@ if barstate.islastconfirmedhistory and showRpt
   src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
   var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
   var bytes = new TextEncoder().encode(src).length;
-  var name = "TV-1M-macd-hist,cross&rsi_(09月20日; 13:12)";
+  var name = "TV-1M-macd-hist,cross&rsi_(09月20日; 14:31)";
   document.getElementById('code').value = src;
   document.getElementById('mLines').textContent = lines.length + ' 行';
   document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';

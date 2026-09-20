@@ -1,4 +1,4 @@
-<title>TV-1M-RSI-mode2 貼上工具</title>
+<title>TV-1M-winrate-mode4 貼上工具</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -68,7 +68,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <header class="hero">
     <div>
       <div class="eyebrow">TradingView · Pine Script v6 · 1 分鐘日內策略 (市場預設 美股, Inputs 可切港股)</div>
-      <h1 id="scriptName">TV-1M-RSI-mode2_(09月20日; 14:31)</h1>
+      <h1 id="scriptName">TV-1M-winrate-mode4_(09月20日; 14:31)</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
     </div>
     <div class="card">
@@ -89,12 +89,12 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-RSI-mode2_(09月20日; 14:31)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-winrate-mode4_(09月20日; 14:31)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
       <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
     </ol>
     <div class="check">
       <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 9 行</span><code>indicator("TV-1M-RSI-mode2_(09月20日; 14:31)", shorttitle="TV-1M-RSI-mode2_(09月20日; 14:31)", …)</code></div>
+      <div><span class="k">第 10 行</span><code>indicator("TV-1M-winrate-mode4_(09月20日; 14:31)", shorttitle="TV-1M-winrate-mode4_(09月20日; 14:31)", …)</code></div>
       <div><span class="k">最後一行</span><code id="cLast">—</code></div>
     </div>
   </section>
@@ -117,7 +117,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <tr><td class="m">hist&amp;rsi (00:53)</td><td class="m">第 1 行 · CE10244 A strategy must contain…</td><td class="m">8192 剛好切在第 66 行 (註解) 開頭</td><td>前 65 行沒有任何輸出函式</td></tr>
     </table>
     </div>
-    <div class="warnbox" style="margin-top:12px">整份檔案約 9.5 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
+    <div class="warnbox" style="margin-top:12px">整份檔案約 9.4 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
   </section>
 
   <section class="card">
@@ -128,121 +128,123 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 
 <script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TV-1M-RSI-mode2_(09月20日; 14:31)  ·  模式 2 (RSI 超賣回歸 / S05) 專用副圖 · 配合主策略 TV-1M-macd-hist,cross&rsi 一起掛
-//  一支 Pine 只能佔一個副圖: 模式 1/3 (MACD) 在主策略副圖, 模式 2 (RSI 0-100) 在這支, 模式 4 (閘門) 在 TV-1M-winrate-mode4; 三支一起 Add to chart
-//  深棕粗線 = RSI(14) · ▲ 淺藍 = 買訊 (RSI 上穿 30) · ▼ 淺紅 = 賣訊 (上穿 55 或改下穿 70), 以 label 標在曲線上; 買訊要 RSI 先跌破 30 再回升, 一天可能只有幾次甚至沒有
-//  ② 的 RSI 長度 / 買訊門檻 / 賣訊方式 必須與主策略 ④c 一致; 這支不下單; plot 的 title 必須是常數字串 (CE10123)
-//  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 116 行, 最後一行是 END OF FILE
+//  TV-1M-winrate-mode4_(09月20日; 14:31)  ·  模式 4 (高勝率閘門) 專用副圖 · 配合主策略 TV-1M-macd-hist,cross&rsi 一起掛
+//  規則: 開市向下 → 整天不做; 只做高開或平開 (09:30 開盤 vs 前一日收盤, ±0.3% 內算平開; ② 可切成 09:30→09:50 開盤段方向);
+//        可做的日子只在 10:00-10:20 / 10:30-11:00 / 11:50-12:30 / 13:30-14:00 開倉 (② 可改, 紐約時間)
+//  顯示: 階梯線 1 = 可開倉 (綠底) / 0.5 = 可做的日子但不在時段 (灰底) / 0 = 開市向下不做 (紅底); 每天開市一個標籤寫當日判定; 右上統計表
+//  ② 的三項設定必須與主策略 ④e 一致, 否則兩邊判定會對不上; 這支不下單, 真正的閘門在主策略 ④e 生效 (買入需四模式同時)
+//  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 118 行, 最後一行是 END OF FILE
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-indicator("TV-1M-RSI-mode2_(09月20日; 14:31)", shorttitle="TV-1M-RSI-mode2_(09月20日; 14:31)", overlay = false, max_labels_count = 500, max_lines_count = 500)
+indicator("TV-1M-winrate-mode4_(09月20日; 14:31)", shorttitle="TV-1M-winrate-mode4_(09月20日; 14:31)", overlay = false, max_labels_count = 500)
 
-// ─────────────────────────── ① 回測期間 (與主策略同一套設定, 只用來畫底色) ───────────────────────────
-gBT        = "① 回測期間 (與主策略對齊)"
-winMode    = input.string("最近 N 天 (日曆)", "回測期間方式 (三選一; 預設一個月)", options = ["最近 N 個交易日", "最近 N 天 (日曆)", "指定日期"], group = gBT, display = display.none)
-tradDays   = input.int(21, "方式 A · 最近 N 個交易日", minval = 1, maxval = 250, group = gBT, display = display.none)
-lookbackD  = input.int(30, "方式 B · 最近 N 天 (日曆; 30 = 一個月)", minval = 1, group = gBT, display = display.none)
-startIn    = input.time(timestamp("19 Aug 2026 00:00 -0400"), "方式 C · 開始日期 (含)", group = gBT, display = display.none)
-endIn      = input.time(timestamp("19 Sep 2026 23:59 -0400"), "方式 C · 結束日期 (含)", group = gBT, display = display.none)
-tzX        = syminfo.timezone
-lastDay0   = timestamp(tzX, year(last_bar_time, tzX), month(last_bar_time, tzX), dayofmonth(last_bar_time, tzX), 0, 0, 0)
+// ─────────────────────────── ① 回測期間 / 時段 (與主策略對齊) ───────────────────────────
+gBT       = "① 回測期間 / 時段 (與主策略對齊)"
+winMode   = input.string("最近 N 天 (日曆)", "回測期間方式", options = ["最近 N 個交易日", "最近 N 天 (日曆)", "指定日期"], group = gBT, display = display.none)
+tradDays  = input.int(21, "方式 A · 最近 N 個交易日", minval = 1, maxval = 250, group = gBT, display = display.none)
+lookbackD = input.int(30, "方式 B · 最近 N 天 (日曆)", minval = 1, group = gBT, display = display.none)
+startIn   = input.time(timestamp("19 Aug 2026 00:00 -0400"), "方式 C · 開始", group = gBT, display = display.none)
+endIn     = input.time(timestamp("19 Sep 2026 23:59 -0400"), "方式 C · 結束", group = gBT, display = display.none)
+mktPreset = input.string("美股", "市場預設", options = ["美股", "港股", "自訂"], group = gBT, display = display.none)
+sessCust  = input.session("0930-1600", "自訂: 交易時段", group = gBT, display = display.none)
+tzCust    = input.string("America/New_York", "自訂: 時區", group = gBT, display = display.none)
+tzX       = syminfo.timezone
+lastDay0  = timestamp(tzX, year(last_bar_time, tzX), month(last_bar_time, tzX), dayofmonth(last_bar_time, tzX), 0, 0, 0)
 var int tdStart = na
 if na(tdStart)
-    ddT   = lastDay0
-    cntD  = 1
+    ddT = lastDay0
+    cntD = 1
     guardD = 0
     while cntD < tradDays and guardD < 400
-        ddT    -= 86400000
+        ddT -= 86400000
         guardD += 1
         dwD = dayofweek(ddT + 43200000, tzX)
         if dwD != dayofweek.saturday and dwD != dayofweek.sunday
             cntD += 1
     tdStart := ddT
-btStart    = winMode == "最近 N 個交易日" ? tdStart : winMode == "最近 N 天 (日曆)" ? timenow - lookbackD * 86400000 : startIn
-btEnd      = winMode == "指定日期" ? endIn : timenow
-inWindow   = time >= btStart and time <= btEnd
+btStart  = winMode == "最近 N 個交易日" ? tdStart : winMode == "最近 N 天 (日曆)" ? timenow - lookbackD * 86400000 : startIn
+btEnd    = winMode == "指定日期" ? endIn : timenow
+inWindow = time >= btStart and time <= btEnd
+sessStr  = mktPreset == "港股" ? "0930-1200,1300-1600" : mktPreset == "美股" ? "0930-1600" : sessCust
+tzStr    = mktPreset == "港股" ? "Asia/Hong_Kong" : mktPreset == "美股" ? "America/New_York" : tzCust
+isIntra  = timeframe.isintraday
+inSess   = not isIntra or not na(time(timeframe.period, sessStr, tzStr))
+newSess  = inSess and not inSess[1]
 
-// ─────────────────────────── ② 模式 2 · RSI 超賣回歸 (S05) — 與主策略 ④c 的設定必須一致 ───────────────────────────
-gR2        = "② 模式 2 · RSI 超賣回歸 (與主策略 ④c 保持一致)"
-rsiLen     = input.int(14, "RSI 長度", minval = 2, group = gR2, display = display.none)
-rsiBuyLv   = input.float(30, "買訊: RSI 上穿此值 (超賣回歸)", minval = 1, maxval = 50, step = 1, group = gR2, display = display.none)
-rsiSellMd  = input.string("上穿 中性值 (S05 原版)", "賣訊方式", options = ["上穿 中性值 (S05 原版)", "下穿 超買值 (超買回落)"], group = gR2, tooltip = "務必與主策略 ④c 的同名設定一致, 否則兩個副圖顯示的訊號會對不上。", display = display.none)
-rsiExitLv  = input.float(55, "賣訊: 中性值 (RSI 上穿即賣)", minval = 30, maxval = 90, step = 1, group = gR2, display = display.none)
-rsiOBLv    = input.float(70, "賣訊: 超買值 (RSI 下穿即賣)", minval = 50, maxval = 99, step = 1, group = gR2, display = display.none)
+// ─────────────────────────── ② 模式 4 · 高勝率閘門 — 三項設定必須與主策略 ④e 一致 ───────────────────────────
+gR4      = "② 模式 4 · 高勝率閘門 (與主策略 ④e 保持一致)"
+openDef  = input.string("跳空: 09:30 開盤 vs 前一日收盤", "「開市向下 / 高開 / 平開」的定義", options = ["跳空: 09:30 開盤 vs 前一日收盤", "開盤段: 09:30 → 09:50 方向"], group = gR4, display = display.none)
+flatBand = input.float(0.3, "平開的範圍 ±%", minval = 0, step = 0.1, group = gR4, display = display.none)
+zoneSess = input.session("1000-1020,1030-1100,1150-1230,1330-1400", "高勝率時段 (紐約時間, 逗號分隔)", group = gR4, display = display.none)
 
-// 所有 ta.* 在全域無條件計算 (Pine v6 的 and / or 是短路求值, 放在條件後面會漏算)
-rsiV       = ta.rsi(close, rsiLen)
-rsiXupBuy  = ta.crossover(rsiV, rsiBuyLv)
-rsiXupExit = ta.crossover(rsiV, rsiExitLv)
-rsiXdnOB   = ta.crossunder(rsiV, rsiOBLv)
-m2Buy      = rsiXupBuy
-m2Sell     = rsiSellMd == "上穿 中性值 (S05 原版)" ? rsiXupExit : rsiXdnOB
+var float dayCloseRun = na
+var float prevClose   = na
+var float gapPct      = na
+var float px0930      = na
+var float px0950      = na
+if newSess
+    prevClose := dayCloseRun
+    gapPct    := na(prevClose) or prevClose == 0 ? na : (open - prevClose) / prevClose * 100.0
+    px0930    := open
+    px0950    := na
+if inSess
+    dayCloseRun := close
+is0950  = isIntra and not na(time(timeframe.period, "0950-0951", tzStr))
+if is0950 and na(px0950)
+    px0950 := open
+drivePct = na(px0950) or na(px0930) or px0930 == 0 ? na : (px0950 - px0930) / px0930 * 100.0
+driveOK  = not na(drivePct) and drivePct >= -flatBand
+gapOK    = not na(gapPct) and gapPct >= -flatBand
+dayOK    = openDef == "跳空: 09:30 開盤 vs 前一日收盤" ? gapOK : driveOK
+inZone   = isIntra and not na(time(timeframe.period, zoneSess, tzStr))
+gateOn   = inSess and dayOK and inZone
+openTxt  = openDef == "跳空: 09:30 開盤 vs 前一日收盤" ? (na(gapPct) ? "跳空 n/a" : (gapPct > flatBand ? "高開 " : gapPct < -flatBand ? "低開 " : "平開 ") + str.tostring(gapPct, "#.##") + "%") : (na(drivePct) ? "開盤段 未定 (等 09:50)" : (drivePct > flatBand ? "開盤上衝 " : drivePct < -flatBand ? "開盤下殺 " : "開盤平 ") + str.tostring(drivePct, "#.##") + "%")
 
-// ─────────────────────────── ③ 顯示 ───────────────────────────
-gDS        = "③ 顯示"
-lwRsi      = input.int(3, "RSI 線粗細", minval = 1, maxval = 6, group = gDS, display = display.none)
-showVL     = input.bool(true, "每個買賣訊號畫一條淺灰幼直線 (買 點線 / 賣 虛線)", group = gDS, display = display.none)
-vlTransp   = input.int(78, "直線淡化 (透明度 %; 越大越淡)", minval = 30, maxval = 95, step = 2, group = gDS, display = display.none)
-showBg     = input.bool(true, "回測期間底色", group = gDS, display = display.none)
-showTbl    = input.bool(true, "右上顯示訊號統計", group = gDS, display = display.none)
-tblPos     = input.string("右上", "統計表位置", options = ["右上", "右下"], group = gDS, display = display.none)
-
-cBrown     = color.rgb(92, 51, 23)          // 模式 2: 深棕 (粗)
-cBuyTri    = color.rgb(120, 180, 255)       // 買訊 ▲ 淺藍
-cSellTri   = color.rgb(255, 120, 120)       // 賣訊 ▼ 淺紅
-
-plot(rsiV, "RSI", color = cBrown, linewidth = lwRsi, display = display.pane + display.price_scale)
-hBuy  = hline(rsiBuyLv, "買訊門檻", color = color.new(color.green, 55), linestyle = hline.style_dashed)
-hMid  = hline(rsiExitLv, "中性值", color = color.new(color.gray, 60), linestyle = hline.style_dotted)
-hOB   = hline(rsiOBLv, "超買值", color = color.new(color.red, 55), linestyle = hline.style_dashed)
-hLo   = hline(0, "0", color = color.new(color.gray, 85))
-hHi   = hline(100, "100", color = color.new(color.gray, 85))
-fill(hLo, hBuy, color = color.new(color.green, 92), title = "超賣區")
-fill(hOB, hHi, color = color.new(color.red, 92), title = "超買區")
-bgcolor(showBg and inWindow ? color.new(color.blue, 94) : na, title = "回測期間底色")
-
-// 訊號直接標在 RSI 曲線上: 用 label (三角形樣式) 而不是 plotshape, 確保買訊一定畫得出來 (最多保留最近 500 個)
-if m2Buy and inWindow
-    label.new(bar_index, rsiV, "", style = label.style_triangleup,   color = cBuyTri,  size = size.small, yloc = yloc.price)
-if m2Sell and inWindow
-    label.new(bar_index, rsiV, "", style = label.style_triangledown, color = cSellTri, size = size.small, yloc = yloc.price)
-
-// 淺灰幼直線: 與主策略同一個視覺語言 (買 點線 / 賣 虛線), 本副圖內貫通上下
-vlCol = color.new(color.gray, vlTransp)
-if showVL and inWindow and m2Buy
-    line.new(bar_index, 0.0, bar_index, 100.0, extend = extend.both, color = vlCol, width = 1, style = line.style_dotted)
-if showVL and inWindow and m2Sell
-    line.new(bar_index, 0.0, bar_index, 100.0, extend = extend.both, color = vlCol, width = 1, style = line.style_dashed)
-
-// 左側線名標籤 (貼在可見範圍最左那根 K 的 RSI 值上)
-var float yRsi = na
-if time >= chart.left_visible_bar_time and na(yRsi)
-    yRsi := rsiV
-var label lbR = na
+// ─────────────────────────── ③ 顯示: 階梯線 1 = 可開倉 / 0.5 = 可做的日子但不在時段 / 0 = 開市向下整天不做 ───────────────────────────
+cOn   = color.rgb(0, 130, 60)
+cHalf = color.rgb(150, 150, 150)
+cOff  = color.rgb(200, 60, 60)
+gateV = not inSess ? na : not dayOK ? 0.0 : inZone ? 1.0 : 0.5
+gateC = not dayOK ? cOff : inZone ? cOn : cHalf
+plot(gateV, "模式4 閘門 (1 可開倉 / 0.5 不在時段 / 0 不做)", style = plot.style_stepline, linewidth = 3, color = gateC, display = display.pane + display.price_scale)
+bgcolor(not inSess ? na : not dayOK ? color.new(cOff, 88) : inZone ? color.new(cOn, 85) : color.new(cHalf, 93), title = "閘門底色")
+bgcolor(inWindow ? color.new(color.blue, 96) : na, title = "回測期間底色")
+hline(1.0, "可開倉", color = color.new(cOn, 60), linestyle = hline.style_dotted)
+hline(0.5, "不在時段", color = color.new(cHalf, 60), linestyle = hline.style_dotted)
+hline(0.0, "不做", color = color.new(cOff, 60), linestyle = hline.style_dotted)
+// 每天開市在線上標出當日判定
+if newSess and inWindow
+    label.new(bar_index, dayOK ? 1.05 : -0.05, openTxt + (dayOK ? " → 可做" : " → 不做"), style = dayOK ? label.style_label_down : label.style_label_up, color = dayOK ? color.new(cOn, 20) : color.new(cOff, 20), textcolor = color.white, size = size.tiny)
+// 左側線名標籤
+var label lbG = na
 if barstate.islast
-    label.delete(lbR)
-    lbR := label.new(chart.left_visible_bar_time, nz(yRsi, rsiV), "模式2 · RSI(" + str.tostring(rsiLen) + ") ▲買 ▼賣", xloc = xloc.bar_time, style = label.style_label_left, color = cBrown, textcolor = color.white, size = size.tiny)
+    label.delete(lbG)
+    lbG := label.new(chart.left_visible_bar_time, 1.0, "模式4 · 高勝率閘門: 綠 = 可開倉, 灰 = 可做但不在時段, 紅 = 開市向下不做", xloc = xloc.bar_time, style = label.style_label_left, color = color.new(cOn, 30), textcolor = color.white, size = size.tiny)
 
-// 訊號統計 (靠右, 與主策略的表格同側)
-var int nB = 0
-var int nS = 0
-if inWindow
-    nB += m2Buy ? 1 : 0
-    nS += m2Sell ? 1 : 0
-posT = tblPos == "右下" ? position.bottom_right : position.top_right
-var table tb = table.new(posT, 2, 4, border_width = 1, frame_width = 1, frame_color = color.gray)
-if barstate.islast and showTbl
-    table.clear(tb, 0, 0, 1, 3)
+// ─────────────────────────── ④ 統計表 (靠右) ───────────────────────────
+var int nDays  = 0
+var int nOK    = 0
+var int nBarOn = 0
+if newSess and inWindow
+    nDays += 1
+    nOK   += dayOK ? 1 : 0
+if inWindow and gateOn
+    nBarOn += 1
+var table tb = table.new(position.top_right, 2, 5, border_width = 1, frame_width = 1, frame_color = color.gray)
+if barstate.islast
+    table.clear(tb, 0, 0, 1, 4)
     hBg = color.new(color.gray, 70)
-    table.cell(tb, 0, 0, "模式 2 · RSI 超賣回歸", text_size = size.tiny, text_color = color.white, bgcolor = cBrown)
-    table.cell(tb, 1, 0, "RSI " + str.tostring(rsiV, "#.#"), text_size = size.tiny, text_color = color.white, bgcolor = cBrown)
-    table.cell(tb, 0, 1, "買訊 (上穿 " + str.tostring(rsiBuyLv, "#") + ")", text_size = size.tiny, bgcolor = hBg)
-    table.cell(tb, 1, 1, str.tostring(nB) + " 次", text_size = size.tiny, text_color = color.blue)
-    table.cell(tb, 0, 2, "賣訊 (" + (rsiSellMd == "上穿 中性值 (S05 原版)" ? "上穿 " + str.tostring(rsiExitLv, "#") : "下穿 " + str.tostring(rsiOBLv, "#")) + ")", text_size = size.tiny, bgcolor = hBg)
-    table.cell(tb, 1, 2, str.tostring(nS) + " 次", text_size = size.tiny, text_color = color.red)
-    table.cell(tb, 0, 3, "窗口", text_size = size.tiny, bgcolor = hBg)
-    table.cell(tb, 1, 3, winMode == "最近 N 個交易日" ? str.tostring(tradDays) + " 交易日" : winMode == "最近 N 天 (日曆)" ? str.tostring(lookbackD) + " 天" : "指定日期", text_size = size.tiny)
-// ═══ END OF FILE ═══ TV-1M-RSI-mode2_(09月20日; 14:31) · 全檔共 116 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+    table.cell(tb, 0, 0, "模式 4 · 高勝率閘門", text_size = size.tiny, text_color = color.white, bgcolor = cOn)
+    table.cell(tb, 1, 0, gateOn ? "現在可開倉" : dayOK ? "今日可做 · 不在時段" : "今日不做", text_size = size.tiny, text_color = color.white, bgcolor = gateOn ? cOn : dayOK ? cHalf : cOff)
+    table.cell(tb, 0, 1, "今日開市", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 1, openTxt, text_size = size.tiny, text_color = dayOK ? color.green : color.red)
+    table.cell(tb, 0, 2, "窗內交易日 / 可做日", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 2, str.tostring(nDays) + " / " + str.tostring(nOK), text_size = size.tiny)
+    table.cell(tb, 0, 3, "可開倉 K 數", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 3, str.tostring(nBarOn), text_size = size.tiny)
+    table.cell(tb, 0, 4, "時段", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 4, zoneSess, text_size = size.tiny)
+// ═══ END OF FILE ═══ TV-1M-winrate-mode4_(09月20日; 14:31) · 全檔共 118 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
 </script>
 <script>
 (function(){
@@ -251,7 +253,7 @@ if barstate.islast and showTbl
   src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
   var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
   var bytes = new TextEncoder().encode(src).length;
-  var name = "TV-1M-RSI-mode2_(09月20日; 14:31)";
+  var name = "TV-1M-winrate-mode4_(09月20日; 14:31)";
   document.getElementById('code').value = src;
   document.getElementById('mLines').textContent = lines.length + ' 行';
   document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';
