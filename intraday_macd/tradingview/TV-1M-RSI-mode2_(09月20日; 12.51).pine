@@ -1,20 +1,21 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TV-1M-RSI-mode2_(09月20日; 12:36)  ·  模式 2 (RSI 超賣回歸 / S05) 專用副圖 · 配合主策略 TV-1M-macd-hist,cross&rsi 一起掛
+//  TV-1M-RSI-mode2_(09月20日; 12:51)  ·  模式 2 (RSI 超賣回歸 / S05) 專用副圖 · 配合主策略 TV-1M-macd-hist,cross&rsi 一起掛
 //  四處必須一致: indicator() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
-//  本檔共 122 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷
+//  本檔共 125 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷
 //
-//  【為甚麼要分成兩支腳本】TradingView 的一支 Pine 腳本只能佔【一個副圖】(overlay = false 那一格), 沒有辦法自己開第二格。
-//   模式 1 與模式 3 都是 MACD 數值, 同尺度, 所以留在主策略的副圖; 模式 2 是 RSI (0-100), 尺度完全不同, 只能另開一支放在自己的副圖。
+//  【為甚麼要分成兩支腳本】TradingView 的一支 Pine 腳本只能佔【一個副圖】, 沒有辦法自己開第二格。
+//   模式 1 與模式 3 都是 MACD 數值, 同尺度, 留在主策略的副圖; 模式 2 是 RSI (0-100), 尺度完全不同, 只能另開一支放在自己的副圖。
 //   掛法: 主策略 Add to chart → 再把這一支 Add to chart → TradingView 會自動給它一格新的副圖 (可拖曳調高度與次序)。
 //
-//  【顯示內容】深棕粗線 = RSI(14) 數值曲線 · ▲ 淺藍 = 模式 2 買訊 (RSI 上穿 30) · ▼ 淺紅 = 模式 2 賣訊 (RSI 上穿 55, 或改下穿 70)
-//   另有 30 / 55 / 70 三條門檻虛線與超買超賣色帶; 每個訊號一條淺灰幼直線 (買 點線 / 賣 虛線); 左邊有線名標籤; 右上有訊號統計表
+//  【顯示內容】深棕粗線 = RSI(14) 曲線 · ▲ 淺藍 = 模式 2 買訊 (RSI 上穿 30) · ▼ 淺紅 = 模式 2 賣訊 (RSI 上穿 55, 或改下穿 70), 兩者以 label 直接標在曲線上
+//   ※ 買訊要 RSI 先跌破 30 再回升才會出現, 1 分 K 一天可能只有幾次甚至沒有 — 這是規則本身, 不是漏畫; 右上統計表會列出窗口內買訊 / 賣訊各幾次
+//   另有 30 / 55 / 70 三條門檻虛線與超買超賣色帶; 每個訊號一條淺灰幼直線 (買 點線 / 賣 虛線); 左邊有線名標籤
 //  【重要】② 的 RSI 長度 / 買訊門檻 / 賣訊方式 三項必須與主策略 ④c 的同名設定一致, 否則兩個副圖顯示的訊號會對不上。
 //  【這支不下單】純顯示用的 indicator; 真正的買賣與回測報表全部在主策略那一支。
-//  版本戳 = 建置時間 HKT; 檔名以 . 代替 : (Windows 檔名不接受冒號); 本檔零延續行; plot 的 title 必須是常數字串 (CE10123)
+//  版本戳 = 建置時間 HKT; 檔名以 . 代替 : ; 本檔零延續行; plot 的 title 必須是常數字串 (CE10123)
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-indicator("TV-1M-RSI-mode2_(09月20日; 12:36)", shorttitle="TV-1M-RSI-mode2_(09月20日; 12:36)", overlay = false, max_labels_count = 500, max_lines_count = 500)
+indicator("TV-1M-RSI-mode2_(09月20日; 12:51)", shorttitle="TV-1M-RSI-mode2_(09月20日; 12:51)", overlay = false, max_labels_count = 500, max_lines_count = 500)
 
 // ─────────────────────────── ① 回測期間 (與主策略同一套設定, 只用來畫底色) ───────────────────────────
 gBT        = "① 回測期間 (與主策略對齊)"
@@ -80,9 +81,11 @@ fill(hLo, hBuy, color = color.new(color.green, 92), title = "超賣區")
 fill(hOB, hHi, color = color.new(color.red, 92), title = "超買區")
 bgcolor(showBg and inWindow ? color.new(color.blue, 94) : na, title = "回測期間底色")
 
-// 訊號直接標在 RSI 曲線上
-plotshape(m2Buy  and inWindow ? rsiV : na, "模式2 買訊 ▲ (RSI 上穿門檻)", style = shape.triangleup,   location = location.absolute, color = cBuyTri,  size = size.small, display = display.pane)
-plotshape(m2Sell and inWindow ? rsiV : na, "模式2 賣訊 ▼", style = shape.triangledown, location = location.absolute, color = cSellTri, size = size.small, display = display.pane)
+// 訊號直接標在 RSI 曲線上: 用 label (三角形樣式) 而不是 plotshape, 確保買訊一定畫得出來 (最多保留最近 500 個)
+if m2Buy and inWindow
+    label.new(bar_index, rsiV, "", style = label.style_triangleup,   color = cBuyTri,  size = size.small, yloc = yloc.price)
+if m2Sell and inWindow
+    label.new(bar_index, rsiV, "", style = label.style_triangledown, color = cSellTri, size = size.small, yloc = yloc.price)
 
 // 淺灰幼直線: 與主策略同一個視覺語言 (買 點線 / 賣 虛線), 本副圖內貫通上下
 vlCol = color.new(color.gray, vlTransp)
@@ -119,4 +122,4 @@ if barstate.islast and showTbl
     table.cell(tb, 1, 2, str.tostring(nS) + " 次", text_size = size.tiny, text_color = color.red)
     table.cell(tb, 0, 3, "窗口", text_size = size.tiny, bgcolor = hBg)
     table.cell(tb, 1, 3, winMode == "最近 N 個交易日" ? str.tostring(tradDays) + " 交易日" : winMode == "最近 N 天 (日曆)" ? str.tostring(lookbackD) + " 天" : "指定日期", text_size = size.tiny)
-// ═══ END OF FILE ═══ TV-1M-RSI-mode2_(09月20日; 12:36) · 全檔共 122 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ TV-1M-RSI-mode2_(09月20日; 12:51) · 全檔共 125 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══

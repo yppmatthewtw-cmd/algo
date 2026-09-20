@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-//  TV-1M-macd-hist,cross&rsi_(09月20日; 12:33)  ·  MACD 柱動能減弱 + 敏感 MACD 金叉 + RSI 超賣回歸 三訊號策略 · 1 分鐘 · 一個月回測 · TradingView Pine Script v6
+//  TV-1M-macd-hist,cross&rsi_(09月20日; 12:51)  ·  MACD 柱動能減弱 + 敏感 MACD 金叉 + RSI 超賣回歸 三訊號策略 · 1 分鐘 · 一個月回測 · TradingView Pine Script v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
-//  本檔共 760 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
+//  本檔共 746 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或按【下載 .pine.txt】用純文字編輯器開啟 → Ctrl+A → Ctrl+C
 //  ★ 看到 CE10244 "A strategy must contain at least one of the following: any strategy.*() … plot*() …" = 貼上的內容被截斷在 8 KB
 //     (前 8 KB 只有表頭 + strategy() + Inputs, 第一個 plot 在很後面) — 這不是程式錯誤, 請改用貼上工具網頁複製, 貼完確認最後一行
@@ -18,9 +18,9 @@
 //         想讓兩者靠近: ④c 把模式 2 賣訊改「下穿超買值 70」, 或放寬賣窗口。副圖參數表會顯示「賣: M1 幾筆 · M2 幾筆 → 同時幾筆」
 //
 //  【副圖分工】一支 Pine 腳本只能佔一個副圖。模式 1 與模式 3 都是 MACD 數值 (同尺度) → 留在本腳本的副圖; 模式 2 是 RSI 0-100, 尺度不同 → 另一支 TV-1M-RSI-mode2 放它自己的副圖, 兩支一起 Add to chart
-//  【圖示】每個模式的每個買賣訊號 = 一條淺灰幼直線貫通主圖與副圖 (買 點線 / 賣 虛線, ⑧b 可關可調淡化); 副圖最下方兩條獨立訊號線: 模式 1 深綠 / 模式 3 紫, 線上 ▲ 淺藍 = 買訊, ▼ 淺紅 = 賣訊;
-//        模式 3 的金叉 (○ 紫) / 死叉 (× 紅, 只顯示) 也標在它自己的 DIF 9/26/9 線上; 每條線左邊都有線名標籤 (擠在 0 軸附近的會自動上下拉開, 不再互相疊住)
-//  【版面】回測摘要 / 觸發參數 / 參數掃描 三個表格全部靠右 (⑦⑨ 可改位置); 表格只能用 TradingView 的九宮格定位, 無法對齊自訂的垂直線
+//  【圖示】每個模式的每個買賣訊號 = 一條淺灰幼直線貫通主圖與副圖 (買 點線 / 賣 虛線, ⑧b 可關可調淡化); 模式 1 的 ▲ 淺藍買訊標在負柱底下, ▼ 淺紅賣訊標在正柱頂上;
+//        模式 3 的金叉 ▲ / 死叉 ▼ (只顯示) 標在它自己的 DIF 9/26/9 線的交叉點; 每條線左邊都有線名標籤 (擠在 0 軸附近的會自動上下拉開, 不再互相疊住)
+//  【版面】主圖頂部兩個表格並列: 參數掃描 中上 (預設列 8 名) + 回測摘要 右上; 副圖右上為觸發參數表 (⑦⑨ 可改位置; 只能用 TradingView 九宮格定位)
 //        純顯示, 不影響策略買賣; 右側有標籤。另有底部小圓點 / 菱形 / 方塊 = 模式 1 / 2 / 3 買訊; 藍三角 B = 真正成交
 //        副圖另畫模式 3 的 DIF / DEA 細線 (半透明, ④d 可關); 逐筆交易表出場原因: S-M1&M2 / EOD / SL / 窗口結束
 //  【參數掃描 (⑨)】81 組 (買N×買k × 賣N×賣k, k∈1/1.5/2) 每一組都套上同一套三訊號買 / 雙訊號賣規則, 排名結果可直接填回 ④
@@ -32,7 +32,7 @@
 //  版本戳 TV-1M-macd-hist,cross&rsi_(MM月DD日; HH:MM), 括號內 = 建置時間 HKT; 檔名以 . 代替 : (Windows 檔名不接受冒號); 本檔零延續行
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("TV-1M-macd-hist,cross&rsi_(09月20日; 12:33)", shorttitle="TV-1M-macd-hist,cross&rsi_(09月20日; 12:33)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
+strategy("TV-1M-macd-hist,cross&rsi_(09月20日; 12:51)", shorttitle="TV-1M-macd-hist,cross&rsi_(09月20日; 12:51)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.03, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
 
 // ─────────────────────────── ① 回測期間 (預設最近 30 天 = 一個月) ───────────────────────────
 gBT        = "① 回測期間 — 全部在此設定, 不用改程式碼"
@@ -270,8 +270,8 @@ if not inWindow and strategy.position_size != 0
 // ─────────────────────────── ⑮ 參數掃描: 同一窗口 81 組 (買N×買k×賣N×賣k) 虛擬回測, 找最能捕獲期內最大昇幅的組合 ───────────────────────────
 gSW       = "⑨ 參數掃描"
 showSweep = input.bool(true, "顯示參數掃描表 (主圖)", group = gSW, tooltip = "在同一回測窗口內, 對 81 組「買 N∈{1,2,3} × 買 k∈{1,1.5,2} × 賣 N∈{1,2,3} × 賣 k∈{1,1.5,2}」各跑一套虛擬回測 (每組都套上 ④c/④d 同一套規則: 買 = 模式 1、2、3 三訊號匹配 (3a), 賣 = 模式 1 與 2 雙訊號匹配 (3b), 與真單一致) (同樣下一根開盤成交、同樣時段/收市強平、同樣手續費滑點), 以最後一根收盤 mark-to-market 排名。k 以 ④ 的自動深度基準為 1 倍; 最少根數與面積係數用 ④ 現行值。看完把最佳組合填回 ④ 的 買/賣 N 與 k 即可。※ 掃描的深度基準不含 ④b 校準 k (本版校準預設關閉, 兩者一致); 若開啟校準, 橙底列會與真實策略略有出入。掃描有模擬 ⑥ 固定止損。", display = display.none)
-swpPos    = input.string("右下", "掃描表位置 (主圖; 本版預設靠右, 與其餘表格同側)", options = ["右下", "右上", "左下", "左上"], group = gSW, display = display.none)
-swpRows   = input.int(12, "列出前幾名", minval = 3, maxval = 30, group = gSW, display = display.none)
+swpPos    = input.string("中上", "掃描表位置 (主圖; 本版預設中上, 與右上的回測摘要並列)", options = ["右下", "右上", "左下", "左上", "中上"], group = gSW, display = display.none)
+swpRows   = input.int(8, "列出前幾名 (本版 8, 表格矮一點, 與右邊摘要並列不重疊)", minval = 3, maxval = 30, group = gSW, display = display.none)
 commPct   = input.float(0.03, "掃描用 · 單邊手續費 % (需與 strategy() 的 commission_value 一致)", minval = 0, step = 0.01, group = gSW, display = display.none)
 slipTk    = input.int(2, "掃描用 · 單邊滑點 tick (需與 strategy() 的 slippage 一致)", minval = 0, group = gSW, display = display.none)
 var float[] KG     = array.from(1.0, 1.5, 2.0)       // k 網格: 1 = 自動門檻, 1.5 = 本版買方預設 (較嚴), 2 = 兩倍嚴 (本版不再掃 0 = 不要求動能)
@@ -427,28 +427,25 @@ hline(0)   // hline/bgcolor 的 display 只接受 none/all, 兩者本來就不�
 bgcolor(inWindow ? color.new(color.blue, 94) : na, title = "回測期間底色")
 // ─── ⑫b 三條訊號線 (副圖最下方): 模式 1 / 2 / 3 各自「單獨運作」時的買 (○ 藍) 賣 (× 紅) 訊號 — 純顯示, 不影響策略買賣 ───
 gLN       = "⑧b 三條單獨訊號線"
-showLanes = input.bool(true, "副圖最下方兩條獨立訊號線: 模式 1 深綠 / 模式 3 紫 (▲ 淺藍 買 · ▼ 淺紅 賣); 模式 2 在另一支 RSI 腳本的獨立副圖", group = gLN, display = display.none)
+showLanes = input.bool(true, "模式 1 訊號標在 MACD 柱上 (▲ 淺藍 = 買, 在負柱底下; ▼ 淺紅 = 賣, 在正柱頂上); 模式 3 標在它的 DIF 線交叉點 (▲ 買 / ▼ 死叉只顯示)", group = gLN, display = display.none)
 showVL    = input.bool(true, "每個模式的每個買賣訊號: 淺灰幼直線貫通主圖與副圖 (買 點線 / 賣 虛線)", group = gLN, display = display.none)
 vlTransp  = input.int(78, "直線淡化 (透明度 %; 越大越淡)", minval = 30, maxval = 95, step = 2, group = gLN, display = display.none)
-laneGap   = input.float(0.35, "三條線的間距 (以柱高幅度的倍數計; 本版拉開至 0.35)", minval = 0.05, maxval = 1.0, step = 0.05, group = gLN, display = display.none)
-laneRef   = nz(ta.highest(math.abs(hist), 300), 0.0)     // 以近 300 根最大柱高定位, 三條線永遠落在柱子下方, 隨圖表縮放
-lane1     = -laneRef * (1.0 + laneGap * 1.0)
-lane3     = -laneRef * (1.0 + laneGap * 2.0)
+laneGap   = input.float(0.12, "訊號三角形離柱頂 / 柱底的距離 (以柱高幅度的倍數計)", minval = 0.02, maxval = 0.5, step = 0.02, group = gLN, display = display.none)
+laneRef   = nz(ta.highest(math.abs(hist), 300), 0.0)     // 近 300 根最大柱高, 用來定三角形離柱子的距離
+padSig    = laneRef * laneGap
+m1BuyY    = hist - padSig                                // 買訊: 負柱的底下
+m1SellY   = hist + padSig                                // 賣訊: 正柱的頂上
 cLane1    = color.rgb(0, 100, 0)        // 模式 1: 深綠
 cLane2    = color.rgb(92, 51, 23)       // 模式 2: 深棕 (粗)
 cLane3    = color.rgb(128, 0, 128)      // 模式 3: 紫
-plot(showLanes ? lane1 : na, "訊號線 · 模式1 (深綠)", color = cLane1, linewidth = 3, display = display.pane)
-plot(showLanes ? lane3 : na, "訊號線 · 模式3 (紫)",   color = cLane3, linewidth = 3, display = display.pane)
 // 獨立線上的訊號: ▲ 淺藍 = 該模式買訊, ▼ 淺紅 = 該模式賣訊 (location.absolute 把三角形畫在該線的 y 值上)
 cBuyTri   = color.rgb(120, 180, 255)
 cSellTri  = color.rgb(255, 120, 120)
-plotshape(showLanes and m1Buy      and inWindow ? lane1 : na, "模式1 單獨買 ▲", style = shape.triangleup,   location = location.absolute, color = cBuyTri,  size = size.small, display = display.pane)
-plotshape(showLanes and m1Sell     and inWindow ? lane1 : na, "模式1 單獨賣 ▼", style = shape.triangledown, location = location.absolute, color = cSellTri, size = size.small, display = display.pane)
-plotshape(showLanes and m3Buy      and inWindow ? lane3 : na, "模式3 單獨買 ▲", style = shape.triangleup,   location = location.absolute, color = cBuyTri,  size = size.small, display = display.pane)
-plotshape(showLanes and m3SellSolo and inWindow ? lane3 : na, "模式3 單獨賣 ▼ (死叉, 策略不用)", style = shape.triangledown, location = location.absolute, color = cSellTri, size = size.small, display = display.pane)
+plotshape(showLanes and m1Buy  and inWindow ? m1BuyY  : na, "模式1 買 ▲ (負柱底下)", style = shape.triangleup,   location = location.absolute, color = cBuyTri,  size = size.small, display = display.pane)
+plotshape(showLanes and m1Sell and inWindow ? m1SellY : na, "模式1 賣 ▼ (正柱頂上)", style = shape.triangledown, location = location.absolute, color = cSellTri, size = size.small, display = display.pane)
 // 模式 3 的訊號直接標在它自己的 DIF (9/26/9) 線上的交叉點
-plot(showM3 and m3Buy      and inWindow ? dif3 : na, "模式3 金叉 (在 DIF 線上)", style = plot.style_circles, color = cLane3, linewidth = 4, display = display.pane)
-plot(showM3 and m3SellSolo and inWindow ? dif3 : na, "模式3 死叉 (在 DIF 線上, 策略不用)", style = plot.style_cross, color = color.new(color.red, 0), linewidth = 4, display = display.pane)
+plotshape(showM3 and m3Buy      and inWindow ? dif3 : na, "模式3 金叉 ▲ (在 DIF 交叉點)", style = shape.triangleup,   location = location.absolute, color = cBuyTri,  size = size.small, display = display.pane)
+plotshape(showM3 and m3SellSolo and inWindow ? dif3 : na, "模式3 死叉 ▼ (在 DIF 交叉點, 策略不用)", style = shape.triangledown, location = location.absolute, color = cSellTri, size = size.small, display = display.pane)
 // 每個模式的每個買賣訊號: 淺灰幼直線, 主圖一條 + 副圖一條 (買 點線 / 賣 虛線)。TradingView 只保留最近 500 條線物件 (= 最近約 250 個訊號)
 vlCol = color.new(color.gray, vlTransp)
 if showVL and inWindow and (m1Buy or m2Buy or m3Buy)
@@ -463,23 +460,17 @@ var float yDea  = na
 var float yDif3 = na
 var float yDea3 = na
 var float yHist = na
-var float yL1   = na
-var float yL3   = na
 if time >= chart.left_visible_bar_time and na(yL1)
     yDif  := dif
     yDea  := dea
     yDif3 := dif3
     yDea3 := dea3
     yHist := hist
-    yL1   := lane1
-    yL3   := lane3
 var label lbDif  = na
 var label lbDea  = na
 var label lbDif3 = na
 var label lbDea3 = na
 var label lbHist = na
-var label lbL1   = na
-var label lbL3   = na
 if barstate.islast
     tL = chart.left_visible_bar_time
     label.delete(lbDif)
@@ -487,8 +478,6 @@ if barstate.islast
     label.delete(lbDif3)
     label.delete(lbDea3)
     label.delete(lbHist)
-    label.delete(lbL1)
-    label.delete(lbL3)
     // 5 條 MACD 家族線常擠在 0 軸附近, 標籤會互相疊住 → 先排序 y 值, 由下往上強制拉開最小間距
     mFam  = array.from(nz(yDif, dif), nz(yDea, dea), nz(yHist, hist), nz(yDif3, dif3), nz(yDea3, dea3))
     gapLb = laneRef * 0.22
@@ -508,9 +497,6 @@ if barstate.islast
     if showM3
         lbDif3 := label.new(tL, array.get(adjLb, 3), "DIF " + m3Tag + " (模式3)", xloc = xloc.bar_time, style = label.style_label_left, color = color.new(color.orange, 50), textcolor = color.white, size = size.tiny)
         lbDea3 := label.new(tL, array.get(adjLb, 4), "DEA " + m3Tag + " (模式3)", xloc = xloc.bar_time, style = label.style_label_left, color = color.new(color.aqua, 50), textcolor = color.black, size = size.tiny)
-    if showLanes
-        lbL1 := label.new(tL, nz(yL1, lane1), "模式1 訊號 ▲買 ▼賣", xloc = xloc.bar_time, style = label.style_label_left, color = cLane1, textcolor = color.white, size = size.tiny)
-        lbL3 := label.new(tL, nz(yL3, lane3), "模式3 訊號 ▲金叉 ▼死叉", xloc = xloc.bar_time, style = label.style_label_left, color = cLane3, textcolor = color.white, size = size.tiny)
 plotshape(showFillMarks and justFilled, "買入成交", style = shape.triangleup,   location = location.bottom, color = color.new(color.aqua, 0), size = size.small, text = "B", display = display.pane)
 plotshape(showFillMarks and justClosed, "賣出成交", style = shape.triangledown, location = location.top,    color = color.new(color.red, 0),  size = size.small, text = "S", display = display.pane)
 plotshape(showFillMarks and justFilled, "買入成交(主圖)", style = shape.triangleup,   location = location.belowbar, color = color.new(color.aqua, 0), size = size.small, text = "B", force_overlay = true, display = display.pane)
@@ -597,7 +583,7 @@ if barstate.islast and showPrm
     table.cell(prm, 1, 12, (useFade ? "模式1 動能減弱: 買 " + str.tostring(fadeBuy) + " 根淺紅 / 賣 " + str.tostring(fadeSell) + " 根淺綠" : "模式1 DIF/DEA 交叉") + " + 模式2 RSI + 模式3 金叉 · 買需三者匹配, 賣需 M1&M2 匹配 · 窗口 " + (winMode == "最近 N 個交易日" ? str.tostring(tradDays) + " 個交易日" : winMode == "最近 N 天 (日曆)" ? str.tostring(lookbackD) + " 天" : "指定日期"), text_size = sizeV)
 
 // ── 參數掃描表 (主圖): 最後一根收盤 mark-to-market 排名 ──
-posW = swpPos == "右下" ? position.bottom_right : swpPos == "右上" ? position.top_right : swpPos == "左下" ? position.bottom_left : position.top_left
+posW = swpPos == "右下" ? position.bottom_right : swpPos == "右上" ? position.top_right : swpPos == "左下" ? position.bottom_left : swpPos == "中上" ? position.top_center : position.top_left
 var table swp = table.new(posW, 7, 36, border_width = 1, frame_width = 1, frame_color = color.gray, force_overlay = true)
 if barstate.islast and showSweep
     table.clear(swp, 0, 0, 6, 35)
@@ -757,4 +743,4 @@ if barstate.islastconfirmedhistory and showRpt
     if strategy.closedtrades > 0
         for i = 0 to strategy.closedtrades - 1
             log.info("#{0} {1} → {2} {7} | {3} → {4} | P&L {5} ({6}%)", i + 1, str.format_time(strategy.closedtrades.entry_time(i), "yyyy-MM-dd HH:mm", tzStr), str.format_time(strategy.closedtrades.exit_time(i),  "yyyy-MM-dd HH:mm", tzStr), str.tostring(strategy.closedtrades.entry_price(i), format.mintick), str.tostring(strategy.closedtrades.exit_price(i),  format.mintick), str.tostring(strategy.closedtrades.profit(i), "#,###.##"), str.tostring((strategy.closedtrades.exit_price(i) / strategy.closedtrades.entry_price(i) - 1.0) * 100.0, "#.##"), strategy.closedtrades.exit_comment(i))
-// ═══ END OF FILE ═══ TV-1M-macd-hist,cross&rsi_(09月20日; 12:33) · 全檔共 760 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ TV-1M-macd-hist,cross&rsi_(09月20日; 12:51) · 全檔共 746 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
