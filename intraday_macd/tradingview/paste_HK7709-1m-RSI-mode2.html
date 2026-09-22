@@ -68,7 +68,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <header class="hero">
     <div>
       <div class="eyebrow">TradingView · Pine Script v6 · 港股 7709 · 1 分鐘日內策略 (市場預設 港股, 有午休)</div>
-      <h1 id="scriptName">HK7709-1m-RSI-mode2_(09月22日; 13:54)</h1>
+      <h1 id="scriptName">HK7709-1m-RSI-mode2_(09月22日; 23:28)</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
     </div>
     <div class="card">
@@ -89,12 +89,12 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">HK7709-1m-RSI-mode2_(09月22日; 13:54)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">HK7709-1m-RSI-mode2_(09月22日; 23:28)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
       <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
     </ol>
     <div class="check">
       <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 11 行</span><code>indicator("HK7709-1m-RSI-mode2_(09月22日; 13:54)", shorttitle="HK7709-1m-RSI-mode2_(09月22日; 13:54)", …)</code></div>
+      <div><span class="k">第 11 行</span><code>indicator("HK7709-1m-RSI-mode2_(09月22日; 23:28)", shorttitle="HK7709-1m-RSI-mode2_(09月22日; 23:28)", …)</code></div>
       <div><span class="k">最後一行</span><code id="cLast">—</code></div>
     </div>
   </section>
@@ -128,7 +128,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 
 <script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  HK7709-1m-RSI-mode2_(09月22日; 13:54)  ·  港股 7709 · 模式 2 (RSI 14/28 可買區 / 可賣區) 專用副圖 · 配合主策略 HK7709-1m-dashboard_(mode 1-4) 一起掛
+//  HK7709-1m-RSI-mode2_(09月22日; 23:28)  ·  港股 7709 · 模式 2 (RSI 14/28 可買區 / 可賣區) 專用副圖 · 配合主策略 HK7709-1m-dashboard_(mode 1-4) 一起掛
 //  模式 2 是「狀態」(像模式 4), 不形成絕對買賣點: 下界 / 上界 = 最近 120 根 RSI14 的第 10 / 90 百分位 (可切固定 30/70)
 //  進入可買區 = RSI14 梯度由 ≤0 轉 >0 (谷底在前一根) 且 谷底到達或低於下界; 一直持續直到「昇不上」= RSI14 跌破 RSI28, 或 RSI14 跌破進區時的谷底 (② 可改為只看 RSI14 / RSI28 轉勢); 每個交易日開始時清空
 //  進入可賣區 = 相反 (梯度由 ≥0 轉 <0 且 峰頂到達或高於上界), 結束條件相反; 進入另一區直接取代現區; 午休 12:00-13:00 沒有 K 線, 區間狀態直接跨過午休
@@ -137,7 +137,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 //  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 203 行, 最後一行是 END OF FILE
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-indicator("HK7709-1m-RSI-mode2_(09月22日; 13:54)", shorttitle="HK7709-1m-RSI-mode2_(09月22日; 13:54)", overlay = false, max_labels_count = 500, max_lines_count = 500)
+indicator("HK7709-1m-RSI-mode2_(09月22日; 23:28)", shorttitle="HK7709-1m-RSI-mode2_(09月22日; 23:28)", overlay = false, max_labels_count = 500, max_lines_count = 500)
 
 // ─────────────────────────── ① 回測期間 (與主策略同一套設定, 只用來畫底色) ───────────────────────────
 gBT        = "① 回測期間 (與主策略對齊)"
@@ -329,7 +329,7 @@ if barstate.islast and showTbl
     table.cell(tb, 1, 5, str.tostring(nBarB) + " / " + str.tostring(nBarS) + " / " + str.tostring(nBarAll) + "  (可買區 " + str.tostring(nBarAll > 0 ? nBarB * 100.0 / nBarAll : 0.0, "#") + "%)", text_size = size.tiny)
     table.cell(tb, 0, 6, "快慢線交叉 升穿 / 跌破 · 區間結束規則", text_size = size.tiny, bgcolor = hBg)
     table.cell(tb, 1, 6, str.tostring(nXup) + " / " + str.tostring(nXdn) + " · " + (endModeA ? "跌破慢線或跌破進區谷底" : endModeB ? "RSI14 轉勢" : "RSI28 轉勢"), text_size = size.tiny)
-// ═══ END OF FILE ═══ HK7709-1m-RSI-mode2_(09月22日; 13:54) · 全檔共 203 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ HK7709-1m-RSI-mode2_(09月22日; 23:28) · 全檔共 203 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
 </script>
 <script>
 (function(){
@@ -338,7 +338,7 @@ if barstate.islast and showTbl
   src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
   var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
   var bytes = new TextEncoder().encode(src).length;
-  var name = "HK7709-1m-RSI-mode2_(09月22日; 13:54)";
+  var name = "HK7709-1m-RSI-mode2_(09月22日; 23:28)";
   document.getElementById('code').value = src;
   document.getElementById('mLines').textContent = lines.length + ' 行';
   document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';

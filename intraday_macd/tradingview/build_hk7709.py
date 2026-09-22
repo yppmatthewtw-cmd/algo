@@ -109,6 +109,7 @@ hdr = rep(hdr, '圖表切【SOXL · 1 分鐘】', '圖表切【HKEX:7709 · 1 �
 hdr = rep(hdr, '版本戳 TV-1M-dashboard_(mode 1-4)_(MM月DD日; HH:MM)', '版本戳 HK7709-1m-dashboard_(mode 1-4)_(MM月DD日; HH:MM)')
 hdr = rep(hdr, 'TV-1M-RSI-mode2', 'HK7709-1m-RSI-mode2', hdr.count('TV-1M-RSI-mode2'))
 hdr = rep(hdr, 'TV-1M-winrate-mode4', 'HK7709-1m-winrate-mode4', hdr.count('TV-1M-winrate-mode4'))
+hdr = rep(hdr, '三支一起 Add to chart, 同名設定要一致\n', '模式 5 (一個月平均的一天曲線 + 開市/收市直線 + 14:30-16:00 黃底) 在 HK7709-mode5_1month-pattern, 純顯示不參與買賣; 四支一起 Add to chart, 同名設定要一致\n')
 assert 'TV-1M' not in hdr and 'SOXL' not in hdr
 n = hdr.count('\n') + s.count('\n') + 1 + 1
 out = hdr.format(name=name_main, n=n) + s + '\n' + END_TAG.format(name=name_main, n=n) + '\n'

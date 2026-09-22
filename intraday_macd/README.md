@@ -553,7 +553,7 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 
 ---
 
-## HK7709-1m-dashboard_(mode 1-4) · 港股 7709 版 (2026-09-22 13:54)
+## HK7709-1m-dashboard_(mode 1-4) · 港股 7709 版 (2026-09-22 23:28)
 
 由 `TV-1M-*_(09月20日; 21.59)` 三支以 `tradingview/build_hk7709.py` 產出, 模式 1–4 的規則 / 參數 / 四模式同時買 / 出場順序 / 81 組掃描 全部與 SOXL 版相同 (規格見 [MODE_SPEC.md](MODE_SPEC.md)), 只改港股相關:
 
@@ -566,19 +566,21 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 
 | 腳本 | 貼上工具 |
 |:---|:---|
-| `HK7709-1m-dashboard_(mode 1-4)_(09月22日; 13.54).pine` (835 行) | https://claude.ai/artifact/C9ku3ZKcnFkD1cRRGPf9fy |
-| `HK7709-1m-RSI-mode2_(09月22日; 13.54).pine` (203 行) | https://claude.ai/artifact/JqpLYGNvUrwMmnYNgJA2cf |
-| `HK7709-1m-winrate-mode4_(09月22日; 13.54).pine` (80 行) | https://claude.ai/artifact/MxgbsuzP6VsVdRuQN5WDKu |
+| `HK7709-1m-dashboard_(mode 1-4)_(09月22日; 23.28).pine` (835 行) | https://claude.ai/artifact/C9ku3ZKcnFkD1cRRGPf9fy |
+| `HK7709-1m-RSI-mode2_(09月22日; 23.28).pine` (203 行) | https://claude.ai/artifact/JqpLYGNvUrwMmnYNgJA2cf |
+| `HK7709-1m-winrate-mode4_(09月22日; 23.28).pine` (80 行) | https://claude.ai/artifact/MxgbsuzP6VsVdRuQN5WDKu |
 
 三支一起在 HKEX:7709 · 1 分鐘圖 Add to chart; ① 預設最近 30 天。離線 Python 引擎仍為美股時段, 未做港股版。
 
 ---
 
-## HK7709-10m-pattern · 港股 7709 過去一個月「平均的一天」(2026-09-22 17:58)
+## HK7709-mode5_1month-pattern · 模式 5 · 港股 7709 過去一個月「平均的一天」曲線 (2026-09-22 23:28)
 
-這裡沒有 7709 的行情資料 (行情主機全部不通), 所以平均化在 TradingView 圖上做: `tradingview/hk7709_pattern_src.pine` → `build_hk7709_pattern.py` 產出 `HK7709-10m-pattern_(09月22日; 17.58).pine` (300 行, 純顯示指標)。
+這裡沒有 7709 的行情資料 (行情主機全部不通), 所以平均化在 TradingView 圖上做: `tradingview/hk7709_pattern_src.pine` → `build_hk7709_pattern.py` 產出 `HK7709-mode5_1month-pattern(09月22日; 23.28).pine` (317 行, 純顯示副圖, 不參與四模式買賣)。
 
-- 每個交易日按港股時段切成固定格 (09:30–12:00 = 15 格, 13:00–16:00 = 18 格, 每格 10 分鐘), 每格的開 / 高 / 低 / 收換成相對當日 09:30 開盤價的 %, 最近 21 個完整交易日同一格疊起來取 平均 / 中位 / 標準差 / 升日比例 (今日未收市不算入)。
-- 畫面: 橙線 = 「平均的一天」曲線, 同一條 pattern 按對應時間格在每一個交易日重覆 (預設最近 60 日 + 今日; ① 可切滾動 = 每日只用之前 N 日, 無前視), 藍線 = 每日實際路徑; 逐格表 / 摘要 / 標籤 / ±1σ 預設關, ① 可開; 右上逐格表; 左下摘要 (開→收、當日最高 / 最低的平均值與最常出現的格、上午 / 午休跳空 / 下午、開盤跳空、平均路徑上的最佳持有窗口)。
-- 貼上工具: https://claude.ai/artifact/BMmXFRixBoqQttZmnWDFTE (圖表切 HKEX:7709 · 10 分鐘)。
-- 離線版 `backtest/intraday_pattern.py` 仍為美股時段; 若從 TradingView 匯出 7709 的 10 分鐘 CSV, 可再做港股版報告。
+- 每個交易日按港股時段切成固定格 (每格 = 圖表週期; 10 分鐘圖 = 15 + 18 格, 1 分鐘圖 = 150 + 180 格), 每格的開 / 高 / 低 / 收換成相對當日 09:30 開盤價的 %, 最近 21 個完整交易日同一格疊起來取 平均 / 中位 / 標準差 / 升日比例 (今日未收市不算入)。
+- 橙線 = 「平均的一天」曲線, 同一條 pattern 按對應時間格在每一個交易日重覆 (預設最近 60 日 + 今日; ① 可切滾動 = 每日只用之前 N 日, 無前視); 藍線 = 每日實際路徑。
+- **模式 5 標記 (②)**: 每個交易日的開市 (09:30) 與收市 (16:00) 各畫一條粗黑直線並標時間; 14:30–16:00 HKT 黃色底色 (時段可改 / 可關)。
+- 逐格表 / 摘要 / 標籤 / ±1σ 預設關, ① 可開 (逐格表只在 ≥ 2 分鐘圖顯示)。
+- 貼上工具: https://claude.ai/artifact/BMmXFRixBoqQttZmnWDFTE (HKEX:7709, 1 分鐘或 10 分鐘圖皆可)。
+- 離線版 `backtest/intraday_pattern.py` 仍為美股時段; 若從 TradingView 匯出 7709 的 CSV, 可再做港股版報告。

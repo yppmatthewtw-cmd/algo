@@ -68,7 +68,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <header class="hero">
     <div>
       <div class="eyebrow">TradingView · Pine Script v6 · 港股 7709 · 1 分鐘日內策略 (市場預設 港股, 有午休)</div>
-      <h1 id="scriptName">HK7709-1m-dashboard_(mode 1-4)_(09月22日; 13:54)</h1>
+      <h1 id="scriptName">HK7709-1m-dashboard_(mode 1-4)_(09月22日; 23:28)</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
     </div>
     <div class="card">
@@ -89,12 +89,12 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">HK7709-1m-dashboard_(mode 1-4)_(09月22日; 13:54)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">HK7709-1m-dashboard_(mode 1-4)_(09月22日; 23:28)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
       <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
     </ol>
     <div class="check">
       <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 39 行</span><code>strategy("HK7709-1m-dashboard_(mode 1-4)_(09月22日; 13:54)", shorttitle="HK7709-1m-dashboard_(mode 1-4)_(09月22日; 13:54)", …)</code></div>
+      <div><span class="k">第 39 行</span><code>strategy("HK7709-1m-dashboard_(mode 1-4)_(09月22日; 23:28)", shorttitle="HK7709-1m-dashboard_(mode 1-4)_(09月22日; 23:28)", …)</code></div>
       <div><span class="k">最後一行</span><code id="cLast">—</code></div>
     </div>
   </section>
@@ -117,7 +117,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <tr><td class="m">hist&amp;rsi (00:53)</td><td class="m">第 1 行 · CE10244 A strategy must contain…</td><td class="m">8192 剛好切在第 66 行 (註解) 開頭</td><td>前 65 行沒有任何輸出函式</td></tr>
     </table>
     </div>
-    <div class="warnbox" style="margin-top:12px">整份檔案約 82.5 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
+    <div class="warnbox" style="margin-top:12px">整份檔案約 82.6 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
   </section>
 
   <section class="card">
@@ -128,7 +128,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 
 <script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  HK7709-1m-dashboard_(mode 1-4)_(09月22日; 13:54)  ·  港股 7709 · 主策略 (dashboard): 模式 1 MACD 柱到上下界 + 模式 2 RSI 14/28 可買區 + 模式 3 敏感 MACD 金叉 + 模式 4 EMA9 斜率向上 · 1 分鐘 · 一個月回測 · Pine v6
+//  HK7709-1m-dashboard_(mode 1-4)_(09月22日; 23:28)  ·  港股 7709 · 主策略 (dashboard): 模式 1 MACD 柱到上下界 + 模式 2 RSI 14/28 可買區 + 模式 3 敏感 MACD 金叉 + 模式 4 EMA9 斜率向上 · 1 分鐘 · 一個月回測 · Pine v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
 //  本檔共 835 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或按【下載 .pine.txt】用純文字編輯器開啟 → Ctrl+A → Ctrl+C
@@ -148,7 +148,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 //   合格買入 = 四模式同時: 模式 1 與 3 的買訊在匹配窗口 (④c 預設 5 根) 內先後出現 + 買入那一根模式 2 處於可買區 + 模式 4 向上, 且本根至少一個模式剛出現 (M1 / M3 觸發, 或 剛進可買區, 或 EMA9 剛轉向上)
 //   合格賣出 = 模式 1 賣訊 (昇到上界後淺綠 N 根完成, 有效 5 根) 在模式 2 可賣區內 (本根至少一個剛出現); 另有 可買區結束平倉 / 15:58 收市強平 / 可選 11:58 午休前平倉 / 可選固定止損
 //
-//  【副圖分工】一支 Pine 腳本只能佔一個副圖。模式 1 與 3 (MACD 尺度) 在本腳本副圖; 模式 2 (RSI 14/28 區) 在 HK7709-1m-RSI-mode2; 模式 4 (EMA9 斜率) 在 HK7709-1m-winrate-mode4; 三支一起 Add to chart, 同名設定要一致
+//  【副圖分工】一支 Pine 腳本只能佔一個副圖。模式 1 與 3 (MACD 尺度) 在本腳本副圖; 模式 2 (RSI 14/28 區) 在 HK7709-1m-RSI-mode2; 模式 4 (EMA9 斜率) 在 HK7709-1m-winrate-mode4; 模式 5 (一個月平均的一天曲線 + 開市/收市直線 + 14:30-16:00 黃底) 在 HK7709-mode5_1month-pattern, 純顯示不參與買賣; 四支一起 Add to chart, 同名設定要一致
 //  【圖示】每個模式的每個買賣訊號 = 一條淺灰幼直線貫通主圖與副圖 (買 點線 / 賣 虛線, ⑧b 可關可調淡化); 模式 1 的 ▲ 淺藍買訊標在負柱底下, ▼ 淺紅賣訊標在正柱頂上; 模式 1 的上界 (紅) / 下界 (藍) 畫在柱上;
 //        副圖只畫模式 3 的 9/26/9 快慢線 (12/26/9 的 DIF/DEA 線已移除, 柱保留給模式 1); 模式 3 的金叉 ▲ / 死叉 ▼ (只顯示) 標在 9/26/9 交叉點; 每條線左邊都有線名標籤 (擠在 0 軸附近的會自動上下拉開, 不再互相疊住)
 //  【版面】主圖右上一張合併表格: 左 7 欄 回測摘要 (藍, 預設不列逐筆交易, ⑦ maxRows 可開) + 右 7 欄 參數掃描 (紫, 列 8 名), 同一表格永不重疊; 副圖右上為觸發參數表
@@ -165,7 +165,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 //  版本戳 HK7709-1m-dashboard_(mode 1-4)_(MM月DD日; HH:MM), 第二個括號 = 建置時間 HKT; 檔名以 . 代替 : (Windows 檔名不接受冒號); 本檔零延續行
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("HK7709-1m-dashboard_(mode 1-4)_(09月22日; 13:54)", shorttitle="HK7709-1m-dashboard_(mode 1-4)_(09月22日; 13:54)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.05, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
+strategy("HK7709-1m-dashboard_(mode 1-4)_(09月22日; 23:28)", shorttitle="HK7709-1m-dashboard_(mode 1-4)_(09月22日; 23:28)", overlay=false, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.05, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_boxes_count = 500, max_lines_count = 500, max_labels_count = 500)
 
 // ─────────────────────────── ① 回測期間 (預設最近 30 天 = 一個月) ───────────────────────────
 gBT        = "① 回測期間 — 全部在此設定, 不用改程式碼"
@@ -961,7 +961,7 @@ if barstate.islastconfirmedhistory and showRpt
     if strategy.closedtrades > 0
         for i = 0 to strategy.closedtrades - 1
             log.info("#{0} {1} → {2} {7} | {3} → {4} | P&L {5} ({6}%)", i + 1, str.format_time(strategy.closedtrades.entry_time(i), "yyyy-MM-dd HH:mm", tzStr), str.format_time(strategy.closedtrades.exit_time(i),  "yyyy-MM-dd HH:mm", tzStr), str.tostring(strategy.closedtrades.entry_price(i), format.mintick), str.tostring(strategy.closedtrades.exit_price(i),  format.mintick), str.tostring(strategy.closedtrades.profit(i), "#,###.##"), str.tostring((strategy.closedtrades.exit_price(i) / strategy.closedtrades.entry_price(i) - 1.0) * 100.0, "#.##"), strategy.closedtrades.exit_comment(i))
-// ═══ END OF FILE ═══ HK7709-1m-dashboard_(mode 1-4)_(09月22日; 13:54) · 全檔共 835 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ HK7709-1m-dashboard_(mode 1-4)_(09月22日; 23:28) · 全檔共 835 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
 </script>
 <script>
 (function(){
@@ -970,7 +970,7 @@ if barstate.islastconfirmedhistory and showRpt
   src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
   var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
   var bytes = new TextEncoder().encode(src).length;
-  var name = "HK7709-1m-dashboard_(mode 1-4)_(09月22日; 13:54)";
+  var name = "HK7709-1m-dashboard_(mode 1-4)_(09月22日; 23:28)";
   document.getElementById('code').value = src;
   document.getElementById('mLines').textContent = lines.length + ' 行';
   document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';
