@@ -550,3 +550,23 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 | `TV-1M-winrate-mode4_(09月20日; 21.59).pine` (80 行, 只換版本戳) | https://claude.ai/artifact/UBhypAstvwhcQkii6SKAuU |
 
 離線引擎 S14 / S15 / S16 同步: 模式 1 用第 75 百分位上下界 (`s14_depth_pct`, 面積可選), 模式 2 為 RSI 14/28 區間狀態機 (`m2_end` = cross / fast / slow), 可買區結束平倉 (`m2_exit_on_end`)。
+
+---
+
+## HK7709-1m-dashboard_(mode 1-4) · 港股 7709 版 (2026-09-22 09:31)
+
+由 `TV-1M-*_(09月20日; 21.59)` 三支以 `tradingview/build_hk7709.py` 產出, 模式 1–4 的規則 / 參數 / 四模式同時買 / 出場順序 / 81 組掃描 全部與 SOXL 版相同 (規格見 [MODE_SPEC.md](MODE_SPEC.md)), 只改港股相關:
+
+- **⑤ 時段**: 市場預設 港股 = 09:30–12:00, 13:00–16:00 · Asia/Hong_Kong (有午休); 不開新倉時段 11:50–12:00 + 15:45–16:00; 15:58 強平 (EOD); 新增可選「午休前平倉」(11:58 平掉, 出場原因 午休, 預設關 = 持倉過午休)。掃描 81 組同步。
+- **② 港股整手**: 新增「每手股數」(預設 100, 請按 7709 實際每手核對); 全部本金 = 本金 ÷ 收盤價 向下取整到整手, 不足一手不下單。
+- **成本**: 手續費 0.05% / 邊 (佣金 + 交易徵費; 不含印花稅 — ETF / 槓桿反向產品豁免, 若 7709 為普通股票請自行加 0.1%) + 滑點 2 tick。
+- **① 指定日期** 時區改 +0800; 主圖摘要新增「商品 ≠ 7709」紅字警告 (開錯商品時)。
+- 模式 2 每日清空與 M1/M3 匹配窗口跨過午休 (午休沒有 K 線, 12:00 前後的 K 相鄰)。
+
+| 腳本 | 貼上工具 |
+|:---|:---|
+| `HK7709-1m-dashboard_(mode 1-4)_(09月22日; 09.31).pine` (835 行) | https://claude.ai/artifact/C9ku3ZKcnFkD1cRRGPf9fy |
+| `HK7709-1m-RSI-mode2_(09月22日; 09.31).pine` (203 行) | https://claude.ai/artifact/JqpLYGNvUrwMmnYNgJA2cf |
+| `HK7709-1m-winrate-mode4_(09月22日; 09.31).pine` (80 行) | https://claude.ai/artifact/MxgbsuzP6VsVdRuQN5WDKu |
+
+三支一起在 HKEX:7709 · 1 分鐘圖 Add to chart; ① 預設最近 30 天。離線 Python 引擎仍為美股時段, 未做港股版。
