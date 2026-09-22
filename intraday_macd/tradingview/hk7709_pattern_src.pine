@@ -1,0 +1,254 @@
+//@version=6
+indicator("HK7709-10m-pattern_(STAMP)", shorttitle="HK7709-10m-pattern_(STAMP)", overlay = false, max_lines_count = 500, max_labels_count = 500)
+
+// ─────────────────────────── ① 期間 / 時段 ───────────────────────────
+gW      = "① 期間 / 時段"
+nDays   = input.int(21, "平均幾個完整交易日 (21 ≈ 一個月; 只計「收市那一格有資料」的整日)", minval = 2, maxval = 120, group = gW, display = display.none)
+tfMin   = input.int(10, "每格分鐘數 (必須 = 圖表週期; 本版 10 分鐘)", minval = 1, maxval = 60, group = gW, tooltip = "圖表切 10 分鐘。每個交易日按時段切成固定的格 (港股 09:30-12:00 = 15 格, 13:00-16:00 = 18 格), 同一格把過去 N 日疊起來取平均 / 中位數。", display = display.none)
+sessAM  = input.session("0930-1200", "上午時段 (港股 0930-1200)", group = gW, display = display.none)
+sessPM  = input.session("1300-1600", "下午時段 (港股 1300-1600)", group = gW, display = display.none)
+tzS     = input.string("Asia/Hong_Kong", "時區", group = gW, display = display.none)
+useMed  = input.bool(false, "主線用中位數 (預設 平均數)", group = gW, display = display.none)
+showBand= input.bool(true, "畫 ±1σ 帶 (灰虛線)", group = gW, display = display.none)
+showTbl = input.bool(true, "顯示逐格表 (右上)", group = gW, display = display.none)
+tblSize = input.string("small", "表字體", options = ["tiny", "small", "normal"], group = gW, display = display.none)
+
+amS = int(str.tonumber(str.substring(sessAM, 0, 2)) * 60 + str.tonumber(str.substring(sessAM, 2, 4)))
+amE = int(str.tonumber(str.substring(sessAM, 5, 7)) * 60 + str.tonumber(str.substring(sessAM, 7, 9)))
+pmS = int(str.tonumber(str.substring(sessPM, 0, 2)) * 60 + str.tonumber(str.substring(sessPM, 2, 4)))
+pmE = int(str.tonumber(str.substring(sessPM, 5, 7)) * 60 + str.tonumber(str.substring(sessPM, 7, 9)))
+nAM   = int(math.ceil((amE - amS) / tfMin))
+nPM   = int(math.ceil((pmE - pmS) / tfMin))
+nSlot = nAM + nPM
+tfOK  = timeframe.isintraday and timeframe.multiplier == tfMin
+
+// ─────────────────────────── ② 每根 K 對應到「當日第幾格」 ───────────────────────────
+mNow  = hour(time, tzS) * 60 + minute(time, tzS)
+slot  = mNow >= amS and mNow < amE ? int(math.floor((mNow - amS) / tfMin)) : mNow >= pmS and mNow < pmE ? nAM + int(math.floor((mNow - pmS) / tfMin)) : -1
+dayId = year(time, tzS) * 10000 + month(time, tzS) * 100 + dayofmonth(time, tzS)
+
+f_slotTime(k) =>
+    mm = k < nAM ? amS + k * tfMin : pmS + (k - nAM) * tfMin
+    str.format("{0,number,00}:{1,number,00}", int(mm / 60), mm % 60)
+
+// 每日一列, 每格一欄: 收盤 / 最高 / 最低 / 開盤 相對當日開盤 (%)
+var matrix<float> MC = matrix.new<float>(0, nSlot, na)
+var matrix<float> MH = matrix.new<float>(0, nSlot, na)
+var matrix<float> ML = matrix.new<float>(0, nSlot, na)
+var matrix<float> MO = matrix.new<float>(0, nSlot, na)
+var float[] gapArr = array.new<float>()     // 每日 開盤 vs 前一日收盤 (%)
+var int[]   dayArr = array.new<int>()       // 每列的日期
+var float dOpen = na
+var float lastClose = na
+var int   lastDay = na
+var int   todayBase = na                    // 今日第一格的 bar_index (畫平均路徑用)
+if slot >= 0
+    if na(lastDay) or dayId != lastDay
+        r = matrix.rows(MC)
+        matrix.add_row(MC, r)
+        matrix.add_row(MH, r)
+        matrix.add_row(ML, r)
+        matrix.add_row(MO, r)
+        array.push(gapArr, na(lastClose) ? na : (open / lastClose - 1) * 100)
+        array.push(dayArr, dayId)
+        if matrix.rows(MC) > nDays + 1
+            matrix.remove_row(MC, 0)
+            matrix.remove_row(MH, 0)
+            matrix.remove_row(ML, 0)
+            matrix.remove_row(MO, 0)
+            array.shift(gapArr)
+            array.shift(dayArr)
+        dOpen     := open
+        lastDay   := dayId
+        todayBase := bar_index - slot      // 若第一格缺 K, 仍以格數對齊
+    rLast = matrix.rows(MC) - 1
+    matrix.set(MC, rLast, slot, (close / dOpen - 1) * 100)
+    matrix.set(MH, rLast, slot, (high  / dOpen - 1) * 100)
+    matrix.set(ML, rLast, slot, (low   / dOpen - 1) * 100)
+    matrix.set(MO, rLast, slot, (open  / dOpen - 1) * 100)
+    lastClose := close
+relNow = slot >= 0 ? (close / dOpen - 1) * 100 : na
+
+// ─────────────────────────── ③ 統計 (只在最後一根算) ───────────────────────────
+f_clean(src) =>
+    out = array.new<float>()
+    for v in src
+        if not na(v)
+            array.push(out, v)
+    out
+f_mean(a) => array.size(a) > 0 ? array.avg(a) : na
+f_med(a)  => array.size(a) > 0 ? array.median(a) : na
+f_sd(a)   => array.size(a) > 1 ? array.stdev(a) : na
+f_up(a) =>
+    n = array.size(a)
+    c = 0
+    for v in a
+        if v > 0
+            c += 1
+    n > 0 ? c / n * 100 : na
+
+var line[]  lns  = array.new<line>()
+var label[] lbs  = array.new<label>()
+var float[] mean = array.new<float>(nSlot, na)
+var float[] medn = array.new<float>(nSlot, na)
+var float[] sdev = array.new<float>(nSlot, na)
+var float[] upR  = array.new<float>(nSlot, na)
+var float[] stp  = array.new<float>(nSlot, na)   // 該格 10 分鐘的平均變動 (%)
+var int[]   okRows = array.new<int>()
+fs = tblSize == "tiny" ? size.tiny : tblSize == "small" ? size.small : size.normal
+var table T = table.new(position.top_right, 1 + math.max(nAM, nPM), 10, bgcolor = color.new(color.white, 8), border_width = 1, border_color = color.new(color.gray, 70), frame_color = color.new(color.gray, 40), frame_width = 1)
+cPos = color.new(color.rgb(0, 128, 60), 0)
+cNeg = color.new(color.rgb(200, 30, 30), 0)
+f_bg(v, scale) =>
+    na(v) ? color.new(color.gray, 90) : v >= 0 ? color.new(color.rgb(0, 150, 80), int(math.max(35, 92 - math.min(math.abs(v) / scale, 1) * 57))) : color.new(color.rgb(220, 40, 40), int(math.max(35, 92 - math.min(math.abs(v) / scale, 1) * 57)))
+f_pct(v) => na(v) ? "–" : (v >= 0 ? "+" : "") + str.tostring(v, "0.00") + "%"
+
+if barstate.islast
+    // 完整日 = 收市最後一格有資料
+    array.clear(okRows)
+    rows = matrix.rows(MC)
+    if rows > 0
+        for r = 0 to rows - 1
+            if not na(matrix.get(MC, r, nSlot - 1))
+                array.push(okRows, r)
+    nOK = array.size(okRows)
+    if nOK > nDays
+        array.remove(okRows, 0)   // 多出的一列 = 今日已完整, 仍只取最近 nDays 個完整日
+        nOK := nDays
+    for k = 0 to nSlot - 1
+        a = array.new<float>()
+        d = array.new<float>()
+        for r in okRows
+            v = matrix.get(MC, r, k)
+            if not na(v)
+                array.push(a, v)
+                pv = 0.0
+                if k > 0
+                    pv := matrix.get(MC, r, k - 1)
+                if not na(pv)
+                    array.push(d, v - pv)
+        array.set(mean, k, f_mean(a))
+        array.set(medn, k, f_med(a))
+        array.set(sdev, k, f_sd(a))
+        array.set(upR,  k, f_up(a))
+        array.set(stp,  k, f_mean(d))
+    // 整日統計
+    cls   = array.new<float>()
+    hiV   = array.new<float>()
+    loV   = array.new<float>()
+    hiK   = array.new<float>()
+    loK   = array.new<float>()
+    amV   = array.new<float>()
+    pmV   = array.new<float>()
+    lunch = array.new<float>()
+    gaps  = array.new<float>()
+    for r in okRows
+        array.push(cls, matrix.get(MC, r, nSlot - 1))
+        rh = f_clean(matrix.row(MH, r))
+        rl = f_clean(matrix.row(ML, r))
+        if array.size(rh) > 0
+            array.push(hiV, array.max(rh))
+            array.push(loV, array.min(rl))
+            hk = 0
+            lk = 0
+            hb = -1e9
+            lb = 1e9
+            for k = 0 to nSlot - 1
+                vh = matrix.get(MH, r, k)
+                vl = matrix.get(ML, r, k)
+                if not na(vh) and vh > hb
+                    hb := vh
+                    hk := k
+                if not na(vl) and vl < lb
+                    lb := vl
+                    lk := k
+            array.push(hiK, hk)
+            array.push(loK, lk)
+        amC = matrix.get(MC, r, nAM - 1)
+        pmO = matrix.get(MO, r, nAM)
+        if not na(amC)
+            array.push(amV, amC)
+            if not na(pmO)
+                array.push(lunch, pmO - amC)
+                array.push(pmV, matrix.get(MC, r, nSlot - 1) - pmO)
+        gv = array.get(gapArr, r)
+        if not na(gv)
+            array.push(gaps, gv)
+    // 最佳持有窗口 (平均路徑上 收→收 最大昇幅)
+    bestG = -1e9
+    bi = 0
+    bj = 0
+    for i = 0 to nSlot - 2
+        for j = i + 1 to nSlot - 1
+            g = array.get(mean, j) - array.get(mean, i)
+            if not na(g) and g > bestG
+                bestG := g
+                bi := i
+                bj := j
+    // 畫平均路徑 (今日格位; 今日未完的格畫在未來)
+    for l in lns
+        line.delete(l)
+    for l in lbs
+        label.delete(l)
+    array.clear(lns)
+    array.clear(lbs)
+    if nOK > 0 and not na(todayBase)
+        pathC = color.new(color.rgb(255, 140, 0), 0)
+        for k = 1 to nSlot - 1
+            y0 = useMed ? array.get(medn, k - 1) : array.get(mean, k - 1)
+            y1 = useMed ? array.get(medn, k) : array.get(mean, k)
+            if not na(y0) and not na(y1)
+                array.push(lns, line.new(todayBase + k - 1, y0, todayBase + k, y1, xloc = xloc.bar_index, color = pathC, width = 3))
+            if showBand
+                s0 = array.get(sdev, k - 1)
+                s1 = array.get(sdev, k)
+                m0 = array.get(mean, k - 1)
+                m1 = array.get(mean, k)
+                if not na(s0) and not na(s1) and not na(m0) and not na(m1)
+                    array.push(lns, line.new(todayBase + k - 1, m0 + s0, todayBase + k, m1 + s1, xloc = xloc.bar_index, color = color.new(color.gray, 40), width = 1, style = line.style_dotted))
+                    array.push(lns, line.new(todayBase + k - 1, m0 - s0, todayBase + k, m1 - s1, xloc = xloc.bar_index, color = color.new(color.gray, 40), width = 1, style = line.style_dotted))
+        yEnd = useMed ? array.get(medn, nSlot - 1) : array.get(mean, nSlot - 1)
+        if not na(yEnd)
+            array.push(lbs, label.new(todayBase + nSlot - 1, yEnd, (useMed ? "中位路徑 " : "平均路徑 ") + str.tostring(nOK) + " 日 · 收 " + f_pct(yEnd), xloc = xloc.bar_index, style = label.style_label_left, color = color.new(pathC, 20), textcolor = color.white, size = size.small))
+        yi = useMed ? array.get(medn, bi) : array.get(mean, bi)
+        yj = useMed ? array.get(medn, bj) : array.get(mean, bj)
+        if bestG > -1e8 and not na(yi) and not na(yj)
+            array.push(lbs, label.new(todayBase + bi, yi, "平均低點 " + f_slotTime(bi) + " 收", xloc = xloc.bar_index, style = label.style_label_up, color = color.new(color.rgb(0, 128, 60), 20), textcolor = color.white, size = size.small))
+            array.push(lbs, label.new(todayBase + bj, yj, "平均高點 " + f_slotTime(bj) + " 收 (+" + str.tostring(bestG, "0.00") + "%)", xloc = xloc.bar_index, style = label.style_label_down, color = color.new(color.rgb(200, 30, 30), 20), textcolor = color.white, size = size.small))
+        array.push(lbs, label.new(todayBase, 0.0, "當日開盤 = 0%", xloc = xloc.bar_index, style = label.style_label_right, color = color.new(color.gray, 60), textcolor = color.white, size = size.tiny))
+    // 逐格表
+    if showTbl
+        table.clear(T, 0, 0, math.max(nAM, nPM), 9)
+        hdrBg = color.new(color.rgb(40, 60, 120), 0)
+        table.cell(T, 0, 0, "上午", text_color = color.white, bgcolor = hdrBg, text_size = fs)
+        table.cell(T, 0, 1, "平均 (開=0)", text_color = color.black, text_size = fs)
+        table.cell(T, 0, 2, "中位", text_color = color.black, text_size = fs)
+        table.cell(T, 0, 3, "該格變動", text_color = color.black, text_size = fs)
+        table.cell(T, 0, 4, "升日比", text_color = color.black, text_size = fs)
+        table.cell(T, 0, 5, "下午", text_color = color.white, bgcolor = hdrBg, text_size = fs)
+        table.cell(T, 0, 6, "平均 (開=0)", text_color = color.black, text_size = fs)
+        table.cell(T, 0, 7, "中位", text_color = color.black, text_size = fs)
+        table.cell(T, 0, 8, "該格變動", text_color = color.black, text_size = fs)
+        table.cell(T, 0, 9, "升日比", text_color = color.black, text_size = fs)
+        for k = 0 to nSlot - 1
+            c  = k < nAM ? k + 1 : k - nAM + 1
+            r0 = k < nAM ? 0 : 5
+            table.cell(T, c, r0,     f_slotTime(k), text_color = color.white, bgcolor = hdrBg, text_size = fs)
+            table.cell(T, c, r0 + 1, f_pct(array.get(mean, k)), text_color = color.black, bgcolor = f_bg(array.get(mean, k), 1.0), text_size = fs)
+            table.cell(T, c, r0 + 2, f_pct(array.get(medn, k)), text_color = color.black, bgcolor = f_bg(array.get(medn, k), 1.0), text_size = fs)
+            table.cell(T, c, r0 + 3, f_pct(array.get(stp, k)),  text_color = color.black, bgcolor = f_bg(array.get(stp, k), 0.3), text_size = fs)
+            table.cell(T, c, r0 + 4, na(array.get(upR, k)) ? "–" : str.tostring(array.get(upR, k), "0") + "%", text_color = color.black, bgcolor = f_bg(na(array.get(upR, k)) ? na : array.get(upR, k) - 50, 30), text_size = fs)
+    // 摘要 (左上)
+    hiT = array.size(hiK) > 0 ? f_slotTime(int(array.median(hiK))) : "–"
+    loT = array.size(loK) > 0 ? f_slotTime(int(array.median(loK))) : "–"
+    d0  = array.size(okRows) > 0 ? array.get(dayArr, array.get(okRows, 0)) : na
+    d1  = array.size(okRows) > 0 ? array.get(dayArr, array.get(okRows, nOK - 1)) : na
+    sumTxt = (tfOK ? "" : "⚠ 圖表週期 ≠ " + str.tostring(tfMin) + " 分鐘, 格位會錯\n") + syminfo.ticker + " · 10 分鐘 · 過去 " + str.tostring(nOK) + " 個完整交易日 (" + (na(d0) ? "–" : str.tostring(d0)) + " → " + (na(d1) ? "–" : str.tostring(d1)) + ")" + "\n開→收 平均 " + f_pct(f_mean(cls)) + " · 中位 " + f_pct(f_med(cls)) + " · 收升日 " + (na(f_up(cls)) ? "–" : str.tostring(f_up(cls), "0") + "%") + "\n當日最高 平均 " + f_pct(f_mean(hiV)) + " (中位出現於 " + hiT + " 格) · 當日最低 平均 " + f_pct(f_mean(loV)) + " (中位出現於 " + loT + " 格)" + "\n上午 開→12:00 平均 " + f_pct(f_mean(amV)) + " · 午休跳空 13:00開 vs 12:00收 平均 " + f_pct(f_mean(lunch)) + " · 下午 13:00開→收 平均 " + f_pct(f_mean(pmV)) + "\n開盤跳空 (vs 前收) 平均 " + f_pct(f_mean(gaps)) + " · 中位 " + f_pct(f_med(gaps)) + "\n平均路徑最佳持有: " + f_slotTime(bi) + " 格收 買 → " + f_slotTime(bj) + " 格收 賣 = +" + str.tostring(bestG, "0.00") + "% (只是平均, 個別日子差異看 ±1σ 帶)"
+    var label sumL = na
+    label.delete(sumL)
+    sumL := label.new(bar_index, 0.0, sumTxt, xloc = xloc.bar_index, yloc = yloc.price, style = label.style_label_lower_right, color = color.new(color.rgb(40, 60, 120), 10), textcolor = color.white, size = size.small, textalign = text.align_left)
+
+// ─────────────────────────── ④ 圖 ───────────────────────────
+plot(relNow, "今日實際路徑 (相對當日開盤 %)", color = color.new(color.rgb(30, 90, 200), 0), linewidth = 2, style = plot.style_linebr)
+hline(0, "0% (當日開盤)", color = color.new(color.gray, 50), linestyle = hline.style_dashed)
+bgcolor(slot >= 0 and slot < nAM ? color.new(color.rgb(255, 200, 80), 94) : slot >= nAM ? color.new(color.rgb(120, 170, 255), 94) : na, title = "上午 / 下午 底色")

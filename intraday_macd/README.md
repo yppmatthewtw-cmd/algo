@@ -571,3 +571,14 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 | `HK7709-1m-winrate-mode4_(09月22日; 13.54).pine` (80 行) | https://claude.ai/artifact/MxgbsuzP6VsVdRuQN5WDKu |
 
 三支一起在 HKEX:7709 · 1 分鐘圖 Add to chart; ① 預設最近 30 天。離線 Python 引擎仍為美股時段, 未做港股版。
+
+---
+
+## HK7709-10m-pattern · 港股 7709 過去一個月「平均的一天」(2026-09-22 14:18)
+
+這裡沒有 7709 的行情資料 (行情主機全部不通), 所以平均化在 TradingView 圖上做: `tradingview/hk7709_pattern_src.pine` → `build_hk7709_pattern.py` 產出 `HK7709-10m-pattern_(09月22日; 14.18).pine` (265 行, 純顯示指標)。
+
+- 每個交易日按港股時段切成固定格 (09:30–12:00 = 15 格, 13:00–16:00 = 18 格, 每格 10 分鐘), 每格的開 / 高 / 低 / 收換成相對當日 09:30 開盤價的 %, 最近 21 個完整交易日同一格疊起來取 平均 / 中位 / 標準差 / 升日比例 (今日未收市不算入)。
+- 畫面: 橙粗線 = 平均路徑 (畫在今日的格位上, 未到的格畫在右邊), 灰虛線 = ±1σ, 藍線 = 今日實際路徑; 右上逐格表; 左下摘要 (開→收、當日最高 / 最低的平均值與最常出現的格、上午 / 午休跳空 / 下午、開盤跳空、平均路徑上的最佳持有窗口)。
+- 貼上工具: https://claude.ai/artifact/BMmXFRixBoqQttZmnWDFTE (圖表切 HKEX:7709 · 10 分鐘)。
+- 離線版 `backtest/intraday_pattern.py` 仍為美股時段; 若從 TradingView 匯出 7709 的 10 分鐘 CSV, 可再做港股版報告。
