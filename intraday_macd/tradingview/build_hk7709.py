@@ -65,6 +65,8 @@ s = rep(s, 'if buySig and entryOK and strategy.position_size == 0   // 四模式
            '    strategy.entry("L", strategy.long, qty = qty, comment = "BUY")     // 股數已向下取整到整手 (全部本金 = 本金 ÷ 收盤價 取整手)\n')
 # ⑤ 港股時段 + 午休
 s = rep(s, 'mktPreset = input.string("美股", "市場預設 (一鍵套用時段+時區)"', 'mktPreset = input.string("港股", "市場預設 (一鍵套用時段+時區; 本版預設 港股)"')
+s = rep(s, 'options = ["美股", "港股", "自訂"], group = gS, tooltip = "美股 = 0930-1600 · America/New_York (無午休, 夏令時間自動處理)\\n港股 = 0930-1200,1300-1600 · Asia/Hong_Kong (有午休)',
+           'options = ["港股", "美股", "自訂"], group = gS, tooltip = "港股 (本版預設) = 0930-1200,1300-1600 · Asia/Hong_Kong (有午休; 7709 在 HKEX)\\n美股 = 0930-1600 · America/New_York (無午休, 夏令時間自動處理)')
 s = rep(s, 'sessCust  = input.session("0930-1600", "自訂: 交易時段"', 'sessCust  = input.session("0930-1200,1300-1600", "自訂: 交易時段"')
 s = rep(s, 'tzCust    = input.string("America/New_York", "自訂: 時區"', 'tzCust    = input.string("Asia/Hong_Kong", "自訂: 時區"')
 s = rep(s, 'noEntry   = input.session("1545-1600", "收市前不開新倉時段", group = gS, display = display.none)\n'
