@@ -1,15 +1,15 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-//  HK7709-10m-pattern_(09月22日; 14:18)  ·  港股 7709 · 10 分鐘 · 過去一個月「平均的一天」(日內平均化 pattern) · 純顯示指標, 不下單
+//  HK7709-10m-pattern_(09月22日; 17:30)  ·  港股 7709 · 10 分鐘 · 過去一個月「平均的一天」(日內平均化 pattern) · 純顯示指標, 不下單
 //  做法: 每個交易日按港股時段切成固定格 (09:30-12:00 = 15 格, 13:00-16:00 = 18 格, 每格 10 分鐘), 每格的收盤 / 最高 / 最低 / 開盤 都換成「相對當日 09:30 開盤價的 %」,
 //        再把最近 21 個完整交易日 (① 可改) 同一格疊起來取 平均 / 中位數 / 標準差 / 升日比例; 只計「收市那一格有資料」的整日, 今日未收市不算入
-//  畫面: 橙粗線 = 平均路徑 (畫在今日的格位上, 今日未到的格畫在右邊未來) · 灰虛線 = ±1σ · 藍線 = 今日實際路徑 · 0% 虛線 = 當日開盤 · 上午 / 下午 底色
+//  畫面: 橙線 = 「平均的一天」曲線, 同一條 pattern 按對應時間格在每一個交易日重覆 (預設最近 60 日 + 今日, 今日未到的格畫在右邊; ① 可切成滾動 = 每日只用之前 N 日, 無前視) · 灰虛線 = 今日 ±1σ · 藍線 = 今日實際路徑 · 0% 虛線 = 當日開盤 · 上午 / 下午 底色
 //        右上表 = 逐格 (平均 / 中位 / 該格 10 分鐘平均變動 / 升日比例, 綠紅深淺 = 大小) · 左下藍框 = 摘要 (開→收、當日最高/最低平均值與最常出現的格、上午 / 午休跳空 / 下午、開盤跳空、平均路徑上的最佳持有窗口)
 //  用法: 圖表切【HKEX:7709 · 10 分鐘】→ 貼上 → Save (同名) → Add to chart; 圖表週期與 ① 每格分鐘數不一致時左下會紅字警告
 //  注意: 平均路徑只是 21 日的平均, ±1σ 帶顯示個別日子的離散程度; 免費方案 10 分鐘 K 可載入約 5,000 根 ≈ 150 個交易日, 一個月足夠
-//  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 265 行, 最後一行是 END OF FILE
+//  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 296 行, 最後一行是 END OF FILE
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-indicator("HK7709-10m-pattern_(09月22日; 14:18)", shorttitle="HK7709-10m-pattern_(09月22日; 14:18)", overlay = false, max_lines_count = 500, max_labels_count = 500)
+indicator("HK7709-10m-pattern_(09月22日; 17:30)", shorttitle="HK7709-10m-pattern_(09月22日; 17:30)", overlay = false, max_lines_count = 500, max_labels_count = 500, max_polylines_count = 100)
 
 // ─────────────────────────── ① 期間 / 時段 ───────────────────────────
 gW      = "① 期間 / 時段"
@@ -19,6 +19,8 @@ sessAM  = input.session("0930-1200", "上午時段 (港股 0930-1200)", group = 
 sessPM  = input.session("1300-1600", "下午時段 (港股 1300-1600)", group = gW, display = display.none)
 tzS     = input.string("Asia/Hong_Kong", "時區", group = gW, display = display.none)
 useMed  = input.bool(false, "主線用中位數 (預設 平均數)", group = gW, display = display.none)
+curveMd = input.string("固定: 同一個 pattern 每日重覆", "平均曲線畫法", options = ["固定: 同一個 pattern 每日重覆", "滾動: 每日用它之前 N 日的平均 (無前視)"], group = gW, tooltip = "固定 = 以最近 N 個完整日算出一條「平均的一天」, 用橙線按對應時間格畫在每一個交易日上 (含今日與未到的格), 每日重覆同一條。\n滾動 = 每一根 K 只用它之前 N 個完整日的同一格平均, 是一條普通的 plot 線, 每日形狀略有不同, 沒有前視。", display = display.none)
+showDays= input.int(60, "固定曲線畫在最近幾個交易日 (上限 90)", minval = 1, maxval = 90, group = gW, display = display.none)
 showBand= input.bool(true, "畫 ±1σ 帶 (灰虛線)", group = gW, display = display.none)
 showTbl = input.bool(true, "顯示逐格表 (右上)", group = gW, display = display.none)
 tblSize = input.string("small", "表字體", options = ["tiny", "small", "normal"], group = gW, display = display.none)
@@ -52,6 +54,7 @@ var float dOpen = na
 var float lastClose = na
 var int   lastDay = na
 var int   todayBase = na                    // 今日第一格的 bar_index (畫平均路徑用)
+var int[] baseArr = array.new<int>()        // 每個交易日第一格的 bar_index (固定曲線每日重覆用)
 if slot >= 0
     if na(lastDay) or dayId != lastDay
         r = matrix.rows(MC)
@@ -71,6 +74,9 @@ if slot >= 0
         dOpen     := open
         lastDay   := dayId
         todayBase := bar_index - slot      // 若第一格缺 K, 仍以格數對齊
+        array.push(baseArr, todayBase)
+        if array.size(baseArr) > 90
+            array.shift(baseArr)
     rLast = matrix.rows(MC) - 1
     matrix.set(MC, rLast, slot, (close / dOpen - 1) * 100)
     matrix.set(MH, rLast, slot, (high  / dOpen - 1) * 100)
@@ -78,6 +84,17 @@ if slot >= 0
     matrix.set(MO, rLast, slot, (open  / dOpen - 1) * 100)
     lastClose := close
 relNow = slot >= 0 ? (close / dOpen - 1) * 100 : na
+// 滾動平均: 本根只用它之前 (不含今日) 的完整日同一格
+float rollAvg = na
+if curveMd != "固定: 同一個 pattern 每日重覆" and slot >= 0 and matrix.rows(MC) > 1
+    sumR = 0.0
+    cntR = 0
+    for r = 0 to matrix.rows(MC) - 2
+        v = matrix.get(MC, r, slot)
+        if not na(v) and not na(matrix.get(MC, r, nSlot - 1))
+            sumR += v
+            cntR += 1
+    rollAvg := cntR > 0 ? sumR / cntR : na
 
 // ─────────────────────────── ③ 統計 (只在最後一根算) ───────────────────────────
 f_clean(src) =>
@@ -98,6 +115,7 @@ f_up(a) =>
     n > 0 ? c / n * 100 : na
 
 var line[]  lns  = array.new<line>()
+var polyline[] pls = array.new<polyline>()
 var label[] lbs  = array.new<label>()
 var float[] mean = array.new<float>(nSlot, na)
 var float[] medn = array.new<float>(nSlot, na)
@@ -200,15 +218,27 @@ if barstate.islast
         line.delete(l)
     for l in lbs
         label.delete(l)
+    for pl in pls
+        polyline.delete(pl)
     array.clear(lns)
     array.clear(lbs)
+    array.clear(pls)
     if nOK > 0 and not na(todayBase)
         pathC = color.new(color.rgb(255, 140, 0), 0)
+        // 固定曲線: 同一條「平均的一天」按對應時間格畫在最近 showDays 個交易日 (含今日, 未到的格畫在右邊)
+        if curveMd == "固定: 同一個 pattern 每日重覆"
+            nB = array.size(baseArr)
+            if nB > 0
+                for b = math.max(0, nB - showDays) to nB - 1
+                    base = array.get(baseArr, b)
+                    pts = array.new<chart.point>()
+                    for k = 0 to nSlot - 1
+                        yk = useMed ? array.get(medn, k) : array.get(mean, k)
+                        if not na(yk)
+                            array.push(pts, chart.point.from_index(base + k, yk))
+                    if array.size(pts) > 1
+                        array.push(pls, polyline.new(pts, false, false, xloc.bar_index, pathC, line_width = b == nB - 1 ? 3 : 2))
         for k = 1 to nSlot - 1
-            y0 = useMed ? array.get(medn, k - 1) : array.get(mean, k - 1)
-            y1 = useMed ? array.get(medn, k) : array.get(mean, k)
-            if not na(y0) and not na(y1)
-                array.push(lns, line.new(todayBase + k - 1, y0, todayBase + k, y1, xloc = xloc.bar_index, color = pathC, width = 3))
             if showBand
                 s0 = array.get(sdev, k - 1)
                 s1 = array.get(sdev, k)
@@ -260,6 +290,7 @@ if barstate.islast
 
 // ─────────────────────────── ④ 圖 ───────────────────────────
 plot(relNow, "今日實際路徑 (相對當日開盤 %)", color = color.new(color.rgb(30, 90, 200), 0), linewidth = 2, style = plot.style_linebr)
+plot(rollAvg, "滾動平均曲線 (每日用之前 N 日; 只在滾動模式有值)", color = color.new(color.rgb(255, 140, 0), 0), linewidth = 3, style = plot.style_linebr)
 hline(0, "0% (當日開盤)", color = color.new(color.gray, 50), linestyle = hline.style_dashed)
 bgcolor(slot >= 0 and slot < nAM ? color.new(color.rgb(255, 200, 80), 94) : slot >= nAM ? color.new(color.rgb(120, 170, 255), 94) : na, title = "上午 / 下午 底色")
-// ═══ END OF FILE ═══ HK7709-10m-pattern_(09月22日; 14:18) · 全檔共 265 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ HK7709-10m-pattern_(09月22日; 17:30) · 全檔共 296 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
