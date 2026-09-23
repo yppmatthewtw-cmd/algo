@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-//  HK7709-mode5_1month-pattern(09月22日; 23:28)  ·  模式 5 · 港股 7709 過去一個月「平均的一天」曲線 (日內平均化 pattern) · 純顯示副圖, 不下單, 不參與四模式買賣 · 配合 HK7709-1m-dashboard_(mode 1-4) 一起掛
+//  HK7709-mode5_1month-pattern(09月23日; 09:31)  ·  模式 5 · 港股 7709 過去一個月「平均的一天」曲線 (日內平均化 pattern) · 純顯示副圖, 不下單, 不參與四模式買賣 · 配合 HK7709-1m-dashboard_(mode 1-4) 一起掛
 //  模式 5 標記: 每個交易日的開市 (09:30) 與收市 (16:00) 各畫一條粗黑直線並標時間; 14:30-16:00 HKT 黃色底色 (② 可改時段 / 關閉)
 //  做法: 每個交易日按港股時段切成固定格 (每格 = 圖表週期: 10 分鐘圖 = 15 + 18 格, 1 分鐘圖 = 150 + 180 格; ① 可指定), 每格的收盤 / 最高 / 最低 / 開盤 都換成「相對當日 09:30 開盤價的 %」,
 //        再把最近 21 個完整交易日 (① 可改) 同一格疊起來取 平均 / 中位數 / 標準差 / 升日比例; 只計「收市那一格有資料」的整日, 今日未收市不算入
@@ -10,7 +10,7 @@
 //  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 317 行, 最後一行是 END OF FILE
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-indicator("HK7709-mode5_1month-pattern(09月22日; 23:28)", shorttitle="HK7709-mode5_1month-pattern(09月22日; 23:28)", overlay = false, max_lines_count = 500, max_labels_count = 500, max_polylines_count = 100)
+indicator("HK7709-mode5_1month-pattern(09月23日; 09:31)", shorttitle="HK7709-mode5_1month-pattern(09月23日; 09:31)", overlay = false, max_lines_count = 500, max_labels_count = 500, max_polylines_count = 100)
 
 // ─────────────────────────── ① 期間 / 時段 ───────────────────────────
 gW      = "① 期間 / 時段"
@@ -98,10 +98,10 @@ dayStart = slot >= 0 and (slot[1] < 0 or na(slot[1]) or dayId != dayId[1])
 dayEnd   = slot == nSlot - 1
 if showDayL and dayStart
     line.new(bar_index, 0, bar_index, 1, xloc = xloc.bar_index, extend = extend.both, color = color.black, width = 2)
-    label.new(bar_index, 0, "開市 " + f_slotTime(0), xloc = xloc.bar_index, yloc = yloc.top, style = label.style_label_down, color = color.black, textcolor = color.white, size = size.small)
+    label.new(bar_index, 0, "開市 " + f_slotTime(0), xloc = xloc.bar_index, yloc = yloc.abovebar, style = label.style_label_down, color = color.black, textcolor = color.white, size = size.small)
 if showDayL and dayEnd
     line.new(time_close, 0, time_close, 1, xloc = xloc.bar_time, extend = extend.both, color = color.black, width = 2)
-    label.new(time_close, 0, "收市 " + str.format("{0,number,00}:{1,number,00}", int(pmE / 60), pmE % 60), xloc = xloc.bar_time, yloc = yloc.top, style = label.style_label_down, color = color.black, textcolor = color.white, size = size.small)
+    label.new(time_close, 0, "收市 " + str.format("{0,number,00}:{1,number,00}", int(pmE / 60), pmE % 60), xloc = xloc.bar_time, yloc = yloc.abovebar, style = label.style_label_down, color = color.black, textcolor = color.white, size = size.small)
 // 滾動平均: 本根只用它之前 (不含今日) 的完整日同一格
 float rollAvg = na
 if curveMd != "固定: 同一個 pattern 每日重覆" and slot >= 0 and matrix.rows(MC) > 1
@@ -314,4 +314,4 @@ plot(relNow, "今日實際路徑 (相對當日開盤 %)", color = color.new(colo
 plot(rollAvg, "滾動平均曲線 (每日用之前 N 日; 只在滾動模式有值)", color = color.new(color.rgb(255, 140, 0), 0), linewidth = 3, style = plot.style_linebr)
 hline(0, "0% (當日開盤)", color = color.new(color.gray, 50), linestyle = hline.style_dashed)
 bgcolor(inYlw ? color.new(color.yellow, 70) : slot >= 0 and slot < nAM ? color.new(color.rgb(255, 200, 80), 94) : slot >= nAM ? color.new(color.rgb(120, 170, 255), 94) : na, title = "14:30-16:00 黃底 / 上午 / 下午 底色")
-// ═══ END OF FILE ═══ HK7709-mode5_1month-pattern(09月22日; 23:28) · 全檔共 317 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ HK7709-mode5_1month-pattern(09月23日; 09:31) · 全檔共 317 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══

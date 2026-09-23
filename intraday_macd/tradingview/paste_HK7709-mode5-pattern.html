@@ -68,7 +68,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <header class="hero">
     <div>
       <div class="eyebrow">TradingView · Pine Script v6 · 港股 7709 · 模式 5 · 一個月日內平均 pattern 曲線 (副圖指標)</div>
-      <h1 id="scriptName">HK7709-mode5_1month-pattern(09月22日; 23:28)</h1>
+      <h1 id="scriptName">HK7709-mode5_1month-pattern(09月23日; 09:31)</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
     </div>
     <div class="card">
@@ -89,12 +89,12 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">HK7709-mode5_1month-pattern(09月22日; 23:28)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">HK7709-mode5_1month-pattern(09月23日; 09:31)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
       <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
     </ol>
     <div class="check">
       <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 13 行</span><code>indicator("HK7709-mode5_1month-pattern(09月22日; 23:28)", shorttitle="HK7709-mode5_1month-pattern(09月22日; 23:28)", …)</code></div>
+      <div><span class="k">第 13 行</span><code>indicator("HK7709-mode5_1month-pattern(09月23日; 09:31)", shorttitle="HK7709-mode5_1month-pattern(09月23日; 09:31)", …)</code></div>
       <div><span class="k">最後一行</span><code id="cLast">—</code></div>
     </div>
   </section>
@@ -128,7 +128,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 
 <script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  HK7709-mode5_1month-pattern(09月22日; 23:28)  ·  模式 5 · 港股 7709 過去一個月「平均的一天」曲線 (日內平均化 pattern) · 純顯示副圖, 不下單, 不參與四模式買賣 · 配合 HK7709-1m-dashboard_(mode 1-4) 一起掛
+//  HK7709-mode5_1month-pattern(09月23日; 09:31)  ·  模式 5 · 港股 7709 過去一個月「平均的一天」曲線 (日內平均化 pattern) · 純顯示副圖, 不下單, 不參與四模式買賣 · 配合 HK7709-1m-dashboard_(mode 1-4) 一起掛
 //  模式 5 標記: 每個交易日的開市 (09:30) 與收市 (16:00) 各畫一條粗黑直線並標時間; 14:30-16:00 HKT 黃色底色 (② 可改時段 / 關閉)
 //  做法: 每個交易日按港股時段切成固定格 (每格 = 圖表週期: 10 分鐘圖 = 15 + 18 格, 1 分鐘圖 = 150 + 180 格; ① 可指定), 每格的收盤 / 最高 / 最低 / 開盤 都換成「相對當日 09:30 開盤價的 %」,
 //        再把最近 21 個完整交易日 (① 可改) 同一格疊起來取 平均 / 中位數 / 標準差 / 升日比例; 只計「收市那一格有資料」的整日, 今日未收市不算入
@@ -139,7 +139,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 //  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 317 行, 最後一行是 END OF FILE
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-indicator("HK7709-mode5_1month-pattern(09月22日; 23:28)", shorttitle="HK7709-mode5_1month-pattern(09月22日; 23:28)", overlay = false, max_lines_count = 500, max_labels_count = 500, max_polylines_count = 100)
+indicator("HK7709-mode5_1month-pattern(09月23日; 09:31)", shorttitle="HK7709-mode5_1month-pattern(09月23日; 09:31)", overlay = false, max_lines_count = 500, max_labels_count = 500, max_polylines_count = 100)
 
 // ─────────────────────────── ① 期間 / 時段 ───────────────────────────
 gW      = "① 期間 / 時段"
@@ -227,10 +227,10 @@ dayStart = slot >= 0 and (slot[1] < 0 or na(slot[1]) or dayId != dayId[1])
 dayEnd   = slot == nSlot - 1
 if showDayL and dayStart
     line.new(bar_index, 0, bar_index, 1, xloc = xloc.bar_index, extend = extend.both, color = color.black, width = 2)
-    label.new(bar_index, 0, "開市 " + f_slotTime(0), xloc = xloc.bar_index, yloc = yloc.top, style = label.style_label_down, color = color.black, textcolor = color.white, size = size.small)
+    label.new(bar_index, 0, "開市 " + f_slotTime(0), xloc = xloc.bar_index, yloc = yloc.abovebar, style = label.style_label_down, color = color.black, textcolor = color.white, size = size.small)
 if showDayL and dayEnd
     line.new(time_close, 0, time_close, 1, xloc = xloc.bar_time, extend = extend.both, color = color.black, width = 2)
-    label.new(time_close, 0, "收市 " + str.format("{0,number,00}:{1,number,00}", int(pmE / 60), pmE % 60), xloc = xloc.bar_time, yloc = yloc.top, style = label.style_label_down, color = color.black, textcolor = color.white, size = size.small)
+    label.new(time_close, 0, "收市 " + str.format("{0,number,00}:{1,number,00}", int(pmE / 60), pmE % 60), xloc = xloc.bar_time, yloc = yloc.abovebar, style = label.style_label_down, color = color.black, textcolor = color.white, size = size.small)
 // 滾動平均: 本根只用它之前 (不含今日) 的完整日同一格
 float rollAvg = na
 if curveMd != "固定: 同一個 pattern 每日重覆" and slot >= 0 and matrix.rows(MC) > 1
@@ -443,7 +443,7 @@ plot(relNow, "今日實際路徑 (相對當日開盤 %)", color = color.new(colo
 plot(rollAvg, "滾動平均曲線 (每日用之前 N 日; 只在滾動模式有值)", color = color.new(color.rgb(255, 140, 0), 0), linewidth = 3, style = plot.style_linebr)
 hline(0, "0% (當日開盤)", color = color.new(color.gray, 50), linestyle = hline.style_dashed)
 bgcolor(inYlw ? color.new(color.yellow, 70) : slot >= 0 and slot < nAM ? color.new(color.rgb(255, 200, 80), 94) : slot >= nAM ? color.new(color.rgb(120, 170, 255), 94) : na, title = "14:30-16:00 黃底 / 上午 / 下午 底色")
-// ═══ END OF FILE ═══ HK7709-mode5_1month-pattern(09月22日; 23:28) · 全檔共 317 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ HK7709-mode5_1month-pattern(09月23日; 09:31) · 全檔共 317 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
 </script>
 <script>
 (function(){
@@ -452,7 +452,7 @@ bgcolor(inYlw ? color.new(color.yellow, 70) : slot >= 0 and slot < nAM ? color.n
   src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
   var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
   var bytes = new TextEncoder().encode(src).length;
-  var name = "HK7709-mode5_1month-pattern(09月22日; 23:28)";
+  var name = "HK7709-mode5_1month-pattern(09月23日; 09:31)";
   document.getElementById('code').value = src;
   document.getElementById('mLines').textContent = lines.length + ' 行';
   document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';

@@ -87,10 +87,10 @@ dayStart = slot >= 0 and (slot[1] < 0 or na(slot[1]) or dayId != dayId[1])
 dayEnd   = slot == nSlot - 1
 if showDayL and dayStart
     line.new(bar_index, 0, bar_index, 1, xloc = xloc.bar_index, extend = extend.both, color = color.black, width = 2)
-    label.new(bar_index, 0, "開市 " + f_slotTime(0), xloc = xloc.bar_index, yloc = yloc.top, style = label.style_label_down, color = color.black, textcolor = color.white, size = size.small)
+    label.new(bar_index, 0, "開市 " + f_slotTime(0), xloc = xloc.bar_index, yloc = yloc.abovebar, style = label.style_label_down, color = color.black, textcolor = color.white, size = size.small)
 if showDayL and dayEnd
     line.new(time_close, 0, time_close, 1, xloc = xloc.bar_time, extend = extend.both, color = color.black, width = 2)
-    label.new(time_close, 0, "收市 " + str.format("{0,number,00}:{1,number,00}", int(pmE / 60), pmE % 60), xloc = xloc.bar_time, yloc = yloc.top, style = label.style_label_down, color = color.black, textcolor = color.white, size = size.small)
+    label.new(time_close, 0, "收市 " + str.format("{0,number,00}:{1,number,00}", int(pmE / 60), pmE % 60), xloc = xloc.bar_time, yloc = yloc.abovebar, style = label.style_label_down, color = color.black, textcolor = color.white, size = size.small)
 // 滾動平均: 本根只用它之前 (不含今日) 的完整日同一格
 float rollAvg = na
 if curveMd != "固定: 同一個 pattern 每日重覆" and slot >= 0 and matrix.rows(MC) > 1
