@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-//  HK7709-1m-benchmark_(09月25日; 14:37)  ·  港股 7709 · 多策略同場回測比較 · 1 分鐘 · 一個月 · TradingView Pine Script v6
+//  HK7709-1m-benchmark_(09月25日; 14:40)  ·  港股 7709 · 多策略同場回測比較 · 1 分鐘 · 一個月 · TradingView Pine Script v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
 //  本檔共 575 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或下載 .pine 後用純文字編輯器開啟 → Ctrl+A → Ctrl+C
@@ -26,7 +26,7 @@
 //  版本戳 HK7709-1m-benchmark_(MM月DD日; HH:MM), 括號內 = 建置時間 HKT; 檔名以 . 代替 : ; 本檔零延續行
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("HK7709-1m-benchmark_(09月25日; 14:37)", shorttitle="HK7709-1m-benchmark_(09月25日; 14:37)", overlay = true, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.05, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_labels_count = 500, max_lines_count = 500, max_boxes_count = 500)
+strategy("HK7709-1m-benchmark_(09月25日; 14:40)", shorttitle="HK7709-1m-benchmark_(09月25日; 14:40)", overlay = true, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.05, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_labels_count = 500, max_lines_count = 500, max_boxes_count = 500)
 
 // ═══════════════════════════ ① 回測期間 (全部可在 Inputs 改, 預設一個月) ═══════════════════════════
 gBT        = "① 回測期間"
@@ -81,7 +81,7 @@ newSess  = inSess and not inSess[1]
 entryOK  = inWindow and inSess and not blockNew and not korBlock and not eodBar
 tzMatch  = tzStr == syminfo.timezone
 
-// ═══════════════════════════ ③ 下真單的策略 (其餘 12 個同時做虛擬回測) ═══════════════════════════
+// ═══════════════════════════ ③ 下真單的策略 (其餘 16 個同時做虛擬回測) ═══════════════════════════
 gLive  = "③ 下真單的策略"
 NS     = 17
 var string[] SNAME = array.from("S01 MACD柱動能減弱", "S02 MACD DIF/DEA交叉", "S03 EMA 9/21 交叉", "S04 Supertrend 轉向", "S05 RSI 超賣回歸", "S06 布林下軌回歸", "S07 VWAP 偏離回歸", "S08 開盤區間突破", "S09 動能突破+量能", "S10 三EMA+ST共振", "S11 ATR標準化MACD", "S12 MACD柱背離", "S13 隨機進場(安慰劑)", "S14 四模式 (本專案, ④ 預設)", "S15 四模式 寬鬆 (N1 k0.5 窗20)", "S16 RSI2 Connors 日內", "S17 EMA200趨勢+VWAP回踩")
@@ -315,7 +315,7 @@ vwXdn    = ta.crossunder(close, vwapV)
 rndRaw = math.abs(math.sin(bar_index * 12.9898 + 78.233) * 43758.5453)
 rndU   = rndRaw - math.floor(rndRaw)
 
-// ═══════════════════════════ ⑦ 13 個策略的進 / 出場訊號 (全部收盤確認, 只做多) ═══════════════════════════
+// ═══════════════════════════ ⑦ 17 個策略的進 / 出場訊號 (全部收盤確認, 只做多) ═══════════════════════════
 s01L = nFadeDn == fadeBuy  and segSign == -1 and okBuy
 s01X = nFadeUp == fadeSell and segSign ==  1 and okSell
 s02L = ta.crossover(dif, dea)
@@ -365,7 +365,7 @@ s17X = vwXdn or close < emaL
 sigL = array.from(s01L, s02L, s03L, s04L, s05L, s06L, s07L, s08L, s09L, s10L, s11L, s12L, s13L, s14L, s15L, s16L, s17L)
 sigX = array.from(s01X, s02X, s03X, s04X, s05X, s06X, s07X, s08X, s09X, s10X, s11X, s12X, s13X, s14X, s15X, s16X, s17X)
 
-// ═══════════════════════════ ⑧ 虛擬回測引擎 (13 個策略同時跑, 規則與真單完全一致) ═══════════════════════════
+// ═══════════════════════════ ⑧ 虛擬回測引擎 (17 個策略同時跑, 規則與真單完全一致) ═══════════════════════════
 // 成交方式: 本根收盤出訊號 → 下一根開盤成交 (與 process_orders_on_close = false 相同)
 var float[] vEq    = array.new_float(NS, 1.0)
 var int[]   vPos   = array.new_int(NS, 0)
@@ -572,4 +572,4 @@ if barstate.islast and showRpt
     for c2 = 5 to 9
         table.cell(rpt, c2, bhRow, "—", text_size = szR, text_color = txt, bgcolor = hBg)
     table.cell(rpt, 10, bhRow, maxRise > 0 ? str.tostring(bhRet / maxRise * 100.0, "#.#") + "%" : "—", text_size = szR, text_color = txt, bgcolor = hBg)
-// ═══ END OF FILE ═══ HK7709-1m-benchmark_(09月25日; 14:37) · 全檔共 575 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ HK7709-1m-benchmark_(09月25日; 14:40) · 全檔共 575 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══

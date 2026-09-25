@@ -605,3 +605,16 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 | `HK7709-mode5_1month-pattern(09月25日; 14.04).pine` (349 行) | https://claude.ai/artifact/BMmXFRixBoqQttZmnWDFTE |
 
 規格見 [MODE_SPEC.md](MODE_SPEC.md) 第 12 節。真實回報仍要在 TradingView 上看; 若仍低, 掃描表會顯示 81 組全期排名, 可判斷是參數問題還是這一個月 7709 根本沒有適合四模式的走勢。
+
+---
+
+## HK7709-1m-benchmark · 我這 algo vs 公認高勝率 / 高回報日內策略 (2026-09-25 14:40)
+
+這裡沒有 7709 行情, 比較要在 TradingView 圖上做: `tradingview/build_hk7709_bench.py` 由 `TW-1M-MULTI` 產出 `HK7709-1m-benchmark_(09月25日; 14.40).pine` (575 行), 把 17 個只做多的日內策略放在同一窗口 / 同一成本 / 同一港股時段 (含 14:30 韓股收市後不開新倉, 可關) 下各跑一次, 主圖右上排名表比較 交易次數 / 勝率 / 總報酬 / 最大回撤 / 獲利因子 / 平均每筆 / 最佳最差 / 平均持倉 / 捕獲率, 附買入持有與期內最大昇幅。
+
+- S01–S13: MULTI 原有 13 個公認策略 (MACD 柱動能減弱、MACD 交叉、EMA 9/21、Supertrend、RSI 超賣、布林下軌、VWAP 偏離、開盤區間突破、動能突破+量能、三 EMA+ST、ATR MACD、MACD 背離、隨機進場安慰劑)。
+- S14 本專案四模式 (④d 的值 = dashboard 預設, 定義逐條相同); S15 四模式寬鬆版 (淺紅 1 根, k 0.5, 窗口 20)。
+- S16 Connors RSI2 日內版 (EMA200 之上 RSI2 < 10 買, 收盤升穿 SMA5 賣); S17 EMA200 趨勢 + VWAP 回踩。
+- ③ 選中的策略下真單 (預設 S14), 港股整手; 其餘虛擬。S14 不含 dashboard ⑨b 的走動式自動調參 (那是逐日換參數), dashboard 真單數字看它自己的 Strategy Tester 再對照本表。
+- 貼上工具: https://claude.ai/artifact/EvEv22MM1DJE3eEAa5rCGc
+

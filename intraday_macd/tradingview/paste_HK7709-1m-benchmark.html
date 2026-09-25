@@ -68,7 +68,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <header class="hero">
     <div>
       <div class="eyebrow">TradingView · Pine Script v6 · 港股 7709 · 17 個策略同場比較 (勝率 / 總回報)</div>
-      <h1 id="scriptName">HK7709-1m-benchmark_(09月25日; 14:37)</h1>
+      <h1 id="scriptName">HK7709-1m-benchmark_(09月25日; 14:40)</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
     </div>
     <div class="card">
@@ -89,12 +89,12 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">HK7709-1m-benchmark_(09月25日; 14:37)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">HK7709-1m-benchmark_(09月25日; 14:40)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
       <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
     </ol>
     <div class="check">
       <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 29 行</span><code>strategy("HK7709-1m-benchmark_(09月25日; 14:37)", shorttitle="HK7709-1m-benchmark_(09月25日; 14:37)", …)</code></div>
+      <div><span class="k">第 29 行</span><code>strategy("HK7709-1m-benchmark_(09月25日; 14:40)", shorttitle="HK7709-1m-benchmark_(09月25日; 14:40)", …)</code></div>
       <div><span class="k">最後一行</span><code id="cLast">—</code></div>
     </div>
   </section>
@@ -128,7 +128,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 
 <script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  HK7709-1m-benchmark_(09月25日; 14:37)  ·  港股 7709 · 多策略同場回測比較 · 1 分鐘 · 一個月 · TradingView Pine Script v6
+//  HK7709-1m-benchmark_(09月25日; 14:40)  ·  港股 7709 · 多策略同場回測比較 · 1 分鐘 · 一個月 · TradingView Pine Script v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
 //  本檔共 575 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或下載 .pine 後用純文字編輯器開啟 → Ctrl+A → Ctrl+C
@@ -155,7 +155,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 //  版本戳 HK7709-1m-benchmark_(MM月DD日; HH:MM), 括號內 = 建置時間 HKT; 檔名以 . 代替 : ; 本檔零延續行
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("HK7709-1m-benchmark_(09月25日; 14:37)", shorttitle="HK7709-1m-benchmark_(09月25日; 14:37)", overlay = true, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.05, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_labels_count = 500, max_lines_count = 500, max_boxes_count = 500)
+strategy("HK7709-1m-benchmark_(09月25日; 14:40)", shorttitle="HK7709-1m-benchmark_(09月25日; 14:40)", overlay = true, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.05, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_labels_count = 500, max_lines_count = 500, max_boxes_count = 500)
 
 // ═══════════════════════════ ① 回測期間 (全部可在 Inputs 改, 預設一個月) ═══════════════════════════
 gBT        = "① 回測期間"
@@ -210,7 +210,7 @@ newSess  = inSess and not inSess[1]
 entryOK  = inWindow and inSess and not blockNew and not korBlock and not eodBar
 tzMatch  = tzStr == syminfo.timezone
 
-// ═══════════════════════════ ③ 下真單的策略 (其餘 12 個同時做虛擬回測) ═══════════════════════════
+// ═══════════════════════════ ③ 下真單的策略 (其餘 16 個同時做虛擬回測) ═══════════════════════════
 gLive  = "③ 下真單的策略"
 NS     = 17
 var string[] SNAME = array.from("S01 MACD柱動能減弱", "S02 MACD DIF/DEA交叉", "S03 EMA 9/21 交叉", "S04 Supertrend 轉向", "S05 RSI 超賣回歸", "S06 布林下軌回歸", "S07 VWAP 偏離回歸", "S08 開盤區間突破", "S09 動能突破+量能", "S10 三EMA+ST共振", "S11 ATR標準化MACD", "S12 MACD柱背離", "S13 隨機進場(安慰劑)", "S14 四模式 (本專案, ④ 預設)", "S15 四模式 寬鬆 (N1 k0.5 窗20)", "S16 RSI2 Connors 日內", "S17 EMA200趨勢+VWAP回踩")
@@ -444,7 +444,7 @@ vwXdn    = ta.crossunder(close, vwapV)
 rndRaw = math.abs(math.sin(bar_index * 12.9898 + 78.233) * 43758.5453)
 rndU   = rndRaw - math.floor(rndRaw)
 
-// ═══════════════════════════ ⑦ 13 個策略的進 / 出場訊號 (全部收盤確認, 只做多) ═══════════════════════════
+// ═══════════════════════════ ⑦ 17 個策略的進 / 出場訊號 (全部收盤確認, 只做多) ═══════════════════════════
 s01L = nFadeDn == fadeBuy  and segSign == -1 and okBuy
 s01X = nFadeUp == fadeSell and segSign ==  1 and okSell
 s02L = ta.crossover(dif, dea)
@@ -494,7 +494,7 @@ s17X = vwXdn or close < emaL
 sigL = array.from(s01L, s02L, s03L, s04L, s05L, s06L, s07L, s08L, s09L, s10L, s11L, s12L, s13L, s14L, s15L, s16L, s17L)
 sigX = array.from(s01X, s02X, s03X, s04X, s05X, s06X, s07X, s08X, s09X, s10X, s11X, s12X, s13X, s14X, s15X, s16X, s17X)
 
-// ═══════════════════════════ ⑧ 虛擬回測引擎 (13 個策略同時跑, 規則與真單完全一致) ═══════════════════════════
+// ═══════════════════════════ ⑧ 虛擬回測引擎 (17 個策略同時跑, 規則與真單完全一致) ═══════════════════════════
 // 成交方式: 本根收盤出訊號 → 下一根開盤成交 (與 process_orders_on_close = false 相同)
 var float[] vEq    = array.new_float(NS, 1.0)
 var int[]   vPos   = array.new_int(NS, 0)
@@ -701,7 +701,7 @@ if barstate.islast and showRpt
     for c2 = 5 to 9
         table.cell(rpt, c2, bhRow, "—", text_size = szR, text_color = txt, bgcolor = hBg)
     table.cell(rpt, 10, bhRow, maxRise > 0 ? str.tostring(bhRet / maxRise * 100.0, "#.#") + "%" : "—", text_size = szR, text_color = txt, bgcolor = hBg)
-// ═══ END OF FILE ═══ HK7709-1m-benchmark_(09月25日; 14:37) · 全檔共 575 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ HK7709-1m-benchmark_(09月25日; 14:40) · 全檔共 575 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
 </script>
 <script>
 (function(){
@@ -710,7 +710,7 @@ if barstate.islast and showRpt
   src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
   var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
   var bytes = new TextEncoder().encode(src).length;
-  var name = "HK7709-1m-benchmark_(09月25日; 14:37)";
+  var name = "HK7709-1m-benchmark_(09月25日; 14:40)";
   document.getElementById('code').value = src;
   document.getElementById('mLines').textContent = lines.length + ' 行';
   document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';
