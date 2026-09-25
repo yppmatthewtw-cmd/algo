@@ -1,16 +1,17 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-//  HK7709-mode5_1month-pattern(09月23日; 09:31)  ·  模式 5 · 港股 7709 過去一個月「平均的一天」曲線 (日內平均化 pattern) · 純顯示副圖, 不下單, 不參與四模式買賣 · 配合 HK7709-1m-dashboard_(mode 1-4) 一起掛
-//  模式 5 標記: 每個交易日的開市 (09:30) 與收市 (16:00) 各畫一條粗黑直線並標時間; 14:30-16:00 HKT 黃色底色 (② 可改時段 / 關閉)
+//  HK7709-mode5_1month-pattern(09月25日; 09:32)  ·  模式 5 · 港股 7709 過去一個月「平均的一天」曲線 (日內平均化 pattern) · 純顯示副圖, 不下單, 不參與四模式買賣 · 配合 HK7709-1m-dashboard_(mode 1-4) 一起掛
+//  模式 5 標記: 每個交易日的開市 (09:30) 與收市 (16:00) 各畫一條粗黑直線並標時間; 開市到收市之間每半小時一條很淺的幼灰直線, 每整點以極小字標時間, 兩者都延伸到主圖 (② 可關); 14:30-16:00 HKT 黃色底色 (② 可改時段 / 關閉)
+//  直線由 TradingView 自動回收最舊的 (上限 500 條 ≈ 主圖+副圖各畫時約 19 個交易日; ② 關掉「延伸到主圖」可保留約 38 日)
 //  做法: 每個交易日按港股時段切成固定格 (每格 = 圖表週期: 10 分鐘圖 = 15 + 18 格, 1 分鐘圖 = 150 + 180 格; ① 可指定), 每格的收盤 / 最高 / 最低 / 開盤 都換成「相對當日 09:30 開盤價的 %」,
 //        再把最近 21 個完整交易日 (① 可改) 同一格疊起來取 平均 / 中位數 / 標準差 / 升日比例; 只計「收市那一格有資料」的整日, 今日未收市不算入
 //  畫面: 橙線 = 「平均的一天」曲線, 同一條 pattern 按對應時間格在每一個交易日重覆 (預設最近 60 日 + 今日, 今日未到的格畫在右邊; ① 可切成滾動 = 每日只用之前 N 日, 無前視) · 灰虛線 = 今日 ±1σ · 藍線 = 今日實際路徑 · 0% 虛線 = 當日開盤 · 上午 / 下午 底色
 //        預設只畫曲線; ① 可另外開: 右上逐格表 (平均 / 中位 / 該格變動 / 升日比例) · 左下摘要藍框 (開→收、最高/最低、上午 / 午休跳空 / 下午、開盤跳空、最佳持有窗口) · 曲線上的高低點標籤 · 今日 ±1σ
 //  用法: 圖表 HKEX:7709, 1 分鐘或 10 分鐘皆可 (格數自動跟圖表週期) → 貼上 → Save (同名) → Add to chart; ① 指定了每格分鐘數而圖表週期不同時左下會紅字警告
 //  注意: 平均路徑只是 21 日的平均, ±1σ 帶顯示個別日子的離散程度; 1 分鐘圖免費方案約 5,000 根 ≈ 15 個交易日 (不足 21 日時用實際有的天數), 10 分鐘圖足夠
-//  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 317 行, 最後一行是 END OF FILE
+//  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 349 行, 最後一行是 END OF FILE
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-indicator("HK7709-mode5_1month-pattern(09月23日; 09:31)", shorttitle="HK7709-mode5_1month-pattern(09月23日; 09:31)", overlay = false, max_lines_count = 500, max_labels_count = 500, max_polylines_count = 100)
+indicator("HK7709-mode5_1month-pattern(09月25日; 09:32)", shorttitle="HK7709-mode5_1month-pattern(09月25日; 09:32)", overlay = false, max_lines_count = 500, max_labels_count = 500, max_polylines_count = 100)
 
 // ─────────────────────────── ① 期間 / 時段 ───────────────────────────
 gW      = "① 期間 / 時段"
@@ -31,6 +32,10 @@ gV      = "② 模式 5 · 每日開市 / 收市分隔線 與 14:30-16:00 黃底
 showDayL= input.bool(true, "每日開市 / 收市畫粗黑直線並標時間", group = gV, display = display.none)
 ylwSess = input.session("1430-1600", "黃色底色時段 (HKT)", group = gV, display = display.none)
 ylwOn   = input.bool(true, "顯示黃色底色", group = gV, display = display.none)
+showGrid= input.bool(true, "開市到收市之間每半小時一條很淺的幼灰直線 (09:30 / 16:00 用粗黑線)", group = gV, display = display.none)
+gridOvl = input.bool(true, "半小時線與整點時間同時延伸到主圖", group = gV, display = display.none)
+gridLbl = input.bool(true, "每整點在線上以極小字標時間", group = gV, display = display.none)
+gridTr  = input.int(78, "半小時線淡化 (0 = 實色, 100 = 隱形)", minval = 0, maxval = 100, group = gV, display = display.none)
 tblSize = input.string("small", "表字體", options = ["tiny", "small", "normal"], group = gW, display = display.none)
 
 amS = int(str.tonumber(str.substring(sessAM, 0, 2)) * 60 + str.tonumber(str.substring(sessAM, 2, 4)))
@@ -98,10 +103,37 @@ dayStart = slot >= 0 and (slot[1] < 0 or na(slot[1]) or dayId != dayId[1])
 dayEnd   = slot == nSlot - 1
 if showDayL and dayStart
     line.new(bar_index, 0, bar_index, 1, xloc = xloc.bar_index, extend = extend.both, color = color.black, width = 2)
+    if gridOvl
+        line.new(bar_index, 0, bar_index, 1, xloc = xloc.bar_index, extend = extend.both, color = color.black, width = 2, force_overlay = true)
     label.new(bar_index, 0, "開市 " + f_slotTime(0), xloc = xloc.bar_index, yloc = yloc.abovebar, style = label.style_label_down, color = color.black, textcolor = color.white, size = size.small)
 if showDayL and dayEnd
     line.new(time_close, 0, time_close, 1, xloc = xloc.bar_time, extend = extend.both, color = color.black, width = 2)
+    if gridOvl
+        line.new(time_close, 0, time_close, 1, xloc = xloc.bar_time, extend = extend.both, color = color.black, width = 2, force_overlay = true)
     label.new(time_close, 0, "收市 " + str.format("{0,number,00}:{1,number,00}", int(pmE / 60), pmE % 60), xloc = xloc.bar_time, yloc = yloc.abovebar, style = label.style_label_down, color = color.black, textcolor = color.white, size = size.small)
+// 模式 5: 開市到收市之間每半小時一條很淺的幼灰直線 (整點標極小時間字), 可延伸到主圖; 12:00 用上午最後一根的收盤時間
+gridC    = color.new(color.gray, gridTr)
+gridTxt  = color.new(color.gray, 30)
+halfBar  = showGrid and slot >= 0 and not dayStart and mNow % 30 == 0
+noonBar  = showGrid and slot == nAM - 1 and pmS > amE      // 上午最後一根 → 12:00 線畫在它的收盤時間
+gridTime = str.format("{0,number,00}:{1,number,00}", hour(time, tzS), minute(time, tzS))
+if halfBar
+    line.new(bar_index, 0, bar_index, 1, xloc = xloc.bar_index, extend = extend.both, color = gridC, width = 1)
+    if gridOvl
+        line.new(bar_index, 0, bar_index, 1, xloc = xloc.bar_index, extend = extend.both, color = gridC, width = 1, force_overlay = true)
+    if gridLbl and mNow % 60 == 0
+        label.new(bar_index, 0, " " + gridTime, xloc = xloc.bar_index, yloc = yloc.abovebar, style = label.style_none, textcolor = gridTxt, size = size.tiny)
+        if gridOvl
+            label.new(bar_index, 0, " " + gridTime, xloc = xloc.bar_index, yloc = yloc.abovebar, style = label.style_none, textcolor = gridTxt, size = size.tiny, force_overlay = true)
+if noonBar
+    noonTxt = str.format("{0,number,00}:{1,number,00}", int(amE / 60), amE % 60)
+    line.new(time_close, 0, time_close, 1, xloc = xloc.bar_time, extend = extend.both, color = gridC, width = 1)
+    if gridOvl
+        line.new(time_close, 0, time_close, 1, xloc = xloc.bar_time, extend = extend.both, color = gridC, width = 1, force_overlay = true)
+    if gridLbl
+        label.new(time_close, 0, " " + noonTxt, xloc = xloc.bar_time, yloc = yloc.abovebar, style = label.style_none, textcolor = gridTxt, size = size.tiny)
+        if gridOvl
+            label.new(time_close, 0, " " + noonTxt, xloc = xloc.bar_time, yloc = yloc.abovebar, style = label.style_none, textcolor = gridTxt, size = size.tiny, force_overlay = true)
 // 滾動平均: 本根只用它之前 (不含今日) 的完整日同一格
 float rollAvg = na
 if curveMd != "固定: 同一個 pattern 每日重覆" and slot >= 0 and matrix.rows(MC) > 1
@@ -314,4 +346,4 @@ plot(relNow, "今日實際路徑 (相對當日開盤 %)", color = color.new(colo
 plot(rollAvg, "滾動平均曲線 (每日用之前 N 日; 只在滾動模式有值)", color = color.new(color.rgb(255, 140, 0), 0), linewidth = 3, style = plot.style_linebr)
 hline(0, "0% (當日開盤)", color = color.new(color.gray, 50), linestyle = hline.style_dashed)
 bgcolor(inYlw ? color.new(color.yellow, 70) : slot >= 0 and slot < nAM ? color.new(color.rgb(255, 200, 80), 94) : slot >= nAM ? color.new(color.rgb(120, 170, 255), 94) : na, title = "14:30-16:00 黃底 / 上午 / 下午 底色")
-// ═══ END OF FILE ═══ HK7709-mode5_1month-pattern(09月23日; 09:31) · 全檔共 317 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ HK7709-mode5_1month-pattern(09月25日; 09:32) · 全檔共 349 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══

@@ -20,6 +20,10 @@ gV      = "② 模式 5 · 每日開市 / 收市分隔線 與 14:30-16:00 黃底
 showDayL= input.bool(true, "每日開市 / 收市畫粗黑直線並標時間", group = gV, display = display.none)
 ylwSess = input.session("1430-1600", "黃色底色時段 (HKT)", group = gV, display = display.none)
 ylwOn   = input.bool(true, "顯示黃色底色", group = gV, display = display.none)
+showGrid= input.bool(true, "開市到收市之間每半小時一條很淺的幼灰直線 (09:30 / 16:00 用粗黑線)", group = gV, display = display.none)
+gridOvl = input.bool(true, "半小時線與整點時間同時延伸到主圖", group = gV, display = display.none)
+gridLbl = input.bool(true, "每整點在線上以極小字標時間", group = gV, display = display.none)
+gridTr  = input.int(78, "半小時線淡化 (0 = 實色, 100 = 隱形)", minval = 0, maxval = 100, group = gV, display = display.none)
 tblSize = input.string("small", "表字體", options = ["tiny", "small", "normal"], group = gW, display = display.none)
 
 amS = int(str.tonumber(str.substring(sessAM, 0, 2)) * 60 + str.tonumber(str.substring(sessAM, 2, 4)))
@@ -87,10 +91,37 @@ dayStart = slot >= 0 and (slot[1] < 0 or na(slot[1]) or dayId != dayId[1])
 dayEnd   = slot == nSlot - 1
 if showDayL and dayStart
     line.new(bar_index, 0, bar_index, 1, xloc = xloc.bar_index, extend = extend.both, color = color.black, width = 2)
+    if gridOvl
+        line.new(bar_index, 0, bar_index, 1, xloc = xloc.bar_index, extend = extend.both, color = color.black, width = 2, force_overlay = true)
     label.new(bar_index, 0, "開市 " + f_slotTime(0), xloc = xloc.bar_index, yloc = yloc.abovebar, style = label.style_label_down, color = color.black, textcolor = color.white, size = size.small)
 if showDayL and dayEnd
     line.new(time_close, 0, time_close, 1, xloc = xloc.bar_time, extend = extend.both, color = color.black, width = 2)
+    if gridOvl
+        line.new(time_close, 0, time_close, 1, xloc = xloc.bar_time, extend = extend.both, color = color.black, width = 2, force_overlay = true)
     label.new(time_close, 0, "收市 " + str.format("{0,number,00}:{1,number,00}", int(pmE / 60), pmE % 60), xloc = xloc.bar_time, yloc = yloc.abovebar, style = label.style_label_down, color = color.black, textcolor = color.white, size = size.small)
+// 模式 5: 開市到收市之間每半小時一條很淺的幼灰直線 (整點標極小時間字), 可延伸到主圖; 12:00 用上午最後一根的收盤時間
+gridC    = color.new(color.gray, gridTr)
+gridTxt  = color.new(color.gray, 30)
+halfBar  = showGrid and slot >= 0 and not dayStart and mNow % 30 == 0
+noonBar  = showGrid and slot == nAM - 1 and pmS > amE      // 上午最後一根 → 12:00 線畫在它的收盤時間
+gridTime = str.format("{0,number,00}:{1,number,00}", hour(time, tzS), minute(time, tzS))
+if halfBar
+    line.new(bar_index, 0, bar_index, 1, xloc = xloc.bar_index, extend = extend.both, color = gridC, width = 1)
+    if gridOvl
+        line.new(bar_index, 0, bar_index, 1, xloc = xloc.bar_index, extend = extend.both, color = gridC, width = 1, force_overlay = true)
+    if gridLbl and mNow % 60 == 0
+        label.new(bar_index, 0, " " + gridTime, xloc = xloc.bar_index, yloc = yloc.abovebar, style = label.style_none, textcolor = gridTxt, size = size.tiny)
+        if gridOvl
+            label.new(bar_index, 0, " " + gridTime, xloc = xloc.bar_index, yloc = yloc.abovebar, style = label.style_none, textcolor = gridTxt, size = size.tiny, force_overlay = true)
+if noonBar
+    noonTxt = str.format("{0,number,00}:{1,number,00}", int(amE / 60), amE % 60)
+    line.new(time_close, 0, time_close, 1, xloc = xloc.bar_time, extend = extend.both, color = gridC, width = 1)
+    if gridOvl
+        line.new(time_close, 0, time_close, 1, xloc = xloc.bar_time, extend = extend.both, color = gridC, width = 1, force_overlay = true)
+    if gridLbl
+        label.new(time_close, 0, " " + noonTxt, xloc = xloc.bar_time, yloc = yloc.abovebar, style = label.style_none, textcolor = gridTxt, size = size.tiny)
+        if gridOvl
+            label.new(time_close, 0, " " + noonTxt, xloc = xloc.bar_time, yloc = yloc.abovebar, style = label.style_none, textcolor = gridTxt, size = size.tiny, force_overlay = true)
 // 滾動平均: 本根只用它之前 (不含今日) 的完整日同一格
 float rollAvg = na
 if curveMd != "固定: 同一個 pattern 每日重覆" and slot >= 0 and matrix.rows(MC) > 1
