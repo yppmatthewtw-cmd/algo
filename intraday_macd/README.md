@@ -553,7 +553,7 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 
 ---
 
-## HK7709-1m-dashboard_(mode 1-4) · 港股 7709 版 (2026-09-25 09:32)
+## HK7709-1m-dashboard_(mode 1-4) · 港股 7709 版 (2026-09-25 14:04)
 
 由 `TV-1M-*_(09月20日; 21.59)` 三支以 `tradingview/build_hk7709.py` 產出, 模式 1–4 的規則 / 參數 / 四模式同時買 / 出場順序 / 81 組掃描 全部與 SOXL 版相同 (規格見 [MODE_SPEC.md](MODE_SPEC.md)), 只改港股相關:
 
@@ -566,17 +566,17 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 
 | 腳本 | 貼上工具 |
 |:---|:---|
-| `HK7709-1m-dashboard_(mode 1-4)_(09月25日; 09.32).pine` (835 行) | https://claude.ai/artifact/C9ku3ZKcnFkD1cRRGPf9fy |
-| `HK7709-1m-RSI-mode2_(09月25日; 09.32).pine` (203 行) | https://claude.ai/artifact/JqpLYGNvUrwMmnYNgJA2cf |
-| `HK7709-1m-winrate-mode4_(09月25日; 09.32).pine` (80 行) | https://claude.ai/artifact/MxgbsuzP6VsVdRuQN5WDKu |
+| `HK7709-1m-dashboard_(mode 1-4)_(09月25日; 14.04).pine` (835 行) | https://claude.ai/artifact/C9ku3ZKcnFkD1cRRGPf9fy |
+| `HK7709-1m-RSI-mode2_(09月25日; 14.04).pine` (203 行) | https://claude.ai/artifact/JqpLYGNvUrwMmnYNgJA2cf |
+| `HK7709-1m-winrate-mode4_(09月25日; 14.04).pine` (80 行) | https://claude.ai/artifact/MxgbsuzP6VsVdRuQN5WDKu |
 
 三支一起在 HKEX:7709 · 1 分鐘圖 Add to chart; ① 預設最近 30 天。離線 Python 引擎仍為美股時段, 未做港股版。
 
 ---
 
-## HK7709-mode5_1month-pattern · 模式 5 · 港股 7709 過去一個月「平均的一天」曲線 (2026-09-25 09:32)
+## HK7709-mode5_1month-pattern · 模式 5 · 港股 7709 過去一個月「平均的一天」曲線 (2026-09-25 14:04)
 
-這裡沒有 7709 的行情資料 (行情主機全部不通), 所以平均化在 TradingView 圖上做: `tradingview/hk7709_pattern_src.pine` → `build_hk7709_pattern.py` 產出 `HK7709-mode5_1month-pattern(09月25日; 09.32).pine` (349 行, 純顯示副圖, 不參與四模式買賣)。
+這裡沒有 7709 的行情資料 (行情主機全部不通), 所以平均化在 TradingView 圖上做: `tradingview/hk7709_pattern_src.pine` → `build_hk7709_pattern.py` 產出 `HK7709-mode5_1month-pattern(09月25日; 14.04).pine` (349 行, 純顯示副圖, 不參與四模式買賣)。
 
 - 每個交易日按港股時段切成固定格 (每格 = 圖表週期; 10 分鐘圖 = 15 + 18 格, 1 分鐘圖 = 150 + 180 格), 每格的開 / 高 / 低 / 收換成相對當日 09:30 開盤價的 %, 最近 21 個完整交易日同一格疊起來取 平均 / 中位 / 標準差 / 升日比例 (今日未收市不算入)。
 - 橙線 = 「平均的一天」曲線, 同一條 pattern 按對應時間格在每一個交易日重覆 (預設最近 60 日 + 今日; ① 可切滾動 = 每日只用之前 N 日, 無前視); 藍線 = 每日實際路徑。
@@ -584,3 +584,24 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 - 逐格表 / 摘要 / 標籤 / ±1σ 預設關, ① 可開 (逐格表只在 ≥ 2 分鐘圖顯示)。
 - 貼上工具: https://claude.ai/artifact/BMmXFRixBoqQttZmnWDFTE (HKEX:7709, 1 分鐘或 10 分鐘圖皆可)。
 - 離線版 `backtest/intraday_pattern.py` 仍為美股時段; 若從 TradingView 匯出 7709 的 CSV, 可再做港股版報告。
+
+---
+
+## HK7709 四支 · 後台自動調參版 (2026-09-25 14:04)
+
+用戶反映一個月回報太低。這裡沒有 7709 行情, 不能離線最佳化, 所以把最佳化搬進策略: `tradingview/patch_hk_tune.py` (由 `build_hk7709.py` 套用) 在主策略加入:
+
+- **⑨ 參數掃描網格改指向影響最大的參數**: 買 N {1,2,3} × 買 k {0.5, 1, 1.5} × M1/M3 匹配窗口 {5, 10, 20} × 出場模式 {現行, 追蹤止損 0.8%, 止賺 1.2%} = 81 組 (賣方 N/k 用 ④ 值)。
+- **⑨b 走動式自動調參 (預設開)**: 每個交易日第一根, 用「之前的交易日」(首 3 日用手動值, 之後回看窗口逐日增長到 10 日) 81 組的虛擬績效, 選報酬最高且 ≥ 2 筆交易的組合套到今日真單 (無前視; 現行組合先佔位, 其他要嚴格更好才換)。開啟時 ④b 校準不套用。副圖參數表第 10 列 / 主圖掃描表底列顯示今日生效組合。
+- **⑤ 韓股時段 (預設開)**: 7709 追蹤 SK Hynix, 韓股 09:00–15:30 KST = 08:00–14:30 HKT; 14:30 後不開新倉 (可選 14:30 平倉)。
+- **出場新增**: 追蹤止損 / 止賺 (自動調參選到時)、半日市 (12/24、12/31) 11:58 強平、隔夜備援 (留倉到翌日第一根平掉)。
+- 評審: 兩輪各 5–6 個獨立評審 + 每項三票反駁; 第一輪 6 項成立 (④b 校準 k 與掃描尺度不一致、切換組合時 M1 訊號年齡未同步、暖身期文字與程式不符、韓股收市平倉依賴 korOnly、半日市留倉) 已全部修正。
+
+| 腳本 | 貼上工具 |
+|:---|:---|
+| `HK7709-1m-dashboard_(mode 1-4)_(09月25日; 14.04).pine` (946 行) | https://claude.ai/artifact/C9ku3ZKcnFkD1cRRGPf9fy |
+| `HK7709-1m-RSI-mode2_(09月25日; 14.04).pine` (203 行) | https://claude.ai/artifact/JqpLYGNvUrwMmnYNgJA2cf |
+| `HK7709-1m-winrate-mode4_(09月25日; 14.04).pine` (80 行) | https://claude.ai/artifact/MxgbsuzP6VsVdRuQN5WDKu |
+| `HK7709-mode5_1month-pattern(09月25日; 14.04).pine` (349 行) | https://claude.ai/artifact/BMmXFRixBoqQttZmnWDFTE |
+
+規格見 [MODE_SPEC.md](MODE_SPEC.md) 第 12 節。真實回報仍要在 TradingView 上看; 若仍低, 掃描表會顯示 81 組全期排名, 可判斷是參數問題還是這一個月 7709 根本沒有適合四模式的走勢。

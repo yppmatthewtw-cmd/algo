@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-//  HK7709-1m-RSI-mode2_(09月25日; 09:32)  ·  港股 7709 · 模式 2 (RSI 14/28 可買區 / 可賣區) 專用副圖 · 配合主策略 HK7709-1m-dashboard_(mode 1-4) 一起掛
+//  HK7709-1m-RSI-mode2_(09月25日; 14:04)  ·  港股 7709 · 模式 2 (RSI 14/28 可買區 / 可賣區) 專用副圖 · 配合主策略 HK7709-1m-dashboard_(mode 1-4) 一起掛
 //  模式 2 是「狀態」(像模式 4), 不形成絕對買賣點: 下界 / 上界 = 最近 120 根 RSI14 的第 10 / 90 百分位 (可切固定 30/70)
 //  進入可買區 = RSI14 梯度由 ≤0 轉 >0 (谷底在前一根) 且 谷底到達或低於下界; 一直持續直到「昇不上」= RSI14 跌破 RSI28, 或 RSI14 跌破進區時的谷底 (② 可改為只看 RSI14 / RSI28 轉勢); 每個交易日開始時清空
 //  進入可賣區 = 相反 (梯度由 ≥0 轉 <0 且 峰頂到達或高於上界), 結束條件相反; 進入另一區直接取代現區; 午休 12:00-13:00 沒有 K 線, 區間狀態直接跨過午休
@@ -8,7 +8,7 @@
 //  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 203 行, 最後一行是 END OF FILE
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-indicator("HK7709-1m-RSI-mode2_(09月25日; 09:32)", shorttitle="HK7709-1m-RSI-mode2_(09月25日; 09:32)", overlay = false, max_labels_count = 500, max_lines_count = 500)
+indicator("HK7709-1m-RSI-mode2_(09月25日; 14:04)", shorttitle="HK7709-1m-RSI-mode2_(09月25日; 14:04)", overlay = false, max_labels_count = 500, max_lines_count = 500)
 
 // ─────────────────────────── ① 回測期間 (與主策略同一套設定, 只用來畫底色) ───────────────────────────
 gBT        = "① 回測期間 (與主策略對齊)"
@@ -200,4 +200,4 @@ if barstate.islast and showTbl
     table.cell(tb, 1, 5, str.tostring(nBarB) + " / " + str.tostring(nBarS) + " / " + str.tostring(nBarAll) + "  (可買區 " + str.tostring(nBarAll > 0 ? nBarB * 100.0 / nBarAll : 0.0, "#") + "%)", text_size = size.tiny)
     table.cell(tb, 0, 6, "快慢線交叉 升穿 / 跌破 · 區間結束規則", text_size = size.tiny, bgcolor = hBg)
     table.cell(tb, 1, 6, str.tostring(nXup) + " / " + str.tostring(nXdn) + " · " + (endModeA ? "跌破慢線或跌破進區谷底" : endModeB ? "RSI14 轉勢" : "RSI28 轉勢"), text_size = size.tiny)
-// ═══ END OF FILE ═══ HK7709-1m-RSI-mode2_(09月25日; 09:32) · 全檔共 203 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ HK7709-1m-RSI-mode2_(09月25日; 14:04) · 全檔共 203 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══

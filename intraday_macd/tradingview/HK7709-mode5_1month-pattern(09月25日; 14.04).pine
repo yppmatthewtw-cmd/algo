@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-//  HK7709-mode5_1month-pattern(09月25日; 09:32)  ·  模式 5 · 港股 7709 過去一個月「平均的一天」曲線 (日內平均化 pattern) · 純顯示副圖, 不下單, 不參與四模式買賣 · 配合 HK7709-1m-dashboard_(mode 1-4) 一起掛
+//  HK7709-mode5_1month-pattern(09月25日; 14:04)  ·  模式 5 · 港股 7709 過去一個月「平均的一天」曲線 (日內平均化 pattern) · 純顯示副圖, 不下單, 不參與四模式買賣 · 配合 HK7709-1m-dashboard_(mode 1-4) 一起掛
 //  模式 5 標記: 每個交易日的開市 (09:30) 與收市 (16:00) 各畫一條粗黑直線並標時間; 開市到收市之間每半小時一條很淺的幼灰直線, 每整點以極小字標時間, 兩者都延伸到主圖 (② 可關); 14:30-16:00 HKT 黃色底色 (② 可改時段 / 關閉)
 //  直線由 TradingView 自動回收最舊的 (上限 500 條 ≈ 主圖+副圖各畫時約 19 個交易日; ② 關掉「延伸到主圖」可保留約 38 日)
 //  做法: 每個交易日按港股時段切成固定格 (每格 = 圖表週期: 10 分鐘圖 = 15 + 18 格, 1 分鐘圖 = 150 + 180 格; ① 可指定), 每格的收盤 / 最高 / 最低 / 開盤 都換成「相對當日 09:30 開盤價的 %」,
@@ -11,7 +11,7 @@
 //  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 349 行, 最後一行是 END OF FILE
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-indicator("HK7709-mode5_1month-pattern(09月25日; 09:32)", shorttitle="HK7709-mode5_1month-pattern(09月25日; 09:32)", overlay = false, max_lines_count = 500, max_labels_count = 500, max_polylines_count = 100)
+indicator("HK7709-mode5_1month-pattern(09月25日; 14:04)", shorttitle="HK7709-mode5_1month-pattern(09月25日; 14:04)", overlay = false, max_lines_count = 500, max_labels_count = 500, max_polylines_count = 100)
 
 // ─────────────────────────── ① 期間 / 時段 ───────────────────────────
 gW      = "① 期間 / 時段"
@@ -346,4 +346,4 @@ plot(relNow, "今日實際路徑 (相對當日開盤 %)", color = color.new(colo
 plot(rollAvg, "滾動平均曲線 (每日用之前 N 日; 只在滾動模式有值)", color = color.new(color.rgb(255, 140, 0), 0), linewidth = 3, style = plot.style_linebr)
 hline(0, "0% (當日開盤)", color = color.new(color.gray, 50), linestyle = hline.style_dashed)
 bgcolor(inYlw ? color.new(color.yellow, 70) : slot >= 0 and slot < nAM ? color.new(color.rgb(255, 200, 80), 94) : slot >= nAM ? color.new(color.rgb(120, 170, 255), 94) : na, title = "14:30-16:00 黃底 / 上午 / 下午 底色")
-// ═══ END OF FILE ═══ HK7709-mode5_1month-pattern(09月25日; 09:32) · 全檔共 349 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ HK7709-mode5_1month-pattern(09月25日; 14:04) · 全檔共 349 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══

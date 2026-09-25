@@ -141,13 +141,20 @@ if showSweep or autoOn                                // 自動調參要用掃�
             if iEx == 1 and not na(pkS)
                 tsS = pkS * (1.0 - trailPct / 100.0)
                 stpS := na(stpS) ? tsS : math.max(stpS, tsS)
+            float tpS = iEx == 2 ? epS * (1.0 + tpPct / 100.0) : na
+            hitS = not na(stpS) and low  <= stpS
+            hitT = not na(tpS)  and high >= tpS
             float xpS = na
-            if not na(stpS) and low <= stpS
-                xpS := math.min(open, stpS) - slipTk * syminfo.mintick
-            if na(xpS) and iEx == 2
-                tpS = epS * (1.0 + tpPct / 100.0)
-                if high >= tpS
-                    xpS := math.max(open, tpS)
+            if hitT and open >= tpS                              // 限價在開盤已達 → 開盤成交, 無滑點
+                xpS := open
+            else if hitS and open <= stpS                        // 停損被開盤跳空穿過 → 開盤成交
+                xpS := open - slipTk * syminfo.mintick
+            else if hitS and hitT                                // 同一根兩者都碰到: 依 TradingView 日內假設, 離開盤較近的一端先到
+                xpS := (high - open) < (open - low) ? tpS : stpS - slipTk * syminfo.mintick
+            else if hitT
+                xpS := tpS
+            else if hitS
+                xpS := stpS - slipTk * syminfo.mintick
             if not na(xpS)
                 rS  = xpS / epS - 1.0 - 2.0 * commPct / 100.0
                 array.set(vEq, v1, array.get(vEq, v1) * (1.0 + rS))
@@ -184,7 +191,7 @@ manNb  = fadeBuy
 manIk  = math.abs(kBuy - 0.5) < 0.001 ? 0 : math.abs(kBuy - 1.0) < 0.001 ? 1 : math.abs(kBuy - 1.5) < 0.001 ? 2 : -1
 manIw  = matchWin == 5 ? 0 : matchWin == 10 ? 1 : matchWin == 20 ? 2 : -1
 manEx  = manExit == "追蹤止損" ? 1 : manExit == "止賺" ? 2 : 0
-manIdx = (manNb >= 1 and manNb <= 3 and manIk >= 0 and manIw >= 0) ? (manNb - 1) * 27 + manIk * 9 + manIw * 3 + manEx : -1   // 手動值在網格中的編號
+manIdx = (manNb >= 1 and manNb <= 3 and manIk >= 0 and manIw >= 0) ? (manNb - 1) * 27 + manIk * 9 + manIw * 3 + (autoOn ? 0 : manEx) : -1   // 手動值在網格中的編號 (自動調參開啟時暖身期出場 = 現行)
 if autoOn and liveIdx < 0                                   // 自動調參初期 (未選過) : 生效組合 = 手動值在網格中的位置 (表格橙底用)
     liveIdx := manIdx
 if not autoOn
@@ -204,7 +211,7 @@ if autoOn and newDay and inWindow
         matrix.remove_col(trHist, 0)
     tuneDayN += 1
     nc = matrix.columns(eqHist)
-    if nc >= tuneMinD + 1                                     // 已有 tuneMinD 個交易日的紀錄才開始選; 之後回看窗口逐日增長到 tuneDays
+    if nc >= math.min(tuneMinD, tuneDays) + 1                 // 已有 tuneMinD 個交易日的紀錄才開始選 (矩陣最多保留 tuneDays 日, 所以以較小者為準); 之後回看窗口逐日增長到 tuneDays
         bestV = -1
         bestR = -1e9
         if liveIdx >= 0                                   // 現行組合先佔位: 其他組合要「嚴格」更好才換 (減少每日跳來跳去)
@@ -231,7 +238,7 @@ if autoOn and newDay and inWindow
         else
             tuneNote  := "第 " + str.tostring(tuneDayN) + " 日 · 回看 " + str.tostring(nc - 1) + " 日內沒有組合達到 " + str.tostring(tuneMinTr) + " 筆交易, 沿用上一組"
     else
-        tuneNote := "第 " + str.tostring(tuneDayN) + " 日 · 紀錄不足 " + str.tostring(tuneMinD) + " 日, 用 ④ / ④c 手動值"
+        tuneNote := "第 " + str.tostring(tuneDayN) + " 日 · 紀錄不足 " + str.tostring(math.min(tuneMinD, tuneDays)) + " 日, 用 ④ / ④c 手動值"
 exitName = liveExit == 1 ? "追蹤止損 " + str.tostring(trailPct, "#.#") + "%" : liveExit == 2 ? "止賺 " + str.tostring(tpPct, "#.#") + "%" : "現行"
 liveTxt  = "買N" + str.tostring(liveNb) + " k" + str.tostring(liveKb, "#.#") + " 窗" + str.tostring(liveWin) + " 出場 " + exitName
 
@@ -271,10 +278,14 @@ liveTxt  = "買N" + str.tostring(liveNb) + " k" + str.tostring(liveKb, "#.#") + 
     s = rep(s, '" · 窗" + str.tostring(matchWin) + "/" + str.tostring(matchWinS), text_size = sizeV)', '" · 窗" + str.tostring(liveWin) + "/" + str.tostring(matchWinS) + (autoOn ? " · 自動調參" : ""), text_size = sizeV)')
     s = rep(s, 'str.tostring(kEff, "#.##"), str.tostring(kBuy, "#.#"), fadeBuy, str.tostring(kSell, "#.#"), fadeSell, str.tostring(maxRise, "#.##")', 'str.tostring(kEff, "#.##"), str.tostring(liveKb, "#.#"), liveNb, str.tostring(kSell, "#.#"), fadeSell, str.tostring(maxRise, "#.##")')
     s = rep(s, '(含 S-M1&M2 / M2區結束 / SL / EOD / 午休 / 窗口結束)', '(含 S-M1&M2 / M2區結束 / SL / 追蹤止損 / 止賺 / EOD / 午休 / 韓股收市 / 隔夜備援 / 窗口結束)')
-    s = rep(s, '"觸發參數 (Inputs ④ / ④c / ④d / ④e 調這裡)"', '"觸發參數 (Inputs ④ / ④c / ④d / ④e / ⑨b 調這裡; 買 N·k·窗口·出場由 ⑨b 逐日選)"')
+    s = rep(s, '"觸發參數 (Inputs ④ / ④c / ④d / ④e 調這裡)"', '"觸發參數 (Inputs ④ / ④c / ④d / ④e / ⑨b 調這裡)" + (autoOn ? "; 買 N·k·窗口·出場由 ⑨b 逐日選" : "")')
+    s = rep(s, '" 百分位 × 校準k)" : "  (手動)")', '" 百分位" + (autoOn ? ", ⑨b 開啟不乘校準k)" : " × 校準k)") : "  (手動)")')
+    s = rep(s, '(targetTPD > 0 ? str.tostring(targetTPD, "#") + " 筆/日" : "關閉") + " / " + (na(tpdEMA) ? "-" : str.tostring(tpdEMA, "#.#")), text_size = sizeV)', '(targetTPD > 0 ? str.tostring(targetTPD, "#") + " 筆/日" + (autoOn ? " (⑨b 開啟時不套用)" : "") : "關閉") + " / " + (na(tpdEMA) ? "-" : str.tostring(tpdEMA, "#.#")), text_size = sizeV)')
+    s = rep(s, 'k 乘在自動深度門檻上, 面積門檻隨之連動。手動模式不受影響。', 'k 乘在自動深度門檻上, 面積門檻隨之連動。手動模式不受影響; ⑨b 自動調參開啟時 (本版預設) 不套用, 門檻交給 ⑨b 的網格 k。')
+    s = rep(s, '或改 ④c 可買區結束規則, 或拉長 ① 期間"', '或改 ④c 可買區結束規則, 或拉長 ① 期間; ⑤ 的韓股時段限制 (14:30 後不開新倉) 亦會減少交易"')
     s = rep(s, '"交易次數 {0} · 勝 {1} 負 {2} · 總損益 {3} ({4}%) · 本金 {5} · 校準k={6} · 買 k{7} N{8} · 賣 k{9} N{10} · 期內最大昇幅 {11}% · 買入持有 {12}%"', '"交易次數 {0} · 勝 {1} 負 {2} · 總損益 {3} ({4}%) · 本金 {5} · 校準k={6} · 最後生效 買 k{7} N{8} · 賣 k{9} N{10} · 期內最大昇幅 {11}% · 買入持有 {12}% · {13}"')
     s = rep(s, 'str.tostring(maxRise, "#.##"), str.tostring(na(winOpen) ? 0.0 : (close / winOpen - 1.0) * 100.0, "#.##"))', 'str.tostring(maxRise, "#.##"), str.tostring(na(winOpen) ? 0.0 : (close / winOpen - 1.0) * 100.0, "#.##"), (autoOn ? "自動調參 " : "手動 ") + liveTxt)')
-    s = rep(s, '另有 可買區結束平倉 / 15:58 收市強平 / 可選 11:58 午休前平倉 / 可選固定止損。', '另有 可買區結束平倉 / 15:58 收市強平 / 可選 11:58 午休前平倉 / 可選固定止損 / 自動調參選到的追蹤止損或止賺。')
+    s = rep(s, '另有 可買區結束平倉 / 15:58 收市強平 / 可選 11:58 午休前平倉 / 可選固定止損。', '另有 可買區結束平倉 / 15:58 收市強平 (半日市 11:58) / 可選 11:58 午休前平倉 / 可選 14:30 韓股收市平倉 / 可選固定止損 / 追蹤止損或止賺 (自動調參選到, 或 ⑨b 手動出場模式) / 隔夜備援。')
     s = rep(s, '"期內無交易 — 檢查 ⑤ 時段 / margin_long = 0 / ④ 上下界 / ④c 匹配窗口與可買區規則"', '"期內無交易 — 檢查 ⑤ 時段 (韓股時段限制) / margin_long = 0 / ④ 上下界 / ④c 匹配窗口與可買區規則 / ⑨b 自動調參"')
     assert 'array.get(KG,' not in s and 'vAgeS' not in s and 'matchWinS' in s
     return s
