@@ -17,22 +17,32 @@ def rep(s, old, new, n=1):
 
 def apply(s):
     # ── ④: 現行生效參數 (liveNb / liveKb / liveExit) 宣告在 minDepthB 之前; 門檻用生效值 ──
-    s = rep(s, 'minDepthB = baseDepth * kBuy                                          // 買: 下跌動能深度門檻\n'
-               'minAreaB  = thMode == "手動" ? minAreaIn * kBuy  : minDepthB * mbBuy  * areaFactor\n',
+    s = rep(s, '// ─── ④b 自動校準: 以「目標每日交易次數」逐日調整門檻係數 k (只用已完成的交易日結算, 無前視) ───\n',
                '// ─── ⑨b 後台自動調參 (走動式, 無前視): 每個新交易日開始, 用「之前 N 個交易日」81 組虛擬回測 (⑨) 的績效選最佳組合套到今日真單 ───\n'
                'gAT      = "⑨b 後台自動調參 (走動式: 每日用之前 N 日最佳組合, 無前視)"\n'
-               'autoTune = input.string("走動式: 每日套用之前 N 日最佳組合", "自動調參", options = ["走動式: 每日套用之前 N 日最佳組合", "關: 用 ④ / ④c 手動值"], group = gAT, tooltip = "走動式 = 每個交易日的第一根 K, 從 ⑨ 的 81 組 (買 N × 買 k × 匹配窗口 × 出場模式) 中選出「之前 N 個交易日」報酬最高、且至少有 M 筆交易的組合, 套到今日的真單; 今日的表現不會用來選今日的參數 (無前視)。回看日數不足時沿用 ④ / ④c 的手動值。關 = 全部用 ④ / ④c 手動值 (等於舊版)。", display = display.none)\n'
-               'tuneDays = input.int(10, "回看幾個交易日 (港股一個月 ≈ 21 日; 10 = 半個月)", minval = 2, maxval = 30, group = gAT, display = display.none)\n'
+               'autoTune = input.string("走動式: 每日套用之前 N 日最佳組合", "自動調參", options = ["走動式: 每日套用之前 N 日最佳組合", "關: 用 ④ / ④c 手動值"], group = gAT, tooltip = "走動式 = 每個交易日的第一根 K, 從 ⑨ 的 81 組 (買 N × 買 k × 匹配窗口 × 出場模式) 中選出「之前的交易日」報酬最高、且至少有 M 筆交易的組合, 套到今日的真單 (由第二根 K 起生效); 今日的表現不會用來選今日的參數 (無前視)。開始前幾日 (下面「最少紀錄日數」) 用 ④ / ④c 手動值, 之後回看窗口逐日增長到「回看幾個交易日」。開啟時 ④b 自動校準不套用 (門檻只用百分位基準 × 網格 k, 令選到的組合與真單門檻一致)。關 = 全部用 ④ / ④c 手動值 + 下面的手動出場模式 (等於舊版)。", display = display.none)\n'
+               'tuneDays = input.int(10, "回看幾個交易日 (上限; 港股一個月 ≈ 21 日; 10 = 半個月)", minval = 2, maxval = 30, group = gAT, display = display.none)\n'
+               'tuneMinD = input.int(3, "最少紀錄日數: 有這麼多個交易日的 81 組紀錄後才開始自動選 (之前用 ④ / ④c 手動值)", minval = 1, maxval = 30, group = gAT, display = display.none)\n'
                'tuneMinTr = input.int(2, "最佳組合在回看期內至少要有幾筆交易 (不足的組合不選; 全部不足則沿用上一組)", minval = 0, maxval = 20, group = gAT, display = display.none)\n'
                'trailPct = input.float(0.8, "出場模式「追蹤止損」: 由持倉期間最高價回落 % 即平倉", minval = 0.1, step = 0.1, group = gAT, tooltip = "1 分鐘 K 上 2 倍槓桿產品, 0.8% 約等於一段正常回調。太小會被雜訊掃出, 太大等於沒有。", display = display.none)\n'
                'tpPct    = input.float(1.2, "出場模式「止賺」: 由進場價升 % 即限價平倉 (限價單無滑點)", minval = 0.1, step = 0.1, group = gAT, display = display.none)\n'
+               'manExit  = input.string("現行", "自動調參關閉時的出場模式 (把掃描表最佳組合手動填回時用)", options = ["現行", "追蹤止損", "止賺"], group = gAT, display = display.none)\n'
+               'autoOn   = autoTune != "關: 用 ④ / ④c 手動值"\n'
+               '\n'
+               '// ─── ④b 自動校準: 以「目標每日交易次數」逐日調整門檻係數 k (只用已完成的交易日結算, 無前視; ⑨b 自動調參開啟時不套用) ───\n')
+    s = rep(s, '        if targetTPD > 0 and thMode != "手動"\n            if tpdEMA < targetTPD * 0.8\n', '        if targetTPD > 0 and thMode != "手動" and not autoOn   // 自動調參開啟時不校準 (門檻交給 ⑨b 的網格 k)\n            if tpdEMA < targetTPD * 0.8\n')
+    s = rep(s, 'baseDepth = thMode == "手動" ? minDepthIn : autoDepth * kEff      // 深度基準: 自動百分位 × 校準係數 k (或手動值)\n',
+               'baseDepth = thMode == "手動" ? minDepthIn : autoDepth * (autoOn ? 1.0 : kEff)   // 深度基準: 自動百分位 × 校準係數 k (或手動值); ⑨b 開啟時不乘校準 k, 與掃描網格同一把尺\n')
+    s = rep(s, 'minDepthB = baseDepth * kBuy                                          // 買: 下跌動能深度門檻\n'
+               'minAreaB  = thMode == "手動" ? minAreaIn * kBuy  : minDepthB * mbBuy  * areaFactor\n',
                'var int   liveNb   = fadeBuy     // 現行生效的 買 N (自動調參會逐日改寫; 關閉時 = ④ 輸入)\n'
                'var float liveKb   = kBuy        // 現行生效的 買 k\n'
                'var int   liveExit = 0           // 現行生效的出場模式: 0 現行 / 1 追蹤止損 / 2 止賺\n'
                'var int   liveIdx  = -1          // 現行生效組合在 81 組網格中的編號 (-1 = 不在網格)\n'
-               'autoOn   = autoTune != "關: 用 ④ / ④c 手動值"\n'
                'minDepthB = baseDepth * liveKb                                        // 買: 下跌動能深度門檻 (用現行生效 k)\n'
                'minAreaB  = thMode == "手動" ? minAreaIn * liveKb : minDepthB * mbBuy  * areaFactor\n')
+    s = rep(s, 'fadeBuy    = input.int(2, "買 · 連續淺紅柱根數 N (跌到下界後, 動能減低 N 根才觸發)"', 'fadeBuy    = input.int(2, "買 · 連續淺紅柱根數 N (跌到下界後, 動能減低 N 根才觸發; ⑨b 自動調參開啟時由它逐日在 1/2/3 中選)"')
+    s = rep(s, 'kBuy       = input.float(1.5, "買 · 下界倍數 k (下界 = 基準 × k; 本版 1.5 = 要求更深; 0 = 不要求到界, 每次淺紅 N 根都買)"', 'kBuy       = input.float(1.5, "買 · 下界倍數 k (下界 = 基準 × k; 1.5 = 要求更深; 0 = 不要求到界; ⑨b 自動調參開啟時由它逐日在 0.5/1/1.5 中選)"')
     s = rep(s, 'matchWin   = input.int(5, "買: 模式 1 與模式 3 的買訊匹配窗口 (根)', 'matchWin   = input.int(5, "買: 模式 1 與模式 3 的買訊匹配窗口 (根; 自動調參開啟時由 ⑨b 逐日在 5/10/20 中選)')
     s = rep(s, 'matchWinS  = input.int(5, "賣: 模式 1 賣訊的有效根數', 'var int   liveWin  = matchWin    // 現行生效的 M1/M3 匹配窗口 (自動調參會逐日改寫)\nmatchWinS  = input.int(5, "賣: 模式 1 賣訊的有效根數')
     s = rep(s, 'm3Live     = m3Age < matchWin\n', 'm3Live     = m3Age < liveWin\n')
@@ -47,9 +57,13 @@ def apply(s):
                'korFlat   = input.bool(false, "韓股收市時 (14:30) 平倉 (預設關 = 持倉到原規則出場)", group = gS, display = display.none)\n')
     s = rep(s, 'lunchBar  = lunchFlat and isIntra and not na(time(timeframe.period, lunchSess, tzStr))   // 午休前平倉那一根 (預設關)\n',
                'lunchBar  = lunchFlat and isIntra and not na(time(timeframe.period, lunchSess, tzStr))   // 午休前平倉那一根 (預設關)\n'
-               'korBlock  = korOnly and isIntra and not na(time(timeframe.period, korSess, tzStr))       // 韓股收市後: 不開新倉\n'
-               'korBar    = korFlat and korBlock and not korBlock[1]                                     // 韓股收市那一根 (可選平倉)\n')
+               'korIn     = isIntra and not na(time(timeframe.period, korSess, tzStr))                   // 韓股收市後的時段\n'
+               'korBlock  = korOnly and korIn                                                            // 韓股收市後: 不開新倉\n'
+               'korBar    = korFlat and korIn and not korIn[1]                                           // 韓股收市那一根 (可選平倉, 與 korOnly 無關)\n')
     s = rep(s, 'entryOK = inWindow and inSess and not blockNew and not eodBar and not lunchBar\n', 'entryOK = inWindow and inSess and not blockNew and not korBlock and not eodBar and not lunchBar\n')
+    s = rep(s, 'eodBar    = isIntra and not na(time(timeframe.period, eodSess, tzStr))\n',
+               'halfDay   = month(time, tzStr) == 12 and (dayofmonth(time, tzStr) == 24 or dayofmonth(time, tzStr) == 31)   // 港股半日市 (平安夜 / 除夕 12:00 收市); 農曆年除夕等其他半日市由下面「隔夜備援」在翌日第一根平掉\n'
+               'eodBar    = isIntra and (not na(time(timeframe.period, eodSess, tzStr)) or (halfDay and not na(time(timeframe.period, "1158-1200", tzStr))))   // 15:58 強平; 半日市 11:58 強平\n')
     # ── ⑨ 真單: 追蹤止損 / 止賺 (自動調參選到時) + 韓股收市平倉 ──
     s = rep(s, 'if useStop and strategy.position_size > 0\n    strategy.exit("SL", "L", stop = strategy.position_avg_price * (1 - stopPct / 100.0), comment = "SL")\n',
                'if useStop and strategy.position_size > 0\n    strategy.exit("SL", "L", stop = strategy.position_avg_price * (1 - stopPct / 100.0), comment = "SL")\n'
@@ -60,17 +74,19 @@ def apply(s):
                'if liveExit == 2 and strategy.position_size > 0                // 出場模式 2: 止賺限價\n'
                '    strategy.exit("TP", "L", limit = strategy.position_avg_price * (1 + tpPct / 100.0), comment = "止賺")\n'
                'if korBar and strategy.position_size != 0                      // 韓股收市平倉 (⑤ 可選, 預設關)\n'
-               '    strategy.close_all(comment = "韓股收市")\n')
+               '    strategy.close_all(comment = "韓股收市")\n'
+               'if newDay and strategy.position_size != 0                      // 隔夜備援: 半日市等原因留倉到翌日, 第一根即平掉 (掃描同步)\n'
+               '    strategy.close_all(comment = "隔夜備援")\n')
     # ── ⑮ 掃描: 整段重寫 (由 gSW 到迴圈結束) ──
     i0 = s.index('// ─────────────────────────── ⑮ 參數掃描')
     i1 = s.index('// ─────────────────────────── ⑩ 成交偵測')
     sweep = '''// ─────────────────────────── ⑮ 參數掃描 + 後台自動調參: 同一窗口 81 組 (買N × 買k × 匹配窗口 × 出場模式) 虛擬回測 ───────────────────────────
 gSW       = "⑨ 參數掃描 (81 組; 自動調參的候選網格)"
-showSweep = input.bool(true, "顯示參數掃描表 (主圖)", group = gSW, tooltip = "在同一回測窗口內, 對 81 組「買 N∈{1,2,3} × 買 k∈{0.5,1,1.5} × M1/M3 匹配窗口∈{5,10,20} × 出場模式∈{現行, 追蹤止損, 止賺}」各跑一套虛擬回測 (每組都套上同一套四模式買 / M1 賣訊在可賣區 + 可買區結束平倉 + EOD 的規則, 賣方 N/k 用 ④ 現行值; 同樣下一根開盤成交、同樣時段、同樣手續費滑點、同樣固定止損), 以最後一根收盤 mark-to-market 排名。k 以 ④ 的第 P 百分位基準為 1 倍。⑨b 自動調參就是每日在這 81 組裡挑「之前 N 日」最好的一組; 關掉自動調參時可把最佳組合手動填回 ④ / ④c。", display = display.none)
-swpRows   = input.int(8, "列出前幾名 (本版 8, 表格矮一點, 與右邊摘要並列不重疊)", minval = 3, maxval = 30, group = gSW, display = display.none)
+showSweep = input.bool(true, "顯示參數掃描表 (主圖)", group = gSW, tooltip = "在同一回測窗口內, 對 81 組「買 N∈{1,2,3} × 買 k∈{0.5,1,1.5} × M1/M3 匹配窗口∈{5,10,20} × 出場模式∈{現行, 追蹤止損, 止賺}」各跑一套虛擬回測 (每組都套上同一套四模式買 / M1 賣訊在可賣區 + 可買區結束平倉 + EOD 的規則, 賣方 N/k 用 ④ 現行值; 同樣下一根開盤成交、同樣時段、同樣手續費滑點、同樣固定止損), 以最後一根收盤 mark-to-market 排名。k 以 ④ 的第 P 百分位基準為 1 倍。⑨b 自動調參就是每日在這 81 組裡挑「之前 N 日」最好的一組; 關掉自動調參時可把最佳組合手動填回 ④ (買 N / k) / ④c (匹配窗口) / ⑨b (出場模式)。", display = display.none)
+swpRows   = input.int(8, "列出前幾名 (本版 8, 表格矮一點, 與左邊摘要並列不重疊)", minval = 3, maxval = 30, group = gSW, display = display.none)
 commPct   = input.float(0.05, "掃描用 · 單邊手續費 % (需與 strategy() 的 commission_value 一致)", minval = 0, step = 0.01, group = gSW, display = display.none)
 slipTk    = input.int(2, "掃描用 · 單邊滑點 tick (需與 strategy() 的 slippage 一致)", minval = 0, group = gSW, display = display.none)
-var float[] KGB    = array.from(0.5, 1.0, 1.5)      // 買 k 網格: 0.5 = 較鬆 (到界要求減半, 訊號多), 1 = 自動門檻, 1.5 = 舊版預設 (較嚴)
+var float[] KGB    = array.from(0.5, 1.0, 1.5)      // 買 k 網格: 0.5 = 較鬆 (到界要求減半, 訊號多), 1 = 自動門檻, 1.5 = ④ 預設 (較嚴)
 var int[]   WG     = array.from(5, 10, 20)          // M1/M3 匹配窗口網格 (根)
 int NV = 81                                          // 3(買N) × 3(買k) × 3(窗口) × 3(出場模式)
 var int[]   vPos   = array.new_int(NV, 0)
@@ -155,7 +171,7 @@ if showSweep or autoOn                                // 自動調參要用掃�
         bSig = ageC < wn and m3Age < wn and m2InBuy and m4OK and (m1c or m3Buy or m2BuyStart or m4Start)
         if posV1 == 0 and bSig and entryOK
             array.set(vPend, v1, 1)
-        else if posV1 == 1 and (sellSig or (m2ExitOnEnd and m2BuyEnd) or eodBar or lunchBar or korBar or not inWindow)
+        else if posV1 == 1 and (sellSig or (m2ExitOnEnd and m2BuyEnd) or eodBar or lunchBar or korBar or newDay or not inWindow)
             array.set(vPend, v1, -1)
 
 // ── ⑨b 走動式自動調參: 新交易日第一根, 快照 81 組權益; 用「最舊快照 → 現在」的報酬選最佳 (至少 tuneMinTr 筆), 套到今日真單 (由下一根起生效) ──
@@ -167,14 +183,15 @@ var float  tuneBestR = na
 manNb  = fadeBuy
 manIk  = math.abs(kBuy - 0.5) < 0.001 ? 0 : math.abs(kBuy - 1.0) < 0.001 ? 1 : math.abs(kBuy - 1.5) < 0.001 ? 2 : -1
 manIw  = matchWin == 5 ? 0 : matchWin == 10 ? 1 : matchWin == 20 ? 2 : -1
-manIdx = (manNb >= 1 and manNb <= 3 and manIk >= 0 and manIw >= 0) ? (manNb - 1) * 27 + manIk * 9 + manIw * 3 : -1   // 手動值在網格中的編號 (出場模式 = 現行)
+manEx  = manExit == "追蹤止損" ? 1 : manExit == "止賺" ? 2 : 0
+manIdx = (manNb >= 1 and manNb <= 3 and manIk >= 0 and manIw >= 0) ? (manNb - 1) * 27 + manIk * 9 + manIw * 3 + manEx : -1   // 手動值在網格中的編號
 if autoOn and liveIdx < 0                                   // 自動調參初期 (未選過) : 生效組合 = 手動值在網格中的位置 (表格橙底用)
     liveIdx := manIdx
 if not autoOn
     liveNb   := fadeBuy
     liveKb   := kBuy
     liveWin  := matchWin
-    liveExit := 0
+    liveExit := manEx
     liveIdx  := manIdx
 if autoOn and newDay and inWindow
     trF = array.new_float(NV, 0.0)
@@ -187,7 +204,7 @@ if autoOn and newDay and inWindow
         matrix.remove_col(trHist, 0)
     tuneDayN += 1
     nc = matrix.columns(eqHist)
-    if nc >= 2
+    if nc >= tuneMinD + 1                                     // 已有 tuneMinD 個交易日的紀錄才開始選; 之後回看窗口逐日增長到 tuneDays
         bestV = -1
         bestR = -1e9
         if liveIdx >= 0                                   // 現行組合先佔位: 其他組合要「嚴格」更好才換 (減少每日跳來跳去)
@@ -208,12 +225,13 @@ if autoOn and newDay and inWindow
             liveKb    := array.get(KGB, math.floor(bestV / 9) % 3)
             liveWin   := array.get(WG, math.floor(bestV / 3) % 3)
             liveExit  := bestV % 3
+            m1Age     := array.get(vAge, bestV)               // 真單的模式 1 買訊年齡同步為該組合自己的年齡 (否則舊參數的訊號會殘留 liveWin 根)
             tuneBestR := bestR * 100.0
             tuneNote  := "第 " + str.tostring(tuneDayN) + " 日 · 回看 " + str.tostring(nc - 1) + " 日最佳 #" + str.tostring(bestV) + " (回看期報酬 " + str.tostring(tuneBestR, "#.##") + "%)"
         else
             tuneNote  := "第 " + str.tostring(tuneDayN) + " 日 · 回看 " + str.tostring(nc - 1) + " 日內沒有組合達到 " + str.tostring(tuneMinTr) + " 筆交易, 沿用上一組"
     else
-        tuneNote := "第 " + str.tostring(tuneDayN) + " 日 · 回看日數不足, 用 ④ / ④c 手動值"
+        tuneNote := "第 " + str.tostring(tuneDayN) + " 日 · 紀錄不足 " + str.tostring(tuneMinD) + " 日, 用 ④ / ④c 手動值"
 exitName = liveExit == 1 ? "追蹤止損 " + str.tostring(trailPct, "#.#") + "%" : liveExit == 2 ? "止賺 " + str.tostring(tpPct, "#.#") + "%" : "現行"
 liveTxt  = "買N" + str.tostring(liveNb) + " k" + str.tostring(liveKb, "#.#") + " 窗" + str.tostring(liveWin) + " 出場 " + exitName
 
@@ -252,7 +270,10 @@ liveTxt  = "買N" + str.tostring(liveNb) + " k" + str.tostring(liveKb, "#.#") + 
     s = rep(s, '"M1 k" + str.tostring(kBuy, "#.#") + "/N" + str.tostring(fadeBuy) + " P" + str.tostring(depthPctl, "#")', '"M1 k" + str.tostring(liveKb, "#.#") + "/N" + str.tostring(liveNb) + " P" + str.tostring(depthPctl, "#")')
     s = rep(s, '" · 窗" + str.tostring(matchWin) + "/" + str.tostring(matchWinS), text_size = sizeV)', '" · 窗" + str.tostring(liveWin) + "/" + str.tostring(matchWinS) + (autoOn ? " · 自動調參" : ""), text_size = sizeV)')
     s = rep(s, 'str.tostring(kEff, "#.##"), str.tostring(kBuy, "#.#"), fadeBuy, str.tostring(kSell, "#.#"), fadeSell, str.tostring(maxRise, "#.##")', 'str.tostring(kEff, "#.##"), str.tostring(liveKb, "#.#"), liveNb, str.tostring(kSell, "#.#"), fadeSell, str.tostring(maxRise, "#.##")')
-    s = rep(s, '(含 S-M1&M2 / M2區結束 / SL / EOD / 午休 / 窗口結束)', '(含 S-M1&M2 / M2區結束 / SL / 追蹤止損 / 止賺 / EOD / 午休 / 韓股收市 / 窗口結束)')
+    s = rep(s, '(含 S-M1&M2 / M2區結束 / SL / EOD / 午休 / 窗口結束)', '(含 S-M1&M2 / M2區結束 / SL / 追蹤止損 / 止賺 / EOD / 午休 / 韓股收市 / 隔夜備援 / 窗口結束)')
+    s = rep(s, '"觸發參數 (Inputs ④ / ④c / ④d / ④e 調這裡)"', '"觸發參數 (Inputs ④ / ④c / ④d / ④e / ⑨b 調這裡; 買 N·k·窗口·出場由 ⑨b 逐日選)"')
+    s = rep(s, '"交易次數 {0} · 勝 {1} 負 {2} · 總損益 {3} ({4}%) · 本金 {5} · 校準k={6} · 買 k{7} N{8} · 賣 k{9} N{10} · 期內最大昇幅 {11}% · 買入持有 {12}%"', '"交易次數 {0} · 勝 {1} 負 {2} · 總損益 {3} ({4}%) · 本金 {5} · 校準k={6} · 最後生效 買 k{7} N{8} · 賣 k{9} N{10} · 期內最大昇幅 {11}% · 買入持有 {12}% · {13}"')
+    s = rep(s, 'str.tostring(maxRise, "#.##"), str.tostring(na(winOpen) ? 0.0 : (close / winOpen - 1.0) * 100.0, "#.##"))', 'str.tostring(maxRise, "#.##"), str.tostring(na(winOpen) ? 0.0 : (close / winOpen - 1.0) * 100.0, "#.##"), (autoOn ? "自動調參 " : "手動 ") + liveTxt)')
     s = rep(s, '另有 可買區結束平倉 / 15:58 收市強平 / 可選 11:58 午休前平倉 / 可選固定止損。', '另有 可買區結束平倉 / 15:58 收市強平 / 可選 11:58 午休前平倉 / 可選固定止損 / 自動調參選到的追蹤止損或止賺。')
     s = rep(s, '"期內無交易 — 檢查 ⑤ 時段 / margin_long = 0 / ④ 上下界 / ④c 匹配窗口與可買區規則"', '"期內無交易 — 檢查 ⑤ 時段 (韓股時段限制) / margin_long = 0 / ④ 上下界 / ④c 匹配窗口與可買區規則 / ⑨b 自動調參"')
     assert 'array.get(KG,' not in s and 'vAgeS' not in s and 'matchWinS' in s
