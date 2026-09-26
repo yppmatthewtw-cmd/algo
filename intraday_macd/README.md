@@ -653,3 +653,15 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 | `TV-1M-dashboard_(mode 1-4)_R3_mode2_4only_(09月26日; 21.11).pine` (923 行) | https://claude.ai/artifact/SmcJKViFpe7Mb6eN3twgAB |
 | `TV-1M-RSI-mode2_R3_mode2_4only_(09月26日; 21.11).pine` (216 行) | https://claude.ai/artifact/4NnQNdYGkmu7vqxyuPS7Ef |
 | `TV-1M-winrate-mode4_R3_mode2_4only_(09月26日; 21.11).pine` (82 行) | https://claude.ai/artifact/5xJ8n9viddJmzrg2E1g5EB |
+
+---
+
+## R4 · 模式 2 進區必須碰過界 (TV-1M-*_R4_mode2_4only_, 2026-09-26 21:33)
+
+R3 的「RSI14 升穿 RSI28」進區會在 RSI 中間位置產生很多 ▲ / ▼ (NVDA 2026-09-25 截圖)。R4 (`tradingview/patch_r4_mode24.py`, `build_r4_mode24.py`): 進可買區之前 N 根 (④c `m2TouchLook`, 預設 20) 內 RSI14 必須碰過 (≤) 下界 (綠區), 進可賣區之前 N 根內必須碰過 (≥) 上界 (紅區); 沒碰過界的模式 2 買 / 賣點一律不輸出 (轉勢進區本來就要求谷底 / 峰頂在界外, 穿越進區現在也要先碰過界)。掃描 27 個區間狀態機同步。其餘同 R3。
+
+| 腳本 | 貼上工具 |
+|:---|:---|
+| `TV-1M-dashboard_(mode 1-4)_R4_mode2_4only_(09月26日; 21.33).pine` (940 行) | https://claude.ai/artifact/Su2PDsxZbLsnL7SrB5nmrY |
+| `TV-1M-RSI-mode2_R4_mode2_4only_(09月26日; 21.33).pine` (220 行) | https://claude.ai/artifact/64QMMKBJmFZbi5WRk51Vy8 |
+| `TV-1M-winrate-mode4_R4_mode2_4only_(09月26日; 21.33).pine` (82 行) | https://claude.ai/artifact/J4hZibPFBqQVximheBrrPS |
