@@ -1,0 +1,290 @@
+<title>TV-1M-winrate-mode4_R5_mode2_4only 貼上工具</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F4F6F3;--surface:#FFFFFF;--ink:#17211C;--muted:#5D6B64;--line:#D9E0DB;
+  --accent:#0E6F6B;--accent-ink:#FFFFFF;--accent-soft:#DDEEEC;
+  --ok:#1E7F3E;--ok-soft:#DFF2E4;--warn:#9A6A0B;--warn-soft:#FBF0D3;--bad:#B3362A;--bad-soft:#F9E1DD;
+  --code-bg:#0F1614;--code-ink:#D8E4DE;
+  --sans:"IBM Plex Sans","PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1513;--surface:#171F1B;--ink:#E4EBE6;--muted:#95A59C;--line:#2A3630;
+    --accent:#4CC3B8;--accent-ink:#06211E;--accent-soft:#163430;
+    --ok:#5BCB7C;--ok-soft:#173824;--warn:#E3B24C;--warn-soft:#3A2E10;--bad:#F07A6C;--bad-soft:#40201B;
+    --code-bg:#0A0F0D;--code-ink:#CDD9D2;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1513;--surface:#171F1B;--ink:#E4EBE6;--muted:#95A59C;--line:#2A3630;
+  --accent:#4CC3B8;--accent-ink:#06211E;--accent-soft:#163430;
+  --ok:#5BCB7C;--ok-soft:#173824;--warn:#E3B24C;--warn-soft:#3A2E10;--bad:#F07A6C;--bad-soft:#40201B;
+  --code-bg:#0A0F0D;--code-ink:#CDD9D2;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;margin:0;padding-inline:16px;padding-block:28px 56px}
+.wrap{max-width:900px;margin:0 auto;display:grid;gap:22px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+h1{font-family:var(--mono);font-size:clamp(20px,4.2vw,30px);font-weight:500;margin:4px 0 6px;letter-spacing:-.01em;text-wrap:balance;word-break:break-all}
+h2{font-size:17px;font-weight:600;margin:0 0 10px}
+p{margin:0}
+.lead{color:var(--muted);max-width:68ch}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.hero{display:grid;gap:14px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid transparent;padding:12px 18px;font-weight:600}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.primary{background:var(--accent);color:var(--accent-ink);font-size:17px;padding:14px 22px}
+.secondary{background:var(--accent-soft);color:var(--ink);border-color:var(--line)}
+.meta{font-family:var(--mono);font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 18px;font-variant-numeric:tabular-nums}
+.status{min-height:24px;font-size:14px;padding:8px 12px;border-radius:6px;display:none}
+.status.ok{display:block;background:var(--ok-soft);color:var(--ok)}
+.status.bad{display:block;background:var(--bad-soft);color:var(--bad)}
+.name{font-family:var(--mono);background:var(--accent-soft);padding:2px 6px;border-radius:4px;word-break:break-all}
+ol.steps{margin:0;padding-left:0;list-style:none;display:grid;gap:12px;counter-reset:s}
+ol.steps li{display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:start}
+ol.steps li::before{counter-increment:s;content:counter(s);width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:600;display:grid;place-items:center;font-size:14px;margin-top:1px}
+ol.steps b{font-weight:600}
+.check{display:grid;gap:8px;margin-top:10px}
+.check div{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:10px 12px;border-radius:6px;background:var(--bg);font-size:14px}
+.check .k{font-family:var(--mono);color:var(--muted);white-space:nowrap}
+.check code{font-family:var(--mono);font-size:13px;word-break:break-all}
+.warnbox{border-left:4px solid var(--warn);background:var(--warn-soft);padding:12px 14px;border-radius:6px;font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+td.m{font-family:var(--mono);font-size:13px}
+.tablewrap{overflow-x:auto}
+textarea{width:100%;height:62vh;min-height:320px;resize:vertical;background:var(--code-bg);color:var(--code-ink);border:1px solid var(--line);border-radius:8px;padding:14px;font-family:var(--mono);font-size:12.5px;line-height:1.5;white-space:pre;overflow:auto;tab-size:4}
+textarea:focus-visible{outline:3px solid var(--accent)}
+.small{font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion: no-preference){ .status{transition:opacity .2s} }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">TradingView · Pine Script v6 · R5 · 只用模式 2 + 4 決定買賣 (模式 2 只用 RSI14) · 1 分鐘日內策略 (市場預設 美股)</div>
+      <h1 id="scriptName">TV-1M-winrate-mode4_R5_mode2_4only_(09月26日; 21:53)</h1>
+      <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
+    </div>
+    <div class="card">
+      <div class="actions">
+        <button class="primary" id="copyAll" type="button">複製全部程式碼</button>
+        <button class="secondary" id="copyName" type="button">複製腳本名稱</button>
+        <button class="secondary" id="dlFile" type="button">下載 .pine.txt 檔</button>
+        <span class="meta"><span id="mLines">— 行</span><span id="mBytes">— KB</span><span>最後一行 = END OF FILE</span></span>
+      </div>
+      <div class="status" id="status" role="status" aria-live="polite" style="margin-top:12px"></div>
+    </div>
+  </header>
+
+  <section class="card">
+    <h2>貼上步驟</h2>
+    <ol class="steps">
+      <li><span><b>圖表週期切 1 分鐘</b>, 開要測的標的 (例如 AMEX:SOXL)。交易時段與市場預設在 Inputs 的「時段」群組裡改。</span></li>
+      <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
+      <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
+      <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-winrate-mode4_R5_mode2_4only_(09月26日; 21:53)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
+    </ol>
+    <div class="check">
+      <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
+      <div><span class="k">第 9 行</span><code>indicator("TV-1M-winrate-mode4_R5_mode2_4only_(09月26日; 21:53)", shorttitle="TV-1M-winrate-mode4_R5_mode2_4only_(09月26日; 21:53)", …)</code></div>
+      <div><span class="k">最後一行</span><code id="cLast">—</code></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>貼上前自我檢查 <span class="small">(不確定剪貼簿裡是不是完整的? 先貼到這裡驗)</span></h2>
+    <p class="small" style="margin-bottom:10px">按了複製之後, 先在下面這個框 Ctrl+V 一次。它會告訴你剪貼簿裡有幾個 byte、幾行、有沒有 END OF FILE。這裡通過了, 再去 Pine Editor 貼。</p>
+    <textarea id="selfcheck" spellcheck="false" style="height:120px;min-height:80px" placeholder="在這裡 Ctrl+V, 貼上剪貼簿的內容 (貼完自動檢查)"></textarea>
+    <div class="status" id="scStatus" role="status" aria-live="polite" style="margin-top:10px"></div>
+  </section>
+
+  <section class="card">
+    <h2>之前為什麼一直報 Missing closing parenthesis / CE10244</h2>
+    <p class="small" style="margin-bottom:10px">三次報錯都指向同一件事: 複製過程只帶走了前 8192 個 byte。切在句子中間就報 Missing closing parenthesis; 切在註解行的開頭 (剛好整行乾淨) 就沒有語法錯誤, 但前 8 KB 裡一個 plot / 下單函式都沒有, 於是報 CE10244。檔案本身兩種情況都沒有問題。</p>
+    <div class="tablewrap">
+    <table>
+      <tr><th>版本</th><th>TradingView 報錯的行</th><th>那一行在原檔的 byte 位置</th><th>結論</th></tr>
+      <tr><td class="m">(09.19;12:34)</td><td class="m">showClusterBox = input.bool(…</td><td class="m">8150 – 8245</td><td>8192 落在句子中間</td></tr>
+      <tr><td class="m">(09.19;13:02)</td><td class="m">depthPctl = input.float(…</td><td class="m">7171 – 7289 (+ 編輯器頂端多出 13 行 ≈ 900 bytes)</td><td>8192 落在句子中間</td></tr>
+      <tr><td class="m">hist&amp;rsi (00:53)</td><td class="m">第 1 行 · CE10244 A strategy must contain…</td><td class="m">8192 剛好切在第 66 行 (註解) 開頭</td><td>前 65 行沒有任何輸出函式</td></tr>
+    </table>
+    </div>
+    <div class="warnbox" style="margin-top:12px">整份檔案約 7.2 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
+  </section>
+
+  <section class="card">
+    <h2>完整程式碼 <span class="small">(備用: 點進框內 Ctrl+A → Ctrl+C)</span></h2>
+    <textarea id="code" readonly spellcheck="false" aria-label="Pine Script 完整程式碼"></textarea>
+  </section>
+</div>
+
+<script type="text/plain" id="pine-src">
+// ═══════════════════════════════════════════════════════════════════════════════
+//  TV-1M-winrate-mode4_R5_mode2_4only_(09月26日; 21:53)  ·  R5 · 模式 4 (EMA9 斜率) 專用副圖 · 配合主策略 TV-1M-dashboard_(mode 1-4)_R5_mode2_4only 一起掛 (R5 買賣只用模式 2 + 4)
+//  模式 4 條件: EMA9 現值比 N 根前高 (預設 N = 1, ② 可改) = 趨勢向上 → 可以買入; 斜率為負 (紅柱) = 可賣區 (狀態): 要再加模式 2 賣訊 (處於可賣區, 本根至少一個剛出現) 才形成整體賣點
+//  顯示: 斜率柱 (% 表示; 綠 >0 可買 / 紅 <0 可賣區) + 0 軸 + 底色; 由可賣區轉可買的那一根標「可買」, 由可買轉可賣區的那一根標「可賣」; 右上統計窗內向上 K 數比例
+//  ② 的 EMA 長度 / 斜率根數必須與主策略 ④e 一致; 這支不下單, 真正的閘門在主策略 ④e / ④f
+//  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 82 行, 最後一行是 END OF FILE
+// ═══════════════════════════════════════════════════════════════════════════════
+//@version=6
+indicator("TV-1M-winrate-mode4_R5_mode2_4only_(09月26日; 21:53)", shorttitle="TV-1M-winrate-mode4_R5_mode2_4only_(09月26日; 21:53)", overlay = false, max_labels_count = 500)
+
+// ─────────────────────────── ① 回測期間 (與主策略對齊, 只用來畫底色) ───────────────────────────
+gBT       = "① 回測期間 (與主策略對齊)"
+winMode   = input.string("最近 N 天 (日曆)", "回測期間方式", options = ["最近 N 個交易日", "最近 N 天 (日曆)", "指定日期"], group = gBT, display = display.none)
+tradDays  = input.int(21, "方式 A · 最近 N 個交易日", minval = 1, maxval = 250, group = gBT, display = display.none)
+lookbackD = input.int(30, "方式 B · 最近 N 天 (日曆)", minval = 1, group = gBT, display = display.none)
+startIn   = input.time(timestamp("19 Aug 2026 00:00 -0400"), "方式 C · 開始", group = gBT, display = display.none)
+endIn     = input.time(timestamp("19 Sep 2026 23:59 -0400"), "方式 C · 結束", group = gBT, display = display.none)
+tzX       = syminfo.timezone
+lastDay0  = timestamp(tzX, year(last_bar_time, tzX), month(last_bar_time, tzX), dayofmonth(last_bar_time, tzX), 0, 0, 0)
+var int tdStart = na
+if na(tdStart)
+    ddT = lastDay0
+    cntD = 1
+    guardD = 0
+    while cntD < tradDays and guardD < 400
+        ddT -= 86400000
+        guardD += 1
+        dwD = dayofweek(ddT + 43200000, tzX)
+        if dwD != dayofweek.saturday and dwD != dayofweek.sunday
+            cntD += 1
+    tdStart := ddT
+btStart  = winMode == "最近 N 個交易日" ? tdStart : winMode == "最近 N 天 (日曆)" ? timenow - lookbackD * 86400000 : startIn
+btEnd    = winMode == "指定日期" ? endIn : timenow
+inWindow = time >= btStart and time <= btEnd
+
+// ─────────────────────────── ② 模式 4 · EMA9 斜率為正 = 可以買入; 斜率為負 (紅柱) = 可賣區 (R3; 與主策略 ④e 一致) ───────────────────────────
+gR4      = "② 模式 4 · EMA9 斜率 (與主策略 ④e 保持一致)"
+m4EmaLen = input.int(9, "EMA 長度", minval = 1, group = gR4, display = display.none)
+m4Look   = input.int(1, "斜率取幾根: EMA 現值 − N 根前的值 > 0 = 向上 (1 = 逐根比較)", minval = 1, maxval = 30, group = gR4, display = display.none)
+m4Ema    = ta.ema(close, m4EmaLen)
+m4Slope  = m4Ema[m4Look] == 0 ? 0.0 : (m4Ema - m4Ema[m4Look]) / m4Ema[m4Look] * 100.0
+m4Up     = m4Slope > 0
+
+// ─────────────────────────── ③ 顯示: 斜率柱 (綠 = 向上可買 / 紅 = 可賣區) + 0 軸 ───────────────────────────
+cUp   = color.rgb(0, 130, 60)
+cDn   = color.rgb(200, 60, 60)
+plot(m4Slope, "EMA9 斜率 % (模式4)", style = plot.style_columns, color = m4Up ? color.new(cUp, 20) : color.new(cDn, 20), display = display.pane + display.price_scale)
+hline(0, "0 軸", color = color.new(color.gray, 40))
+bgcolor(m4Up ? color.new(cUp, 90) : color.new(cDn, 88), title = "可買 / 可賣區 底色")
+bgcolor(inWindow ? color.new(color.blue, 96) : na, title = "回測期間底色")
+// 由可賣區轉為可買的那一根標「可買」, 由可買轉為可賣區的那一根標「可賣」(只在回測窗內)
+if inWindow and m4Up and not m4Up[1]
+    label.new(bar_index, m4Slope, "可買", style = label.style_label_down, color = color.new(cUp, 30), textcolor = color.white, size = size.tiny)
+if inWindow and not m4Up and m4Up[1]
+    label.new(bar_index, m4Slope, "可賣", style = label.style_label_up, color = color.new(cDn, 30), textcolor = color.white, size = size.tiny)
+var label lbG = na
+var float yL = na
+if time >= chart.left_visible_bar_time and na(yL)
+    yL := m4Slope
+if barstate.islast
+    label.delete(lbG)
+    lbG := label.new(chart.left_visible_bar_time, nz(yL, m4Slope), "模式4 · EMA" + str.tostring(m4EmaLen) + " 斜率: 綠柱 (>0) = 趨勢向上可買入, 紅柱 (<0) = 可賣區 (R3: 要再加模式 2 賣訊才成整體賣點)", xloc = xloc.bar_time, style = label.style_label_left, color = color.new(cUp, 30), textcolor = color.white, size = size.tiny)
+
+// ─────────────────────────── ④ 統計表 (靠右) ───────────────────────────
+var int nBar   = 0
+var int nBarUp = 0
+if inWindow
+    nBar   += 1
+    nBarUp += m4Up ? 1 : 0
+var table tb = table.new(position.top_right, 2, 4, border_width = 1, frame_width = 1, frame_color = color.gray)
+if barstate.islast
+    table.clear(tb, 0, 0, 1, 3)
+    hBg = color.new(color.gray, 70)
+    table.cell(tb, 0, 0, "模式 4 · EMA" + str.tostring(m4EmaLen) + " 斜率", text_size = size.tiny, text_color = color.white, bgcolor = cUp)
+    table.cell(tb, 1, 0, m4Up ? "現在向上 → 可買" : "現在向下 → 可賣區", text_size = size.tiny, text_color = color.white, bgcolor = m4Up ? cUp : cDn)
+    table.cell(tb, 0, 1, "斜率 (" + str.tostring(m4Look) + " 根)", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 1, str.tostring(m4Slope, "#.####") + "%", text_size = size.tiny, text_color = m4Up ? color.green : color.red)
+    table.cell(tb, 0, 2, "窗內 K 數 / 向上 (可買) K 數", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 2, str.tostring(nBar) + " / " + str.tostring(nBarUp), text_size = size.tiny)
+    table.cell(tb, 0, 3, "向上比例", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 3, str.tostring(nBar > 0 ? nBarUp * 100.0 / nBar : 0.0, "#.#") + "%", text_size = size.tiny)
+// ═══ END OF FILE ═══ TV-1M-winrate-mode4_R5_mode2_4only_(09月26日; 21:53) · 全檔共 82 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+</script>
+<script>
+(function(){
+  var src = document.getElementById('pine-src').textContent;
+  // <script type="text/plain"> 內的換行原樣保留; 只去掉包裝時多出的首尾換行
+  src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
+  var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
+  var bytes = new TextEncoder().encode(src).length;
+  var name = "TV-1M-winrate-mode4_R5_mode2_4only_(09月26日; 21:53)";
+  document.getElementById('code').value = src;
+  document.getElementById('mLines').textContent = lines.length + ' 行';
+  document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';
+  document.getElementById('cLines').textContent = lines.length;
+  document.getElementById('cFirst').textContent = lines[0];
+  document.getElementById('cLast').textContent = lines[lines.length-1];
+  var st = document.getElementById('status');
+  function show(ok, msg){ st.className = 'status ' + (ok ? 'ok' : 'bad'); st.textContent = msg; }
+  function fallbackCopy(text){
+    var ta = document.getElementById('code');
+    if (text !== src) { ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); }
+    ta.focus(); ta.select(); ta.setSelectionRange(0, text.length);
+    var ok = false; try { ok = document.execCommand('copy'); } catch(e) { ok = false; }
+    if (ta !== document.getElementById('code')) document.body.removeChild(ta);
+    return ok;
+  }
+  function copy(text, label){
+    var done = function(){ show(true, '已複製 ' + label + ' ✓  → 到 Pine Editor 按 Ctrl+A 再 Ctrl+V, 然後檢查最後一行'); };
+    var fail = function(){ show(false, '瀏覽器擋住了自動複製。請點進下方程式碼框, 按 Ctrl+A 再 Ctrl+C (Mac 用 ⌘), 內容一樣完整。'); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function(){ fallbackCopy(text) ? done() : fail(); });
+    } else { fallbackCopy(text) ? done() : fail(); }
+  }
+  document.getElementById('copyAll').addEventListener('click', function(){ copy(src, '全部程式碼 (' + lines.length + ' 行, ' + bytes + ' bytes)'); });
+  document.getElementById('copyName').addEventListener('click', function(){ copy(name, '腳本名稱 ' + name); });
+  // 下載: 檔名用 .pine.txt (檢視器的下載白名單沒有 .pine); 在 claude.ai 檢視器內必須經由 downloads 能力儲存,
+  //       在一般瀏覽器 (本機開啟) 則直接用 Blob 下載。兩條路都不經過對話附件的預覽視窗。
+  var dlBtn = document.getElementById('dlFile');
+  var dlName = name.replace(/:/g, '.') + '.pine.txt';
+  var inViewer = !!(window.claude && typeof window.claude.use === 'function');
+  function afterSave(){ show(true, '已儲存 ' + dlName + ' (' + bytes + ' bytes) → 用記事本 / VS Code 開啟, Ctrl+A → Ctrl+C, 再貼到 Pine Editor'); }
+  function localDownload(){
+    var blob = new Blob([src], {type: 'text/plain;charset=utf-8'});
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = dlName;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+    afterSave();
+  }
+  if (inViewer) {
+    window.claude.use('downloads').then(function(ns){ if (!ns) dlBtn.hidden = true; });
+  }
+  dlBtn.addEventListener('click', function(){
+    if (!inViewer) { localDownload(); return; }
+    window.claude.use('downloads').then(function(ns){
+      if (!ns) { show(false, '這個檢視器不提供下載, 請改用【複製全部程式碼】。'); return; }
+      ns.save({filename: dlName, data: src}).then(afterSave, function(err){
+        var c = err && err.code;
+        if (c === 'declined') show(false, '已取消下載。要的話再按一次, 或改用【複製全部程式碼】。');
+        else if (c === 'rate_limited') show(false, '上一個下載提示還開著, 請先處理它再按。');
+        else show(false, '這個檢視器無法下載 (' + (c || '未知') + '), 請改用【複製全部程式碼】。');
+      });
+    });
+  });
+  // 貼上前自我檢查: 比對剪貼簿內容與本頁原始碼
+  var sc = document.getElementById('selfcheck'), scs = document.getElementById('scStatus');
+  function scShow(ok, msg){ scs.className = 'status ' + (ok ? 'ok' : 'bad'); scs.textContent = msg; }
+  function selfCheck(){
+    var t = sc.value.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    if (!t.trim()) { scs.className = 'status'; scs.textContent = ''; return; }
+    var tt = t.replace(/\n+$/, '') + '\n';
+    var tb = new TextEncoder().encode(tt).length, tl = tt.split('\n').length - 1;
+    var last = tt.replace(/\n$/, '').split('\n').pop();
+    if (tt === src) { scShow(true, '完整 ✓  ' + tl + ' 行 / ' + tb + ' bytes, 與本頁原始碼完全一致, 最後一行是 END OF FILE。可以去 Pine Editor 貼了。'); return; }
+    if (Math.abs(tb - 8192) <= 4) { scShow(false, '被截斷 ✗  剪貼簿只有 ' + tb + ' bytes (剛好 8 KB), ' + tl + ' 行 — 這就是 CE10244 的原因。請改按本頁的【複製全部程式碼】或【下載 .pine.txt 檔】。'); return; }
+    if (last.indexOf('END OF FILE') < 0) { scShow(false, '不完整 ✗  ' + tl + ' 行 / ' + tb + ' bytes (應為 ' + lines.length + ' 行 / ' + bytes + ' bytes), 最後一行不是 END OF FILE。'); return; }
+    scShow(false, '有 END OF FILE 但內容與本頁不完全一致 (' + tl + ' 行 / ' + tb + ' bytes, 應為 ' + lines.length + ' 行 / ' + bytes + ' bytes) — 可能是編輯器自動改了縮排或空白, 建議重新複製。');
+  }
+  sc.addEventListener('input', selfCheck); sc.addEventListener('paste', function(){ setTimeout(selfCheck, 0); });
+})();
+</script>

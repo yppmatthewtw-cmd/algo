@@ -351,3 +351,18 @@ m2BuyStart  = (轉勢向上 且 谷底 ≤ 下界) or (RSI14 升穿 RSI28 且 to
 m2SellStart = (轉勢向下 且 峰頂 ≥ 上界) or (RSI14 跌破 RSI28 且 touchHiF)
 ```
 沒有碰過下界 (綠區) 的可買區進入點、沒有碰過上界 (紅區) 的可賣區進入點一律不輸出。掃描 (⑨) 的 27 個區間狀態機用各自百分位的界做同一條檢查。其餘規則、出場順序、掃描網格同 R3。
+
+---
+
+## 16. R5 變體 · 模式 2 只用 RSI14 (TV-1M-*_R5_mode2_4only_)
+
+RSI28 及其衍生 (穿越進區、快慢線過濾、碰界回看) 全部刪除。模式 2:
+```
+rsiF        = RSI(14); 下界 / 上界 = 最近 120 根 RSI14 的第 10 / 90 百分位 (可切固定 30/70)
+m2BuyStart  = turnUpF and reachLoF      RSI14 梯度由 ≤0 轉 >0 且 谷底 (前一根) ≤ 下界
+m2SellStart = turnDnF and reachHiF      梯度由 ≥0 轉 <0 且 峰頂 ≥ 上界
+可買區結束 (④c zoneEndMd): A 跌破進區谷底 [預設] / B RSI14 轉勢向下 / C 跌破 50 或跌破谷底; 可賣區相反 (升破峰頂 / 轉勢向上 / 升破 50 或峰頂)
+buySig      = m2InBuy and m4Up and (m2BuyStart or m4Start)                (模式 1/3 關閉時)
+sellSig     = m2InSell and m4SellZone and (m2SellStart or m4DnStart)      (④f 預設賣法)
+```
+出場順序同 R2。**掃描 (⑨, R5)**: 81 組 = 下界百分位 {5,10,20} × 上界百分位 {80,90,95} × 結束規則 {A,B,C} × 模式 4 根數 {1,3,5}; 編號 v = 下界序×27 + 上界序×9 + 結束序×3 + 根數序; 27 個區間狀態機。

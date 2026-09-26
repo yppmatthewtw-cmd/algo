@@ -665,3 +665,15 @@ R3 的「RSI14 升穿 RSI28」進區會在 RSI 中間位置產生很多 ▲ / �
 | `TV-1M-dashboard_(mode 1-4)_R4_mode2_4only_(09月26日; 21.33).pine` (940 行) | https://claude.ai/artifact/Su2PDsxZbLsnL7SrB5nmrY |
 | `TV-1M-RSI-mode2_R4_mode2_4only_(09月26日; 21.33).pine` (220 行) | https://claude.ai/artifact/64QMMKBJmFZbi5WRk51Vy8 |
 | `TV-1M-winrate-mode4_R4_mode2_4only_(09月26日; 21.33).pine` (82 行) | https://claude.ai/artifact/J4hZibPFBqQVximheBrrPS |
+
+---
+
+## R5 · 模式 2 只用 RSI14, RSI28 刪除 (TV-1M-*_R5_mode2_4only_, 2026-09-26 21:53)
+
+`tradingview/patch_r5_mode24.py` (`build_r5_mode24.py`): 模式 2 只剩 RSI14。進可買區 = RSI14 轉勢向上且谷底 ≤ 下界; 進可賣區 = 轉勢向下且峰頂 ≥ 上界。結束規則 (④c): 跌破進區谷底 [預設] / RSI14 轉勢向下 / 跌破 50 或谷底 (可賣區相反)。R3/R4 隨 RSI28 而來的穿越進區、快慢線過濾、碰界回看全部移除。買 = 可買區 + 模式 4 EMA9 向上; 賣 = 模式 4 可賣區 (紅柱) + 模式 2 賣訊。⑨ 掃描 81 組 = 下界百分位 {5,10,20} × 上界百分位 {80,90,95} × 結束規則 {3} × 模式 4 根數 {1,3,5}。RSI 副圖只畫 RSI14 與上下界。
+
+| 腳本 | 貼上工具 |
+|:---|:---|
+| `TV-1M-dashboard_(mode 1-4)_R5_mode2_4only_(09月26日; 21.53).pine` (907 行) | https://claude.ai/artifact/So5eUtRx1aRd8cuoRwXtca |
+| `TV-1M-RSI-mode2_R5_mode2_4only_(09月26日; 21.53).pine` (187 行) | https://claude.ai/artifact/RwvQ3divDXrXakydpyp8Na |
+| `TV-1M-winrate-mode4_R5_mode2_4only_(09月26日; 21.53).pine` (82 行) | https://claude.ai/artifact/DdhsQPpFM71hHsuM8Y8CBS |
