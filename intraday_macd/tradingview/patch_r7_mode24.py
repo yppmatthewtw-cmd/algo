@@ -23,7 +23,8 @@ else if m2ExitOnEnd and m2BuyEnd and not eodBar and strategy.position_size > 0  
     strategy.close("L", comment = "M2區結束")
 else if m4ExitOnEnd and m4DnStart and not eodBar and strategy.position_size > 0  // R6: 模式 4 離開可買區 (EMA9 剛轉向下) → 買點失效 → stop out
     strategy.close("L", comment = "M4區結束")
-''', '''if m4ExitOnEnd and useM4 and not m4Up and strategy.position_size > 0        // R7: 紅柱 (EMA9 斜率 ≤ 0) → 立即以本根收盤價平倉, 排在所有出場之前
+''', '''m4ExitNow = m4ExitOnEnd and useM4 and not m4Up and strategy.position_size > 0   // R7: 紅柱 (EMA9 斜率 ≤ 0) → 立即以本根收盤價平倉, 排在所有出場之前
+if m4ExitNow
     strategy.close("L", comment = "M4紅柱", immediately = true)
 else if sellSig and not eodBar and strategy.position_size > 0
     strategy.close("L", comment = sellCmt)
@@ -54,6 +55,8 @@ else if m2ExitOnEnd and m2BuyEnd and not eodBar and strategy.position_size > 0  
 ''')
     s = rep(s, ' or (m4ExitOnEnd and useM4 and dnV) or eodBar or not inWindow)   // R6: 該組的 EMA9 剛轉向下也平倉\n', ' or eodBar or not inWindow)\n')
     s = rep(s, '(含 S-M4區&M2 或 ④f 選的賣法 / M2區結束 / M4區結束 / SL / EOD / 窗口結束)', '(含 M4紅柱 (R7, 本根收盤價) / S-M4區&M2 或 ④f 選的賣法 / M2區結束 / SL / EOD / 窗口結束)')
+    # M4紅柱 在本根收盤成交, 但 strategy.position_size 要到下一根才歸零 → 成交標記改為本根標, 下一根不重複
+    s = rep(s, 'justClosed = posSz <= 0 and posSz[1] >  0      // 賣單真正成交', 'justClosed = m4ExitNow or (posSz <= 0 and posSz[1] > 0 and not m4ExitNow[1])   // 賣單真正成交 (M4紅柱 本根收盤成交 → 標在本根; 下一根 position_size 才歸零, 不重複標)')
     s = rep(s, '" · M4 離開可買區平倉 " + (m4ExitOnEnd ? "開 (R6)" : "關")', '" · 紅柱立即平倉 " + (m4ExitOnEnd ? "開 (R7)" : "關")')
     s = rep(s, '"賣 (R6): " + (sellRuleI == 0', '"賣 (R7): 紅柱立即平倉; 其餘 " + (sellRuleI == 0')
     s = rep(s, '"===== R6 模式 2+4 回測 (RSI14 區 + EMA9, M4 離開可買區即平倉; 模式 1/3 "', '"===== R7 模式 2+4 回測 (RSI14 區 + EMA9, 紅柱立即平倉; 模式 1/3 "')
@@ -63,6 +66,9 @@ else if m2ExitOnEnd and m2BuyEnd and not eodBar and strategy.position_size > 0  
 
 def apply_m4(s):
     s = rep(s, '"可賣", style = label.style_label_up', '"紅柱→平倉", style = label.style_label_up')
+    s = rep(s, '② 模式 4 · EMA9 斜率為正 = 可以買入; 斜率為負 (紅柱) = 可賣區 (R3; 與主策略 ④e 一致)', '② 模式 4 · EMA9 斜率為正 = 可以買入 / 可持倉; 斜率為負 (紅柱) = 不可持倉, 立即平倉 (R7; 與主策略 ④e 一致)')
+    s = rep(s, '③ 顯示: 斜率柱 (綠 = 向上可買 / 紅 = 可賣區) + 0 軸', '③ 顯示: 斜率柱 (綠 = 向上可買 / 紅 = 不可持倉, 立即平倉) + 0 軸')
+    s = rep(s, 'title = "可買 / 可賣區 底色")', 'title = "可買 / 紅柱 (平倉) 底色")')
     s = rep(s, 'm4Up ? "現在向上 → 可買" : "現在向下 → 可賣區"', 'm4Up ? "現在向上 → 可買 / 可持倉" : "現在向下 → 不可持倉 (立即平倉)"')
     s = rep(s, '紅柱 (<0) = 可賣區 (R3: 要再加模式 2 賣訊才成整體賣點)', '紅柱 (≤0) = 不可持倉 (R7: 持倉中出現紅柱那一根立即以收盤價平倉)')
     return s

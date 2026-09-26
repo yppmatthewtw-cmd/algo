@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 //  TV-1M-winrate-mode4_R7_mode2_4only_(09月26日; 22:25)  ·  R7 · 模式 4 (EMA9 斜率) 專用副圖 · 配合主策略 TV-1M-dashboard_(mode 1-4)_R7_mode2_4only 一起掛 (R7 買賣只用模式 2 + 4; R7: 只有綠柱才可持倉, 出現紅柱那一根立即以收盤價平倉 M4紅柱)
-//  模式 4 條件: EMA9 現值比 N 根前高 (預設 N = 1, ② 可改) = 趨勢向上 → 可以買入; 斜率為負 (紅柱) = 可賣區 (狀態): 要再加模式 2 賣訊 (處於可賣區, 本根至少一個剛出現) 才形成整體賣點
-//  顯示: 斜率柱 (% 表示; 綠 >0 可買 / 紅 <0 可賣區) + 0 軸 + 底色; 由可賣區轉可買的那一根標「可買」, 由可買轉可賣區的那一根標「可賣」; 右上統計窗內向上 K 數比例
+//  模式 4 條件: EMA9 現值比 N 根前高 (預設 N = 1, ② 可改) = 趨勢向上 (綠柱) → 可以買入 / 可持倉; 斜率 ≤ 0 (紅柱) = 不可持倉: 主策略持倉中出現紅柱那一根立即以收盤價平倉 (M4紅柱)
+//  顯示: 斜率柱 (% 表示; 綠 >0 可買 / 紅 ≤0 不可持倉) + 0 軸 + 底色; 由紅轉綠的那一根標「可買」, 由綠轉紅的那一根標「紅柱→平倉」; 右上統計窗內向上 K 數比例
 //  ② 的 EMA 長度 / 斜率根數必須與主策略 ④e 一致; 這支不下單, 真正的閘門在主策略 ④e / ④f
 //  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 82 行, 最後一行是 END OF FILE
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -33,7 +33,7 @@ btStart  = winMode == "最近 N 個交易日" ? tdStart : winMode == "最近 N �
 btEnd    = winMode == "指定日期" ? endIn : timenow
 inWindow = time >= btStart and time <= btEnd
 
-// ─────────────────────────── ② 模式 4 · EMA9 斜率為正 = 可以買入; 斜率為負 (紅柱) = 可賣區 (R3; 與主策略 ④e 一致) ───────────────────────────
+// ─────────────────────────── ② 模式 4 · EMA9 斜率為正 = 可以買入 / 可持倉; 斜率為負 (紅柱) = 不可持倉, 立即平倉 (R7; 與主策略 ④e 一致) ───────────────────────────
 gR4      = "② 模式 4 · EMA9 斜率 (與主策略 ④e 保持一致)"
 m4EmaLen = input.int(9, "EMA 長度", minval = 1, group = gR4, display = display.none)
 m4Look   = input.int(1, "斜率取幾根: EMA 現值 − N 根前的值 > 0 = 向上 (1 = 逐根比較)", minval = 1, maxval = 30, group = gR4, display = display.none)
@@ -41,12 +41,12 @@ m4Ema    = ta.ema(close, m4EmaLen)
 m4Slope  = m4Ema[m4Look] == 0 ? 0.0 : (m4Ema - m4Ema[m4Look]) / m4Ema[m4Look] * 100.0
 m4Up     = m4Slope > 0
 
-// ─────────────────────────── ③ 顯示: 斜率柱 (綠 = 向上可買 / 紅 = 可賣區) + 0 軸 ───────────────────────────
+// ─────────────────────────── ③ 顯示: 斜率柱 (綠 = 向上可買 / 紅 = 不可持倉, 立即平倉) + 0 軸 ───────────────────────────
 cUp   = color.rgb(0, 130, 60)
 cDn   = color.rgb(200, 60, 60)
 plot(m4Slope, "EMA9 斜率 % (模式4)", style = plot.style_columns, color = m4Up ? color.new(cUp, 20) : color.new(cDn, 20), display = display.pane + display.price_scale)
 hline(0, "0 軸", color = color.new(color.gray, 40))
-bgcolor(m4Up ? color.new(cUp, 90) : color.new(cDn, 88), title = "可買 / 可賣區 底色")
+bgcolor(m4Up ? color.new(cUp, 90) : color.new(cDn, 88), title = "可買 / 紅柱 (平倉) 底色")
 bgcolor(inWindow ? color.new(color.blue, 96) : na, title = "回測期間底色")
 // 由可賣區轉為可買的那一根標「可買」, 由可買轉為可賣區的那一根標「可賣」(只在回測窗內)
 if inWindow and m4Up and not m4Up[1]

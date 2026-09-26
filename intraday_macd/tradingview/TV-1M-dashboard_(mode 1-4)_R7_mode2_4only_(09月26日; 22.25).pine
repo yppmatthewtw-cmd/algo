@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 //  TV-1M-dashboard_(mode 1-4)_R7_mode2_4only_(09月26日; 22:25)  ·  R7 主策略 (dashboard): 只用 模式 2 RSI14 可買區 / 可賣區 + 模式 4 EMA9 斜率 決定買賣 (模式 1 柱到界 / 模式 3 金叉 預設關閉, ④f 可加回); R7 = R5 (模式 2 只用 RSI14) + 模式 4 只有綠柱才可持倉: 持倉中出現紅柱那一根立即以收盤價平倉 (M4紅柱) · 1 分鐘 · 一個月回測 · Pine v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
-//  本檔共 922 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
+//  本檔共 923 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或按【下載 .pine.txt】用純文字編輯器開啟 → Ctrl+A → Ctrl+C
 //  ★ 看到 CE10244 "A strategy must contain at least one of the following: any strategy.*() … plot*() …" = 貼上的內容被截斷在 8 KB
 //     (前 8 KB 只有表頭 + strategy() + Inputs, 第一個 plot 在很後面) — 這不是程式錯誤, 請改用貼上工具網頁複製, 貼完確認最後一行
@@ -331,7 +331,8 @@ if buySig and entryOK and strategy.position_size == 0   // R2: 模式 2 + 4 (+ �
         strategy.entry("L", strategy.long, comment = "BUY")          // 用 default_qty_type=percent_of_equity 100%
     else
         strategy.entry("L", strategy.long, qty = qty, comment = "BUY")
-if m4ExitOnEnd and useM4 and not m4Up and strategy.position_size > 0        // R7: 紅柱 (EMA9 斜率 ≤ 0) → 立即以本根收盤價平倉, 排在所有出場之前
+m4ExitNow = m4ExitOnEnd and useM4 and not m4Up and strategy.position_size > 0   // R7: 紅柱 (EMA9 斜率 ≤ 0) → 立即以本根收盤價平倉, 排在所有出場之前
+if m4ExitNow
     strategy.close("L", comment = "M4紅柱", immediately = true)
 else if sellSig and not eodBar and strategy.position_size > 0
     strategy.close("L", comment = sellCmt)
@@ -511,7 +512,7 @@ liveV  = (liveIp >= 0 and liveIh >= 0 and liveIl >= 0) ? liveIp * 27 + liveIh * 
 //    已有倉時的買訊 / 無倉時的賣訊 / 回測窗外的訊號 → position_size 不變 → 不會畫
 posSz      = strategy.position_size
 justFilled = posSz > 0  and posSz[1] <= 0      // 買單真正成交
-justClosed = posSz <= 0 and posSz[1] >  0      // 賣單真正成交 (含 M4紅柱 (R7, 本根收盤價) / S-M4區&M2 或 ④f 選的賣法 / M2區結束 / SL / EOD / 窗口結束)
+justClosed = m4ExitNow or (posSz <= 0 and posSz[1] > 0 and not m4ExitNow[1])   // 賣單真正成交 (M4紅柱 本根收盤成交 → 標在本根; 下一根 position_size 才歸零, 不重複標) (含 M4紅柱 (R7, 本根收盤價) / S-M4區&M2 或 ④f 選的賣法 / M2區結束 / SL / EOD / 窗口結束)
 
 // 成交直線
 // 成交直線: 副圖 (MACD) 一條 + 主圖 (價格 K 線) 一條, 兩條同一根 K, 上下貫通
@@ -919,4 +920,4 @@ if barstate.islastconfirmedhistory and showRpt
     if strategy.closedtrades > 0
         for i = 0 to strategy.closedtrades - 1
             log.info("#{0} {1} → {2} {7} | {3} → {4} | P&L {5} ({6}%)", i + 1, str.format_time(strategy.closedtrades.entry_time(i), "yyyy-MM-dd HH:mm", tzStr), str.format_time(strategy.closedtrades.exit_time(i),  "yyyy-MM-dd HH:mm", tzStr), str.tostring(strategy.closedtrades.entry_price(i), format.mintick), str.tostring(strategy.closedtrades.exit_price(i),  format.mintick), str.tostring(strategy.closedtrades.profit(i), "#,###.##"), str.tostring((strategy.closedtrades.exit_price(i) / strategy.closedtrades.entry_price(i) - 1.0) * 100.0, "#.##"), strategy.closedtrades.exit_comment(i))
-// ═══ END OF FILE ═══ TV-1M-dashboard_(mode 1-4)_R7_mode2_4only_(09月26日; 22:25) · 全檔共 922 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ TV-1M-dashboard_(mode 1-4)_R7_mode2_4only_(09月26日; 22:25) · 全檔共 923 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
