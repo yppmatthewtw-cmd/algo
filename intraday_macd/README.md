@@ -618,3 +618,20 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 - ③ 選中的策略下真單 (預設 S14), 港股整手; 其餘虛擬。S14 不含 dashboard ⑨b 的走動式自動調參 (那是逐日換參數), dashboard 真單數字看它自己的 Strategy Tester 再對照本表。
 - 貼上工具: https://claude.ai/artifact/EvEv22MM1DJE3eEAa5rCGc
 
+
+---
+
+## R2 · 只用模式 2 + 4 決定買賣 (TV-1M-*_R2_mode2_4only_, 2026-09-26 17:40)
+
+由 SOXL 版 `TV-1M-*_(09月20日; 21.59)` 以 `tradingview/build_r2_mode24.py` (補丁 `patch_r2_mode24.py`) 產出, 模式 1 (柱到界) 與模式 3 (金叉) 預設不參與買賣 (仍顯示; ④f 可加回)。
+
+- **買 (R2)** = 模式 2 處於可買區 且 模式 4 EMA9 向上, 且本根至少一個剛出現 (RSI14 剛轉勢進可買區, 或 EMA9 剛轉向上)。
+- **賣 (④f 可選)**: 預設對稱規則 = 模式 2 處於可賣區 且 EMA9 向下, 且本根至少一個剛出現 (剛進可賣區 / EMA9 剛轉向下), 出場原因 S-M2&M4; 另可選 剛進可賣區即賣 (S-M2賣區) / 只靠可買區結束 + 收市 / 舊規則 (模式 1 賣訊在可賣區, 需開啟模式 1)。持倉中可買區結束一律平倉 (M2區結束); 15:58 EOD; 可選固定止損。
+- **⑨ 掃描 81 組改為模式 2 / 4 的參數**: 模式 2 下界百分位 {5, 10, 20} (上界 = 100 − 下界) × 可買區結束規則 {跌破慢線或谷底, RSI14 轉下, RSI28 轉下} × 模式 4 斜率根數 {1, 3, 5} × 賣法 {M2&M4 同時, 進可賣區即賣, 只靠區結束}; 9 個模式 2 區間狀態機全域計算, 每組都是 R2 規則 + 可買區結束平倉 + EOD; 橙底列 = 現行 ④c / ④e / ④f 組合。
+- 美股時段、成本、一個月窗口與 21:59 版相同。
+
+| 腳本 | 貼上工具 |
+|:---|:---|
+| `TV-1M-dashboard_(mode 1-4)_R2_mode2_4only_(09月26日; 17.40).pine` (907 行) | https://claude.ai/artifact/8tQgEoYh53Nc931j8y5LE7 |
+| `TV-1M-RSI-mode2_R2_mode2_4only_(09月26日; 17.40).pine` (204 行) | https://claude.ai/artifact/3zGZHFRNUyFK8VChFzwQwh |
+| `TV-1M-winrate-mode4_R2_mode2_4only_(09月26日; 17.40).pine` (80 行) | https://claude.ai/artifact/YZhJL5xpPNEXCi5RXDVxju |

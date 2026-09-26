@@ -1,0 +1,80 @@
+// ═══════════════════════════════════════════════════════════════════════════════
+//  TV-1M-winrate-mode4_R2_mode2_4only_(09月26日; 17:40)  ·  R2 · 模式 4 (EMA9 斜率) 專用副圖 · 配合主策略 TV-1M-dashboard_(mode 1-4)_R2_mode2_4only 一起掛 (R2 買賣只用模式 2 + 4)
+//  模式 4 條件: EMA9 現值比 N 根前高 (預設 N = 1, ② 可改) = 趨勢向上 → 可以買入; 斜率為負 = 不可買, 且 (R2 預設賣法) 與模式 2 可賣區同時成立時形成賣點
+//  顯示: 斜率柱 (% 表示; 綠 >0 可買 / 紅 <0 不可) + 0 軸 + 底色; 由不可轉可買的那一根標「可買」; 右上統計窗內向上 K 數比例
+//  ② 的 EMA 長度 / 斜率根數必須與主策略 ④e 一致; 這支不下單, 真正的閘門在主策略 ④e / ④f
+//  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 80 行, 最後一行是 END OF FILE
+// ═══════════════════════════════════════════════════════════════════════════════
+//@version=6
+indicator("TV-1M-winrate-mode4_R2_mode2_4only_(09月26日; 17:40)", shorttitle="TV-1M-winrate-mode4_R2_mode2_4only_(09月26日; 17:40)", overlay = false, max_labels_count = 500)
+
+// ─────────────────────────── ① 回測期間 (與主策略對齊, 只用來畫底色) ───────────────────────────
+gBT       = "① 回測期間 (與主策略對齊)"
+winMode   = input.string("最近 N 天 (日曆)", "回測期間方式", options = ["最近 N 個交易日", "最近 N 天 (日曆)", "指定日期"], group = gBT, display = display.none)
+tradDays  = input.int(21, "方式 A · 最近 N 個交易日", minval = 1, maxval = 250, group = gBT, display = display.none)
+lookbackD = input.int(30, "方式 B · 最近 N 天 (日曆)", minval = 1, group = gBT, display = display.none)
+startIn   = input.time(timestamp("19 Aug 2026 00:00 -0400"), "方式 C · 開始", group = gBT, display = display.none)
+endIn     = input.time(timestamp("19 Sep 2026 23:59 -0400"), "方式 C · 結束", group = gBT, display = display.none)
+tzX       = syminfo.timezone
+lastDay0  = timestamp(tzX, year(last_bar_time, tzX), month(last_bar_time, tzX), dayofmonth(last_bar_time, tzX), 0, 0, 0)
+var int tdStart = na
+if na(tdStart)
+    ddT = lastDay0
+    cntD = 1
+    guardD = 0
+    while cntD < tradDays and guardD < 400
+        ddT -= 86400000
+        guardD += 1
+        dwD = dayofweek(ddT + 43200000, tzX)
+        if dwD != dayofweek.saturday and dwD != dayofweek.sunday
+            cntD += 1
+    tdStart := ddT
+btStart  = winMode == "最近 N 個交易日" ? tdStart : winMode == "最近 N 天 (日曆)" ? timenow - lookbackD * 86400000 : startIn
+btEnd    = winMode == "指定日期" ? endIn : timenow
+inWindow = time >= btStart and time <= btEnd
+
+// ─────────────────────────── ② 模式 4 · EMA9 斜率為正 = 可以買入 (與主策略 ④e 一致) ───────────────────────────
+gR4      = "② 模式 4 · EMA9 斜率 (與主策略 ④e 保持一致)"
+m4EmaLen = input.int(9, "EMA 長度", minval = 1, group = gR4, display = display.none)
+m4Look   = input.int(1, "斜率取幾根: EMA 現值 − N 根前的值 > 0 = 向上 (1 = 逐根比較)", minval = 1, maxval = 30, group = gR4, display = display.none)
+m4Ema    = ta.ema(close, m4EmaLen)
+m4Slope  = m4Ema[m4Look] == 0 ? 0.0 : (m4Ema - m4Ema[m4Look]) / m4Ema[m4Look] * 100.0
+m4Up     = m4Slope > 0
+
+// ─────────────────────────── ③ 顯示: 斜率柱 (綠 = 向上可買 / 紅 = 向下不可) + 0 軸 ───────────────────────────
+cUp   = color.rgb(0, 130, 60)
+cDn   = color.rgb(200, 60, 60)
+plot(m4Slope, "EMA9 斜率 % (模式4)", style = plot.style_columns, color = m4Up ? color.new(cUp, 20) : color.new(cDn, 20), display = display.pane + display.price_scale)
+hline(0, "0 軸", color = color.new(color.gray, 40))
+bgcolor(m4Up ? color.new(cUp, 90) : color.new(cDn, 92), title = "可買 / 不可 底色")
+bgcolor(inWindow ? color.new(color.blue, 96) : na, title = "回測期間底色")
+// 由不可轉為可買的那一根標一下 (只在回測窗內)
+if inWindow and m4Up and not m4Up[1]
+    label.new(bar_index, m4Slope, "可買", style = label.style_label_down, color = color.new(cUp, 30), textcolor = color.white, size = size.tiny)
+var label lbG = na
+var float yL = na
+if time >= chart.left_visible_bar_time and na(yL)
+    yL := m4Slope
+if barstate.islast
+    label.delete(lbG)
+    lbG := label.new(chart.left_visible_bar_time, nz(yL, m4Slope), "模式4 · EMA" + str.tostring(m4EmaLen) + " 斜率: 綠柱 (>0) = 趨勢向上可買入, 紅柱 (<0) = 不可", xloc = xloc.bar_time, style = label.style_label_left, color = color.new(cUp, 30), textcolor = color.white, size = size.tiny)
+
+// ─────────────────────────── ④ 統計表 (靠右) ───────────────────────────
+var int nBar   = 0
+var int nBarUp = 0
+if inWindow
+    nBar   += 1
+    nBarUp += m4Up ? 1 : 0
+var table tb = table.new(position.top_right, 2, 4, border_width = 1, frame_width = 1, frame_color = color.gray)
+if barstate.islast
+    table.clear(tb, 0, 0, 1, 3)
+    hBg = color.new(color.gray, 70)
+    table.cell(tb, 0, 0, "模式 4 · EMA" + str.tostring(m4EmaLen) + " 斜率", text_size = size.tiny, text_color = color.white, bgcolor = cUp)
+    table.cell(tb, 1, 0, m4Up ? "現在向上 → 可買" : "現在向下 → 不可", text_size = size.tiny, text_color = color.white, bgcolor = m4Up ? cUp : cDn)
+    table.cell(tb, 0, 1, "斜率 (" + str.tostring(m4Look) + " 根)", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 1, str.tostring(m4Slope, "#.####") + "%", text_size = size.tiny, text_color = m4Up ? color.green : color.red)
+    table.cell(tb, 0, 2, "窗內 K 數 / 向上 K 數", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 2, str.tostring(nBar) + " / " + str.tostring(nBarUp), text_size = size.tiny)
+    table.cell(tb, 0, 3, "向上比例", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 3, str.tostring(nBar > 0 ? nBarUp * 100.0 / nBar : 0.0, "#.#") + "%", text_size = size.tiny)
+// ═══ END OF FILE ═══ TV-1M-winrate-mode4_R2_mode2_4only_(09月26日; 17:40) · 全檔共 80 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══

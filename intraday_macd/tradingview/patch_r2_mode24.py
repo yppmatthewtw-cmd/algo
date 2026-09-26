@@ -232,5 +232,30 @@ liveV  = (liveIp >= 0 and liveIl >= 0 and liveIs >= 0) ? liveIp * 27 + liveIe * 
     s = rep(s, '"===== 四模式回測 (柱到界+RSI區+金叉+EMA9) {0}', '"===== R2 模式 2+4 回測 (RSI區+EMA9; 模式 1/3 " + (useM1 or useM3 ? "部分加回" : "關閉") + ") {0}')
     s = rep(s, '(含 S-M1&M2 / M2區結束 / SL / EOD / 窗口結束)', '(含 S-M2&M4 或 ④f 選的賣法 / M2區結束 / SL / EOD / 窗口結束)')
     s = rep(s, '"期內無交易 — 檢查 ⑤ 時段 / margin_long = 0 / ④ 上下界 / ④c 匹配窗口與可買區規則"', '"期內無交易 — 檢查 ⑤ 時段 / margin_long = 0 / ④c 可買區規則 (下界百分位、結束規則) / ④e 模式 4"')
+    # ── 文字同步 (評審指出的過時文字) ──
+    s = rep(s, '"買 · 下界倍數 k (下界 = 基準 × k; 本版 1.5 = 要求更深; 0 = 不要求到界, 每次淺紅 N 根都買)"', '"買 · 下界倍數 k (下界 = 基準 × k; 0 = 不要求到界, 每次淺紅 N 根都算模式 1 買訊; R2 需 ④f 加回模式 1 才影響買賣)"')
+    s = rep(s, '設 0 = 不檢查, 每次淺綠 N 根都賣 (較早落車)。', '設 0 = 不檢查, 每次淺綠 N 根都算模式 1 賣訊 (R2 只在 ④f 選舊規則時才用來賣)。')
+    s = rep(s, '"買: 模式 1 與模式 3 的買訊匹配窗口 (根) — 兩者在此根數內先後出現即算「同時」; 1 = 必須同一根"', '"買: 模式 1 與模式 3 的買訊匹配窗口 (根; 只在 ④f 加回模式 1 / 3 時用)"')
+    s = rep(s, '四者同時且本根至少一個剛出現 → 合格買點。", display = display.none)', 'R2 預設買 = 模式 2 可買區 + 模式 4 向上 (本根至少一個剛出現); ④f 加回模式 1 / 3 後才要求它們在此窗口內。", display = display.none)')
+    s = rep(s, 'tooltip = "賣出 = 模式 1 賣訊 (昇到上界後淺綠 N 根完成) 在有效根數內 且 模式 2 處於可賣區, 本根至少一個剛出現 (模式 1 剛觸發, 或 剛進入可賣區)。另有 可買區結束平倉 / 15:58 收市強平 / 可選固定止損。"', 'tooltip = "舊規則 (④f 選「舊規則」時才生效): 模式 1 賣訊在有效根數內 且 模式 2 處於可賣區。R2 預設賣 = 模式 2 可賣區 + 模式 4 向下, 見 ④f。另有 可買區結束平倉 / 15:58 收市強平 / 可選固定止損。"')
+    s = rep(s, '"舊規則: 模式 1 賣訊在可賣區 (需開啟模式 1)"', '"舊規則: 模式 1 賣訊在可賣區 (不需開啟 ④f 模式 1; 該開關只影響買入)"')
+    s = rep(s, '④d 模式 3: 敏感 MACD (9/26/9) 快線穿慢線 — 只參與買入, 不參與賣出 ───', '④d 模式 3: 敏感 MACD (9/26/9) 快線穿慢線 — R2 預設不參與買賣 (④f 開啟後只參與買入) ───')
+    s = rep(s, 'gR3        = "④d 模式 3 · 敏感 MACD (9/26/9) 金叉 (只參與買入)"', 'gR3        = "④d 模式 3 · 敏感 MACD (9/26/9) 金叉 (R2 預設不參與; ④f 開啟後只參與買入)"')
+    s = rep(s, '// 先拍一份快照, 供 ⑮ 參數掃描共用 (掃描寫在 ⑨ 之後, 但段統計在下面就會被更新)', '// 先拍一份快照供 momB / momS 用 (段統計在下面才更新)')
+    s = rep(s, '④e 模式 4: EMA9 斜率為正 (趨勢向上) 才可以買入 — 只限制買入, 不參與賣出 ───', '④e 模式 4: EMA9 斜率為正 (趨勢向上) 才可以買入 — R2 預設賣法亦用 EMA9 向下 / 剛轉向下 ───')
+    s = rep(s, 'gR4      = "④e 模式 4 · EMA9 斜率 (趨勢向上才可買; 只限制買入)"', 'gR4      = "④e 模式 4 · EMA9 斜率 (向上才可買; R2 預設賣法也要求 EMA9 向下)"')
+    s = rep(s, '"啟用模式 4 (關掉 = 回到三模式)"', '"啟用模式 4 (關掉 = 只剩模式 2 決定買賣; 加回 ④f 的模式 1 / 3 時才是三模式)"')
+    s = rep(s, '+ " · " + m3Def + " · 只參與買入", text_size = sizeV, text_color = m3Live ? color.green : color.gray)', '+ " · " + m3Def + (useM3 ? " · 只參與買入" : " · R2 不參與 (④f 可加回)"), text_size = sizeV, text_color = m3Live ? color.green : color.gray)')
+    s = rep(s, '" → 四模式同時 " + str.tostring(cBoth) + "  (現況: M1 "', '" → " + (useM1 or useM3 ? "含加回模式 同時 " : "M2+M4 同時 ") + str.tostring(cBoth) + "  (現況: M1 "')
+    s = rep(s, """"M1 淺綠N根 " + str.tostring(cS1) + " · M2 進可賣區 " + str.tostring(cS2) + " → 同時 " + str.tostring(cSBoth) + "  (現況: S1 " + (s1Age >= 999 ? "-" : str.tostring(s1Age) + " 根前") + " / M2 " + m2Zone + ") · 可買區結束平倉 \"""",
+               """"M2 進可賣區 " + str.tostring(cS2) + " · M4 轉下 " + str.tostring(cM4Dn) + (sellRuleI == 3 ? " · M1 淺綠N根 " + str.tostring(cS1) : "") + " → R2 賣點 " + str.tostring(cSBoth) + "  (現況: M2 " + m2Zone + " / M4 " + (m4Up ? "向上" : "向下") + (sellRuleI == 3 ? " / S1 " + (s1Age >= 999 ? "-" : str.tostring(s1Age) + " 根前") : "") + ") · 可買區結束平倉 \"""")
+    s = rep(s, 'var int cSBoth = 0\n', 'var int cSBoth = 0\nvar int cM4Dn  = 0\n')
+    s = rep(s, '    cSBoth += sellSig ? 1 : 0\n', '    cSBoth += sellSig ? 1 : 0\n    cM4Dn  += m4DnStart ? 1 : 0\n')
+    s = rep(s, '"要更嚴 (少而準): M1 百分位↑ 倍數k↑ 根數↑ · M2 下界百分位↓ 上界百分位↑ · 匹配窗口↓ · M4 斜率根數↑ · 要更鬆: 反之"', '"R2 要更嚴 (少而準): M2 下界百分位↓ 上界百分位↑ · M2 結束規則改「破慢線/谷底」 · M4 斜率根數↑ · ④f 賣法改 M2&M4 同時; 要更鬆: 反之 (M1 門檻 / 匹配窗口只在 ④f 加回模式 1/3 時有效)"')
+    s = rep(s, """"M1 k" + str.tostring(kBuy, "#.#") + "/N" + str.tostring(fadeBuy) + " P" + str.tostring(depthPctl, "#") + " · M2 RSI" + str.tostring(rsiFastLen) + "/" + str.tostring(rsiSlowLen) + " · M3 " + str.tostring(m3Fast) + "/" + str.tostring(m3Slow) + (m3Def == "DIF 上穿 DEA (金叉)" ? "金叉" : "0軸") + " · 窗" + str.tostring(matchWin) + "/" + str.tostring(matchWinS), text_size = sizeV)""",
+               """"R2 M2 " + (rsiBandMd == "固定: 30 / 70" ? "固定30/70" : "P" + str.tostring(rsiPctLo, "#") + "/" + str.tostring(rsiPctHi, "#")) + " " + (endModeA ? "破慢線/谷底" : endModeB ? "14轉下" : "28轉下") + " · M4 " + str.tostring(m4Look) + " 根 · 賣 " + sellCmt + (useM1 ? " · M1 k" + str.tostring(kBuy, "#.#") + "/N" + str.tostring(fadeBuy) + " 窗" + str.tostring(matchWin) : "") + (useM3 ? " · M3 窗" + str.tostring(matchWin) : ""), text_size = sizeV)""")
+    s = rep(s, '再放寬 ④c 的 M1/M3 匹配窗口 (兩個買訊要在窗口內先後出現, 且那一根要在可買區、EMA9 向上) 或 ④ 上下界 (百分位↓ 倍數↓), 或改 ④c 可買區結束規則, 或拉長 ① 期間"', '再放寬 ④c 可買區規則 (下界百分位↑ / 結束規則改 RSI28 轉下) 或 ④e 模式 4 斜率根數, 或改 ④f 賣法, 或拉長 ① 期間" + (useM1 or useM3 ? " (④f 已加回模式 1/3: 亦可放寬 ④ 上下界 / ④c 匹配窗口)" : "")')
+    s = rep(s, '"交易次數 {0} · 勝 {1} 負 {2} · 總損益 {3} ({4}%) · 本金 {5} · 校準k={6} · 買 k{7} N{8} · 賣 k{9} N{10} · 期內最大昇幅 {11}% · 買入持有 {12}%"', '"交易次數 {0} · 勝 {1} 負 {2} · 總損益 {3} ({4}%) · 本金 {5} · 校準k={6} · R2 M2 P{7}/{8} · M4 {9} 根 · 賣 {10} · 期內最大昇幅 {11}% · 買入持有 {12}%"')
+    s = rep(s, 'str.tostring(kEff, "#.##"), str.tostring(kBuy, "#.#"), fadeBuy, str.tostring(kSell, "#.#"), fadeSell, str.tostring(maxRise, "#.##")', 'str.tostring(kEff, "#.##"), str.tostring(rsiPctLo, "#"), str.tostring(rsiPctHi, "#"), m4Look, sellCmt, str.tostring(maxRise, "#.##")')
     assert 'array.get(KG,' not in s and 'vAgeS' not in s and 'sellSigM1' in s
     return s
