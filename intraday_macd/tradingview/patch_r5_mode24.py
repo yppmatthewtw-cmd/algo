@@ -79,6 +79,7 @@ def _common(s, with_newday):
     s = re.sub(r'^m2FastAbove = input\.bool\(true,.*\n', '', s, count=1, flags=re.M)
     s = re.sub(r'^zoneEndMd  = input\.string\(.*\n', ZONE_END, s, count=1, flags=re.M)
     s = rep(s, 'rsiFastLen = input.int(14, "RSI 快線長度 (轉勢與到界都看它)"', 'rsiFastLen = input.int(14, "RSI 長度 (R5 只用這一條 RSI14; RSI28 已刪除)"')
+    s = s.replace('模式 2 · RSI 14/28 可買區 / 可賣區 (與主策略 ④c 保持一致)', '模式 2 · RSI 14 可買區 / 可賣區 (與主策略 ④c 保持一致)')
     # 整段狀態機重寫
     i0 = s.index('rsiF       = ta.rsi(close, rsiFastLen)\n')
     i1 = s.index('\n', s.index('m2Zone     = ', i0)) + 1
@@ -198,6 +199,10 @@ liveV  = (liveIp >= 0 and liveIh >= 0 and liveIl >= 0) ? liveIp * 27 + liveIh * 
     s = rep(s, '"===== R4 模式 2+4 回測 (RSI區 碰界後 " + m2EntryMd + "; EMA9; 模式 1/3 "', '"===== R5 模式 2+4 回測 (RSI14 區 + EMA9; 模式 1/3 "')
     s = rep(s, '對 81 組「模式 2 進區方式∈{轉勢且到界, 穿越, 任一} × 下界百分位∈{5,10,20} (上界 = 100 − 下界) × 可買區結束規則∈{跌破慢線或谷底, RSI14 轉勢向下, RSI28 轉勢向下} × 模式 4 斜率根數∈{1,3,5}」各跑一套虛擬回測 (每組都是 R3 規則: 買 = 該組的可買區 + 該組的 EMA9 向上 + ④c 快慢線過濾 且本根至少一個剛出現;', '對 81 組「模式 2 下界百分位∈{5,10,20} × 上界百分位∈{80,90,95} × 可買區結束規則∈{跌破谷底, RSI14 轉勢向下, 跌破 50 或谷底} × 模式 4 斜率根數∈{1,3,5}」各跑一套虛擬回測 (每組都是 R5 規則: 買 = 該組的可買區 (RSI14 到下界後轉勢) + 該組的 EMA9 向上 且本根至少一個剛出現;')
     s = rep(s, '橙底列 = 現行 ④c / ④e 的組合 (④c 用固定 30/70 或百分位不在網格時顯示「不在網格」)。', '橙底列 = 現行 ④c / ④e 的組合 (④c 用固定 30/70 或百分位不在網格時顯示「不在網格」)。R5 只用 RSI14。')
+    s = rep(s, '結束規則改 RSI28 轉下', '結束規則改 破50/谷底')
+    s = rep(s, '模式2 RSI14/28 可買區', '模式2 RSI14 可買區')
+    s = rep(s, 'gSW       = "⑨ 參數掃描 (R3: 模式 2 進區方式 × 下界 × 結束規則 × 模式 4 根數)"', 'gSW       = "⑨ 參數掃描 (R5: 模式 2 下界P × 上界P × 結束規則 × 模式 4 根數)"')
+    s = rep(s, 'and m2InBuy and m2BuyOK   // R3: 加 RSI14 > RSI28 過濾; R2:', 'and m2InBuy and m2BuyOK   // R5: m2BuyOK 恆真 (無 RSI28); R2:')
     for bad in ('xFSup', 'xFSdn', 'm2FastAbove', 'm2TouchLook', 'm2EntryMd', 'liveIn', 'swingLo', 'turnUpS', 'zTouch', 'iN2', 'rsiSlowLen', 'rsiS ', 'rsiS,', 'rsiS)'):
         assert bad not in s, bad
     return s

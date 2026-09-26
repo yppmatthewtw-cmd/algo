@@ -259,7 +259,7 @@ m1Live  = m1Age < matchWin
 var int s1Age = 999                              // 模式 1 賣訊距今幾根
 s1Age  := m1Sell ? 0 : math.min(s1Age + 1, 999)
 s1Live  = s1Age < matchWinS
-buyCore = (not useM1 or m1Live) and (not useM3 or m3Live) and m2InBuy and m2BuyOK   // R3: 加 RSI14 > RSI28 過濾; R2: 模式 2 處於可買區; 模式 1 / 3 只在 ④f 開啟時才要求 (模式 4 閘門在 ④e 之後套上 → buySig)
+buyCore = (not useM1 or m1Live) and (not useM3 or m3Live) and m2InBuy and m2BuyOK   // R5: m2BuyOK 恆真 (無 RSI28); R2: 模式 2 處於可買區; 模式 1 / 3 只在 ④f 開啟時才要求 (模式 4 閘門在 ④e 之後套上 → buySig)
 buyEvt  = (useM1 and m1Buy) or (useM3 and m3Buy) or m2BuyStart   // 本根至少一個「參與中」的模式剛出現買點 (模式 4 剛轉向上也算, 在 ④e 加上)
 sellSigM1 = s1Live and m2InSell and (m1Sell or m2SellStart) // 舊規則 (④f 可選): 模式 1 賣訊在有效根數內 且 模式 2 處於可賣區; R2 的 sellSig 在 ④e 之後定義
 
@@ -343,7 +343,7 @@ if not inWindow and strategy.position_size != 0
     strategy.close_all(comment = "窗口結束")
 
 // ─────────────────────────── ⑮ 參數掃描 (R2): 同一窗口 81 組 (模式 2 下界百分位 × 可買區結束規則 × 模式 4 斜率根數 × 賣法) 虛擬回測 ───────────────────────────
-gSW       = "⑨ 參數掃描 (R3: 模式 2 進區方式 × 下界 × 結束規則 × 模式 4 根數)"
+gSW       = "⑨ 參數掃描 (R5: 模式 2 下界P × 上界P × 結束規則 × 模式 4 根數)"
 showSweep = input.bool(true, "顯示參數掃描表 (主圖)", group = gSW, tooltip = "在同一回測窗口內, 對 81 組「模式 2 下界百分位∈{5,10,20} × 上界百分位∈{80,90,95} × 可買區結束規則∈{跌破谷底, RSI14 轉勢向下, 跌破 50 或谷底} × 模式 4 斜率根數∈{1,3,5}」各跑一套虛擬回測 (每組都是 R5 規則: 買 = 該組的可買區 (RSI14 到下界後轉勢) + 該組的 EMA9 向上 且本根至少一個剛出現; 賣 = ④f 現行賣法 (舊規則不模擬); 另有可買區結束平倉 / EOD / 固定止損; 同樣下一根開盤成交、同樣時段、同樣手續費滑點), 以最後一根收盤 mark-to-market 排名。橙底列 = 現行 ④c / ④e 的組合 (④c 用固定 30/70 或百分位不在網格時顯示「不在網格」)。R5 只用 RSI14。", display = display.none)
 swpRows   = input.int(8, "列出前幾名 (本版 8, 表格矮一點, 與左邊摘要並列不重疊)", minval = 3, maxval = 30, group = gSW, display = display.none)
 commPct   = input.float(0.03, "掃描用 · 單邊手續費 % (需與 strategy() 的 commission_value 一致)", minval = 0, step = 0.01, group = gSW, display = display.none)
@@ -734,7 +734,7 @@ if barstate.islast and showPrm
     table.cell(prm, 0, 11, "MACD", text_size = sizeV, bgcolor = pBg)
     table.cell(prm, 1, 11, str.tostring(fastLen) + " / " + str.tostring(slowLen) + " / " + str.tostring(sigLen) + " · 1× 柱 (牛牛/Webull 顯示 2×)", text_size = sizeV)
     table.cell(prm, 0, 12, "觸發方式", text_size = sizeV, bgcolor = pBg)
-    table.cell(prm, 1, 12, (useFade ? "模式1 動能減弱: 買 " + str.tostring(fadeBuy) + " 根淺紅 / 賣 " + str.tostring(fadeSell) + " 根淺綠" : "模式1 DIF/DEA 交叉") + " (段要先到界; R2 " + (useM1 ? "已加回" : "已關閉") + ") + 模式2 RSI14/28 可買區 + 模式3 金叉 (R2 " + (useM3 ? "已加回" : "已關閉") + ") + 模式4 EMA9向上 · R2 買 = M2 可買區 + M4 向上; 賣 = " + sellCmt + "; 可買區結束平倉 · 窗口 " + (winMode == "最近 N 個交易日" ? str.tostring(tradDays) + " 個交易日" : winMode == "最近 N 天 (日曆)" ? str.tostring(lookbackD) + " 天" : "指定日期"), text_size = sizeV)
+    table.cell(prm, 1, 12, (useFade ? "模式1 動能減弱: 買 " + str.tostring(fadeBuy) + " 根淺紅 / 賣 " + str.tostring(fadeSell) + " 根淺綠" : "模式1 DIF/DEA 交叉") + " (段要先到界; R2 " + (useM1 ? "已加回" : "已關閉") + ") + 模式2 RSI14 可買區 + 模式3 金叉 (R2 " + (useM3 ? "已加回" : "已關閉") + ") + 模式4 EMA9向上 · R2 買 = M2 可買區 + M4 向上; 賣 = " + sellCmt + "; 可買區結束平倉 · 窗口 " + (winMode == "最近 N 個交易日" ? str.tostring(tradDays) + " 個交易日" : winMode == "最近 N 天 (日曆)" ? str.tostring(lookbackD) + " 天" : "指定日期"), text_size = sizeV)
 
 // ── 參數掃描表 (主圖): 最後一根收盤 mark-to-market 排名 ──
 if barstate.islast and showSweep
@@ -888,7 +888,7 @@ if barstate.islast and showRpt
         else
             for c = 0 to 6
                 table.cell(rpt, c, row, "", text_size = sizeV)
-            noTradeMsg = barsTot == 0 ? "⚠ 期內無交易 —【時段設定與此商品不符】策略用 " + tzStr + " " + sessStr + ", 但 " + syminfo.ticker + " 的交易所時區是 " + syminfo.timezone + " → 請到 ⑤ 盤中時段 把「市場預設」改對 (港股/美股)" : "期內無交易 — 先確認 strategy() 仍有 margin_long = 0 (v6 預設 100% 會令全部本金下單被拒); 再放寬 ④c 可買區規則 (下界百分位↑ / 結束規則改 RSI28 轉下) 或 ④e 模式 4 斜率根數, 或改 ④f 賣法, 或拉長 ① 期間" + (useM1 or useM3 ? " (④f 已加回模式 1/3: 亦可放寬 ④ 上下界 / ④c 匹配窗口)" : "")
+            noTradeMsg = barsTot == 0 ? "⚠ 期內無交易 —【時段設定與此商品不符】策略用 " + tzStr + " " + sessStr + ", 但 " + syminfo.ticker + " 的交易所時區是 " + syminfo.timezone + " → 請到 ⑤ 盤中時段 把「市場預設」改對 (港股/美股)" : "期內無交易 — 先確認 strategy() 仍有 margin_long = 0 (v6 預設 100% 會令全部本金下單被拒); 再放寬 ④c 可買區規則 (下界百分位↑ / 結束規則改 破50/谷底) 或 ④e 模式 4 斜率根數, 或改 ④f 賣法, 或拉長 ① 期間" + (useM1 or useM3 ? " (④f 已加回模式 1/3: 亦可放寬 ④ 上下界 / ④c 匹配窗口)" : "")
             table.cell(rpt, 0, row, noTradeMsg, text_size = sizeV, text_color = color.orange, text_halign = text.align_left)
             table.merge_cells(rpt, 0, row, 6, row)
     else if nT == 0

@@ -168,7 +168,7 @@ btEnd      = winMode == "指定日期" ? endIn : timenow
 inWindow   = time >= btStart and time <= btEnd
 
 // ─────────────────────────── ② 模式 2 · RSI 14 / 28 可買區 / 可賣區 (狀態) — 與主策略 ④c 的設定必須一致 ───────────────────────────
-gR2        = "② 模式 2 · RSI 14/28 可買區 / 可賣區 (與主策略 ④c 保持一致)"
+gR2        = "② 模式 2 · RSI 14 可買區 / 可賣區 (與主策略 ④c 保持一致)"
 rsiFastLen = input.int(14, "RSI 長度 (R5 只用這一條 RSI14; RSI28 已刪除)", minval = 2, group = gR2, tooltip = "務必與主策略 ④c 的同名設定一致, 否則兩個副圖顯示的區間會對不上。", display = display.none)
 rsiBandMd  = input.string("動態: 最近 N 根 RSI14 的百分位", "下界 / 上界怎麼定", options = ["動態: 最近 N 根 RSI14 的百分位", "固定: 30 / 70"], group = gR2, display = display.none)
 rsiPctLen  = input.int(120, "動態: 取樣根數 N", minval = 20, maxval = 1000, group = gR2, display = display.none)
