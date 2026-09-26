@@ -181,10 +181,12 @@ liveV  = (liveIp >= 0 and liveIl >= 0) ? liveIn * 27 + liveIp * 9 + liveIe * 3 +
 
 
 def apply_rsi(s):
-    s = rep(s, '// 全部 ta.* 在全域無條件計算 (Pine v6 的 and / or 是短路求值)\n', R3_INPUTS.replace('(R3)", options', '(R3; 與主策略 ④c 一致)", options').replace('m2FastAbove = input.bool(true, "買入時要求 RSI14 > RSI28 (快線在慢線之上; 賣出要求 RSI14 < RSI28) — 過濾下跌途中的反彈 (R3 預設開)"', 'm2FastAbove = input.bool(true, "買入時要求 RSI14 > RSI28 (只影響 ▲▼ 標記的顏色深淺: 快線在慢線之上的可買區才是深色; 與主策略 ④c 一致)"') + '// 全部 ta.* 在全域無條件計算 (Pine v6 的 and / or 是短路求值)\n')
+    s = rep(s, '// 全部 ta.* 在全域無條件計算 (Pine v6 的 and / or 是短路求值)\n', R3_INPUTS.replace('(R3)", options', '(R3; 與主策略 ④c 一致)", options').replace('m2FastAbove = input.bool(true, "買入時要求 RSI14 > RSI28 (快線在慢線之上; 賣出要求 RSI14 < RSI28) — 過濾下跌途中的反彈 (R3 預設開)"', 'm2FastAbove = input.bool(true, "買入時要求 RSI14 > RSI28 (這支只影響 ▲▼ 標記深淺: 進區那一根快線在慢線之上 = 深色, 否則淡色要等升穿 / 跌破; 與主策略 ④c 一致)"') + '// 全部 ta.* 在全域無條件計算 (Pine v6 的 and / or 是短路求值)\n')
     s = rep(s, OLD_ZONE_PANE, NEW_ZONE_PANE)
     s = rep(s, OLD_SET, NEW_SET)
     s = rep(s, 'm2Zone     = m2InBuy ? "可買區" : m2InSell ? "可賣區" : "無"\n', 'm2BuyOK    = not m2FastAbove or rsiF > rsiS\nm2SellOK   = not m2FastAbove or rsiF < rsiS\nm2Zone     = m2InBuy ? (m2BuyOK ? "可買區 (快>慢, 可買)" : "可買區 (快<慢, 等升穿)") : m2InSell ? (m2SellOK ? "可賣區 (快<慢, 可賣)" : "可賣區 (快>慢, 等跌破)") : "無"\n')
+    s = rep(s, 'style = label.style_triangleup,   color = cBuyTri,  size = size.small', 'style = label.style_triangleup,   color = m2BuyOK ? cBuyTri : color.new(cBuyTri, 60),  size = size.small')
+    s = rep(s, 'style = label.style_triangledown, color = cSellTri, size = size.small', 'style = label.style_triangledown, color = m2SellOK ? cSellTri : color.new(cSellTri, 60), size = size.small')
     return s
 
 
