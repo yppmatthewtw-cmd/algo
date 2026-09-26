@@ -175,7 +175,7 @@ liveV  = (liveIp >= 0 and liveIl >= 0) ? liveIn * 27 + liveIp * 9 + liveIe * 3 +
     s = rep(s, '"R2 M2 " + (rsiBandMd == "固定: 30 / 70"', '"R3 M2 " + (liveIn == 0 ? "轉勢 " : liveIn == 1 ? "穿越 " : "任一 ") + (rsiBandMd == "固定: 30 / 70"')
     s = rep(s, '"===== R2 模式 2+4 回測 (RSI區+EMA9; 模式 1/3 "', '"===== R3 模式 2+4 回測 (RSI區 " + m2EntryMd + "; EMA9; 模式 1/3 "')
     s = rep(s, '(含 S-M2&M4 或 ④f 選的賣法 / M2區結束 / SL / EOD / 窗口結束)', '(含 S-M4區&M2 或 ④f 選的賣法 / M2區結束 / SL / EOD / 窗口結束)')
-    s = rep(s, '"期內無交易 — 檢查 ⑤ 時段 / margin_long = 0 / ④c 可買區規則 (下界百分位、結束規則) / ④e 模式 4 / ⑨b 自動調參"', '"期內無交易 — 檢查 ⑤ 時段 / margin_long = 0 / ④c 可買區規則 (進區方式、下界百分位、結束規則、快慢線過濾) / ④e 模式 4"', 0) if False else s
+    s = rep(s, '"期內無交易 — 檢查 ⑤ 時段 / margin_long = 0 / ④c 可買區規則 (下界百分位、結束規則) / ④e 模式 4"', '"期內無交易 — 檢查 ⑤ 時段 / margin_long = 0 / ④c 可買區規則 (進區方式、下界百分位、結束規則、快慢線過濾) / ④e 模式 4"')
     assert 'iS2' not in s and 'liveIs' not in s
     return s
 

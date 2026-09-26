@@ -635,3 +635,21 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 | `TV-1M-dashboard_(mode 1-4)_R2_mode2_4only_(09月26日; 17.40).pine` (907 行) | https://claude.ai/artifact/8tQgEoYh53Nc931j8y5LE7 |
 | `TV-1M-RSI-mode2_R2_mode2_4only_(09月26日; 17.40).pine` (204 行) | https://claude.ai/artifact/3zGZHFRNUyFK8VChFzwQwh |
 | `TV-1M-winrate-mode4_R2_mode2_4only_(09月26日; 17.40).pine` (80 行) | https://claude.ai/artifact/YZhJL5xpPNEXCi5RXDVxju |
+
+---
+
+## R3 · 模式 2 進區加金叉 + 快慢線過濾, 模式 4 紅柱 = 可賣區 (TV-1M-*_R3_mode2_4only_, 2026-09-26 21:11)
+
+針對 NVDA 2026-09-25 1 分鐘圖 (R2 截圖): 下跌途中兩次反彈買入被 M2區結束 止損, 之後 15:15–15:47 ET 的急升沒有買到。由 R2 再套 `tradingview/patch_r3_mode24.py` (`build_r3_mode24.py`) 產出。
+
+- **④c 進可買區方式** (預設「兩者任一」): 轉勢且谷底到下界 (R2), 或 RSI14 升穿 RSI28 (金叉)。急升時 RSI14 不會先跌到下界再轉勢, 只會由中間直接升穿 RSI28, 加入金叉進區才買得到。穿越進區的谷底 / 峰頂 = 最近 10 根 RSI14 最低 / 最高 (結束規則「跌破谷底」用)。可賣區對稱 (轉勢到上界 或 死叉)。
+- **④c 快慢線過濾** (預設開): 買入那一根必須 RSI14 > RSI28; RSI14 剛升穿 RSI28 也算「剛出現」。下跌途中的反彈 (快線仍在慢線之下) 不買。賣出對稱 (RSI14 < RSI28)。
+- **④e / ④f 模式 4 紅柱 (EMA9 向下) = 可賣區 (狀態)**: 整體賣點 = 處於模式 4 可賣區 且 模式 2 賣訊 (處於可賣區 且 RSI14 < RSI28, 本根至少一個剛出現: 剛進可賣區 / EMA9 剛轉向下 / RSI14 剛跌破 RSI28), 出場原因 S-M4區&M2。模式 4 副圖紅柱底色加深, 由可買轉可賣區那一根標「可賣」。
+- **⑨ 掃描 81 組** = 進區方式 {轉勢, 穿越, 任一} × 下界百分位 {5, 10, 20} × 結束規則 {3} × 模式 4 根數 {1, 3, 5} (27 個區間狀態機; 賣法與過濾用 ④f / ④c 現值)。
+- 這裡沒有 NVDA 資料, 無法驗證那兩筆一定被過濾、急升一定買到; 這是按截圖上 RSI / EMA9 的形態推的參數, 掛上後看 ⑨ 掃描表與 Strategy Tester 對照。
+
+| 腳本 | 貼上工具 |
+|:---|:---|
+| `TV-1M-dashboard_(mode 1-4)_R3_mode2_4only_(09月26日; 21.11).pine` (923 行) | https://claude.ai/artifact/SmcJKViFpe7Mb6eN3twgAB |
+| `TV-1M-RSI-mode2_R3_mode2_4only_(09月26日; 21.11).pine` (216 行) | https://claude.ai/artifact/4NnQNdYGkmu7vqxyuPS7Ef |
+| `TV-1M-winrate-mode4_R3_mode2_4only_(09月26日; 21.11).pine` (82 行) | https://claude.ai/artifact/5xJ8n9viddJmzrg2E1g5EB |

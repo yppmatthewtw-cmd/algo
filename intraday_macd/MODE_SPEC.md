@@ -312,3 +312,29 @@ sellSig (預設) = m2InSell and (not useM4 or not m4Up) and (m2SellStart or m4Dn
 出場順序: S-M2&M4 (或 ④f 選的賣法) → M2區結束 → SL → EOD → 窗口結束。
 
 **掃描 (⑨, R2)**: 81 組 = 下界百分位 {5,10,20} × 結束規則 {A 破慢線或谷底, B RSI14 轉下, C RSI28 轉下} × 模式 4 根數 {1,3,5} × 賣法 {M2&M4, 進賣區即賣, 只靠區結束}; 編號 v = P序×27 + 結束序×9 + 根數序×3 + 賣法序; 9 個模式 2 區間狀態機各自獨立 (每日清空、進區優先、谷底 / 峰頂記錄與 ④c 相同)。④c 用固定 30/70、百分位不在 {5/95, 10/90, 20/80}、模式 4 根數不在 {1,3,5}、或賣法為舊規則時, 現行組合顯示「不在網格」。
+
+---
+
+## 14. R3 變體 · 模式 2 進區方式 / 快慢線過濾 / 模式 4 可賣區 (TV-1M-*_R3_mode2_4only_)
+
+在第 13 節 R2 之上:
+
+| 參數 | 預設 | 意思 |
+|:---|:---|:---|
+| `m2EntryMd` (④c) | 兩者任一 | 進可買區 = 轉勢且谷底到下界 (R2) 或 RSI14 升穿 RSI28; 可賣區對稱 (轉勢到上界 或 RSI14 跌破 RSI28) |
+| `m2SwingLen` (④c) | 10 | 穿越進區時的谷底 / 峰頂 = 最近 N 根 RSI14 最低 / 最高 (結束規則「跌破谷底 / 升破峰頂」用) |
+| `m2FastAbove` (④c) | 開 | 買入要求 RSI14 > RSI28 (剛升穿也算剛出現); 賣出要求 RSI14 < RSI28 (剛跌破也算剛出現) |
+| `sellRule` 選項 0 (④f) | 模式 4 可賣區 (紅柱) + 模式 2 賣訊 | 出場原因 S-M4區&M2 |
+
+```
+m2BuyStart  = (entTurn and turnUpF and reachLoF) or (entCross and xFSup)
+m2Trough    = 轉勢進區 ? rsiF[1] : lowest(rsiF, 10)
+m2BuyOK     = not m2FastAbove or rsiF > rsiS
+buySig      = m2InBuy and m2BuyOK and m4Up and (m2BuyStart or xFSup or m4Start)      (模式 1/3 關閉時)
+m4SellZone  = not m4Up                                                               EMA9 斜率 < 0 = 紅柱
+sellSig     = m2InSell and (rsiF < rsiS) and m4SellZone and (m2SellStart or m4DnStart or xFSdn)
+```
+
+**買點觸發的那一根** (三選一, 其餘條件已成立): RSI14 剛進可買區 (轉勢到界 或 升穿 RSI28); RSI14 剛升穿 RSI28 (可買區早已開始但之前快線在慢線之下); EMA9 剛轉向上。**賣點觸發的那一根**: 剛進可賣區; RSI14 剛跌破 RSI28; EMA9 剛轉向下 (進入模式 4 可賣區)。其餘出場同 R2 (M2區結束 → SL → EOD → 窗口結束)。
+
+**掃描 (⑨, R3)**: 81 組 = 進區方式 {轉勢, 穿越, 任一} × 下界百分位 {5, 10, 20} × 結束規則 {A, B, C} × 模式 4 根數 {1, 3, 5}; 編號 v = 進區序×27 + P序×9 + 結束序×3 + 根數序; 27 個模式 2 區間狀態機; 賣法與快慢線過濾用 ④f / ④c 現值 (舊規則賣法不模擬)。
