@@ -366,3 +366,14 @@ buySig      = m2InBuy and m4Up and (m2BuyStart or m4Start)                (模�
 sellSig     = m2InSell and m4SellZone and (m2SellStart or m4DnStart)      (④f 預設賣法)
 ```
 出場順序同 R2。**掃描 (⑨, R5)**: 81 組 = 下界百分位 {5,10,20} × 上界百分位 {80,90,95} × 結束規則 {A,B,C} × 模式 4 根數 {1,3,5}; 編號 v = 下界序×27 + 上界序×9 + 結束序×3 + 根數序; 27 個區間狀態機。
+
+---
+
+## 17. R6 變體 · 模式 4 離開可買區即平倉 (TV-1M-*_R6_mode2_4only_)
+
+在第 16 節 R5 之上: `m4ExitOnEnd` (④e, 預設開)。
+```
+m4DnStart = useM4 and not m4Up and m4Up[1]        EMA9 剛轉向下 = 模式 4 離開可買區
+持倉中 m4DnStart → strategy.close("M4區結束")     其它模式的買點已失效, 不再等模式 2 賣訊
+```
+出場順序 (R6): S-M4區&M2 (或 ④f 選的賣法) → M2區結束 → M4區結束 → SL → EOD → 窗口結束。掃描各組用自己的 EMA9 根數 (1/3/5) 判斷「剛轉向下」。

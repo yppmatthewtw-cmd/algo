@@ -677,3 +677,9 @@ R3 的「RSI14 升穿 RSI28」進區會在 RSI 中間位置產生很多 ▲ / �
 | `TV-1M-dashboard_(mode 1-4)_R5_mode2_4only_(09月26日; 21.53).pine` (907 行) | https://claude.ai/artifact/So5eUtRx1aRd8cuoRwXtca |
 | `TV-1M-RSI-mode2_R5_mode2_4only_(09月26日; 21.53).pine` (187 行) | https://claude.ai/artifact/RwvQ3divDXrXakydpyp8Na |
 | `TV-1M-winrate-mode4_R5_mode2_4only_(09月26日; 21.53).pine` (82 行) | https://claude.ai/artifact/DdhsQPpFM71hHsuM8Y8CBS |
+
+---
+
+## R6 · 模式 4 離開可買區即平倉 (TV-1M-*_R6_mode2_4only_, 2026-09-26 22:09)
+
+`tradingview/patch_r6_mode24.py` (`build_r6_mode24.py`): 在 R5 之上, ④e 新增 `m4ExitOnEnd` (預設開): 持倉中 EMA9 剛轉向下 (模式 4 離開可買區, 其它模式的買點已失效) → 那一根收盤掛單平倉, 出場原因 M4區結束; 排在賣訊 (S-M4區&M2) 與 M2區結束 之後、固定止損之前。掃描 81 組同步 (各組用自己的 EMA9 根數判斷)。副圖 RSI / 模式 4 只換名稱與表頭。
