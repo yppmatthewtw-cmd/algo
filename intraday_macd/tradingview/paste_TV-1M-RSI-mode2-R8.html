@@ -1,0 +1,395 @@
+<title>TV-1M-RSI-mode2_R8_mode2_4only 貼上工具</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F4F6F3;--surface:#FFFFFF;--ink:#17211C;--muted:#5D6B64;--line:#D9E0DB;
+  --accent:#0E6F6B;--accent-ink:#FFFFFF;--accent-soft:#DDEEEC;
+  --ok:#1E7F3E;--ok-soft:#DFF2E4;--warn:#9A6A0B;--warn-soft:#FBF0D3;--bad:#B3362A;--bad-soft:#F9E1DD;
+  --code-bg:#0F1614;--code-ink:#D8E4DE;
+  --sans:"IBM Plex Sans","PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1513;--surface:#171F1B;--ink:#E4EBE6;--muted:#95A59C;--line:#2A3630;
+    --accent:#4CC3B8;--accent-ink:#06211E;--accent-soft:#163430;
+    --ok:#5BCB7C;--ok-soft:#173824;--warn:#E3B24C;--warn-soft:#3A2E10;--bad:#F07A6C;--bad-soft:#40201B;
+    --code-bg:#0A0F0D;--code-ink:#CDD9D2;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1513;--surface:#171F1B;--ink:#E4EBE6;--muted:#95A59C;--line:#2A3630;
+  --accent:#4CC3B8;--accent-ink:#06211E;--accent-soft:#163430;
+  --ok:#5BCB7C;--ok-soft:#173824;--warn:#E3B24C;--warn-soft:#3A2E10;--bad:#F07A6C;--bad-soft:#40201B;
+  --code-bg:#0A0F0D;--code-ink:#CDD9D2;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;margin:0;padding-inline:16px;padding-block:28px 56px}
+.wrap{max-width:900px;margin:0 auto;display:grid;gap:22px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+h1{font-family:var(--mono);font-size:clamp(20px,4.2vw,30px);font-weight:500;margin:4px 0 6px;letter-spacing:-.01em;text-wrap:balance;word-break:break-all}
+h2{font-size:17px;font-weight:600;margin:0 0 10px}
+p{margin:0}
+.lead{color:var(--muted);max-width:68ch}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.hero{display:grid;gap:14px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid transparent;padding:12px 18px;font-weight:600}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.primary{background:var(--accent);color:var(--accent-ink);font-size:17px;padding:14px 22px}
+.secondary{background:var(--accent-soft);color:var(--ink);border-color:var(--line)}
+.meta{font-family:var(--mono);font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 18px;font-variant-numeric:tabular-nums}
+.status{min-height:24px;font-size:14px;padding:8px 12px;border-radius:6px;display:none}
+.status.ok{display:block;background:var(--ok-soft);color:var(--ok)}
+.status.bad{display:block;background:var(--bad-soft);color:var(--bad)}
+.name{font-family:var(--mono);background:var(--accent-soft);padding:2px 6px;border-radius:4px;word-break:break-all}
+ol.steps{margin:0;padding-left:0;list-style:none;display:grid;gap:12px;counter-reset:s}
+ol.steps li{display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:start}
+ol.steps li::before{counter-increment:s;content:counter(s);width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:600;display:grid;place-items:center;font-size:14px;margin-top:1px}
+ol.steps b{font-weight:600}
+.check{display:grid;gap:8px;margin-top:10px}
+.check div{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:10px 12px;border-radius:6px;background:var(--bg);font-size:14px}
+.check .k{font-family:var(--mono);color:var(--muted);white-space:nowrap}
+.check code{font-family:var(--mono);font-size:13px;word-break:break-all}
+.warnbox{border-left:4px solid var(--warn);background:var(--warn-soft);padding:12px 14px;border-radius:6px;font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+td.m{font-family:var(--mono);font-size:13px}
+.tablewrap{overflow-x:auto}
+textarea{width:100%;height:62vh;min-height:320px;resize:vertical;background:var(--code-bg);color:var(--code-ink);border:1px solid var(--line);border-radius:8px;padding:14px;font-family:var(--mono);font-size:12.5px;line-height:1.5;white-space:pre;overflow:auto;tab-size:4}
+textarea:focus-visible{outline:3px solid var(--accent)}
+.small{font-size:13px;color:var(--muted)}
+@media (prefers-reduced-motion: no-preference){ .status{transition:opacity .2s} }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">TradingView · Pine Script v6 · R8 · 只做多 · 只用模式 2 + 4 (模式 1/3 已刪除; 紅柱立即平倉) · 1 分鐘日內策略 (市場預設 美股)</div>
+      <h1 id="scriptName">TV-1M-RSI-mode2_R8_mode2_4only_(09月27日; 00:58)</h1>
+      <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
+    </div>
+    <div class="card">
+      <div class="actions">
+        <button class="primary" id="copyAll" type="button">複製全部程式碼</button>
+        <button class="secondary" id="copyName" type="button">複製腳本名稱</button>
+        <button class="secondary" id="dlFile" type="button">下載 .pine.txt 檔</button>
+        <span class="meta"><span id="mLines">— 行</span><span id="mBytes">— KB</span><span>最後一行 = END OF FILE</span></span>
+      </div>
+      <div class="status" id="status" role="status" aria-live="polite" style="margin-top:12px"></div>
+    </div>
+  </header>
+
+  <section class="card">
+    <h2>貼上步驟</h2>
+    <ol class="steps">
+      <li><span><b>圖表週期切 1 分鐘</b>, 開要測的標的 (例如 AMEX:SOXL)。交易時段與市場預設在 Inputs 的「時段」群組裡改。</span></li>
+      <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
+      <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
+      <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">TV-1M-RSI-mode2_R8_mode2_4only_(09月27日; 00:58)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
+    </ol>
+    <div class="check">
+      <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
+      <div><span class="k">第 14 行</span><code>indicator("TV-1M-RSI-mode2_R8_mode2_4only_(09月27日; 00:58)", shorttitle="TV-1M-RSI-mode2_R8_mode2_4only_(09月27日; 00:58)", …)</code></div>
+      <div><span class="k">最後一行</span><code id="cLast">—</code></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>貼上前自我檢查 <span class="small">(不確定剪貼簿裡是不是完整的? 先貼到這裡驗)</span></h2>
+    <p class="small" style="margin-bottom:10px">按了複製之後, 先在下面這個框 Ctrl+V 一次。它會告訴你剪貼簿裡有幾個 byte、幾行、有沒有 END OF FILE。這裡通過了, 再去 Pine Editor 貼。</p>
+    <textarea id="selfcheck" spellcheck="false" style="height:120px;min-height:80px" placeholder="在這裡 Ctrl+V, 貼上剪貼簿的內容 (貼完自動檢查)"></textarea>
+    <div class="status" id="scStatus" role="status" aria-live="polite" style="margin-top:10px"></div>
+  </section>
+
+  <section class="card">
+    <h2>之前為什麼一直報 Missing closing parenthesis / CE10244</h2>
+    <p class="small" style="margin-bottom:10px">三次報錯都指向同一件事: 複製過程只帶走了前 8192 個 byte。切在句子中間就報 Missing closing parenthesis; 切在註解行的開頭 (剛好整行乾淨) 就沒有語法錯誤, 但前 8 KB 裡一個 plot / 下單函式都沒有, 於是報 CE10244。檔案本身兩種情況都沒有問題。</p>
+    <div class="tablewrap">
+    <table>
+      <tr><th>版本</th><th>TradingView 報錯的行</th><th>那一行在原檔的 byte 位置</th><th>結論</th></tr>
+      <tr><td class="m">(09.19;12:34)</td><td class="m">showClusterBox = input.bool(…</td><td class="m">8150 – 8245</td><td>8192 落在句子中間</td></tr>
+      <tr><td class="m">(09.19;13:02)</td><td class="m">depthPctl = input.float(…</td><td class="m">7171 – 7289 (+ 編輯器頂端多出 13 行 ≈ 900 bytes)</td><td>8192 落在句子中間</td></tr>
+      <tr><td class="m">hist&amp;rsi (00:53)</td><td class="m">第 1 行 · CE10244 A strategy must contain…</td><td class="m">8192 剛好切在第 66 行 (註解) 開頭</td><td>前 65 行沒有任何輸出函式</td></tr>
+    </table>
+    </div>
+    <div class="warnbox" style="margin-top:12px">整份檔案約 17.1 KB, 任何只載入「前 8 KB」的預覽視窗都會截斷它。之後所有版本檔尾都有 END OF FILE 標記, 貼完看一眼最後一行就知道有沒有貼齊。</div>
+  </section>
+
+  <section class="card">
+    <h2>完整程式碼 <span class="small">(備用: 點進框內 Ctrl+A → Ctrl+C)</span></h2>
+    <textarea id="code" readonly spellcheck="false" aria-label="Pine Script 完整程式碼"></textarea>
+  </section>
+</div>
+
+<script type="text/plain" id="pine-src">
+// ═══════════════════════════════════════════════════════════════════════════════
+//  TV-1M-RSI-mode2_R8_mode2_4only_(09月27日; 00:58)  ·  R8 · 模式 2 (只用 RSI14 的可買區 / 可賣區) 專用副圖 · 配合主策略 TV-1M-dashboard_(mode 1-4)_R8_mode2_4only 一起掛 (R8 只做多, 買賣只用模式 2 + 4, 模式 1/3 已刪除)
+//  R5: RSI28 已刪除; 進可買區 = RSI14 轉勢向上且谷底到下界, 進可賣區 = 轉勢向下且峰頂到上界; 結束 (② 可選) = 跌破進區谷底 [預設] / RSI14 轉勢向下 / 跌破 50 或谷底
+//  R3 進區方式 (② 預設「兩者任一」): 轉勢且谷底到下界, 或 RSI14 升穿 RSI28 (急升時 RSI 不會先跌到下界); 穿越進區的谷底 / 峰頂 = 最近 10 根 RSI14 最低 / 最高; 右上表現況會標明快慢線關係 (主策略買入要求 RSI14 > RSI28)
+//  模式 2 是「狀態」, 不形成絕對買賣點: 下界 / 上界 = 最近 120 根 RSI14 的第 10 / 90 百分位 (可切固定 30/70)
+//  進入可買區 = RSI14 梯度由 ≤0 轉 >0 (谷底在前一根) 且 谷底到達或低於下界; 一直持續直到「昇不上」= RSI14 跌破 RSI28, 或 RSI14 跌破進區時的谷底 (② 可改為只看 RSI14 / RSI28 轉勢); 每個交易日開始時清空
+//  進入可賣區 = 相反 (梯度由 ≥0 轉 <0 且 峰頂到達或高於上界), 結束條件相反; 進入另一區直接取代現區
+//  R3 的整體買點 = 可買區 且 RSI14 > RSI28 且 EMA9 向上, 本根至少一個剛出現 (▲ / RSI14 剛升穿 RSI28 / EMA9 剛轉向上); 整體賣點 = 模式 4 可賣區 (紅柱) 且 可賣區 且 RSI14 < RSI28, 本根至少一個剛出現; 可買區結束 (×) 持倉一律平倉
+//  顯示: 深棕粗線 RSI14 · 橙細線 RSI28 · 綠/紅細線 = 下界/上界 · 底色 淺藍 = 可買區 / 淺紅 = 可賣區 · ▲ 淺藍 = 進可買區 · ▼ 淺紅 = 進可賣區 · × = 區間結束 · 圓點 = 快慢線交叉
+//  ② 的 快慢線長度 / 下上界方式 / 百分位 / 到界回看根數 / 區間結束規則 / 每日清空 / 進區方式 / 穿越谷底根數 必須與主策略 ④c 一致; 這支不下單; plot 的 title 必須是常數字串
+//  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 187 行, 最後一行是 END OF FILE
+// ═══════════════════════════════════════════════════════════════════════════════
+//@version=6
+indicator("TV-1M-RSI-mode2_R8_mode2_4only_(09月27日; 00:58)", shorttitle="TV-1M-RSI-mode2_R8_mode2_4only_(09月27日; 00:58)", overlay = false, max_labels_count = 500, max_lines_count = 500)
+
+// ─────────────────────────── ① 回測期間 (與主策略同一套設定, 只用來畫底色) ───────────────────────────
+gBT        = "① 回測期間 (與主策略對齊)"
+winMode    = input.string("最近 N 天 (日曆)", "回測期間方式 (三選一; 預設一個月)", options = ["最近 N 個交易日", "最近 N 天 (日曆)", "指定日期"], group = gBT, display = display.none)
+tradDays   = input.int(21, "方式 A · 最近 N 個交易日", minval = 1, maxval = 250, group = gBT, display = display.none)
+lookbackD  = input.int(30, "方式 B · 最近 N 天 (日曆; 30 = 一個月)", minval = 1, group = gBT, display = display.none)
+startIn    = input.time(timestamp("19 Aug 2026 00:00 -0400"), "方式 C · 開始日期 (含)", group = gBT, display = display.none)
+endIn      = input.time(timestamp("19 Sep 2026 23:59 -0400"), "方式 C · 結束日期 (含)", group = gBT, display = display.none)
+tzX        = syminfo.timezone
+lastDay0   = timestamp(tzX, year(last_bar_time, tzX), month(last_bar_time, tzX), dayofmonth(last_bar_time, tzX), 0, 0, 0)
+var int tdStart = na
+if na(tdStart)
+    ddT   = lastDay0
+    cntD  = 1
+    guardD = 0
+    while cntD < tradDays and guardD < 400
+        ddT    -= 86400000
+        guardD += 1
+        dwD = dayofweek(ddT + 43200000, tzX)
+        if dwD != dayofweek.saturday and dwD != dayofweek.sunday
+            cntD += 1
+    tdStart := ddT
+btStart    = winMode == "最近 N 個交易日" ? tdStart : winMode == "最近 N 天 (日曆)" ? timenow - lookbackD * 86400000 : startIn
+btEnd      = winMode == "指定日期" ? endIn : timenow
+inWindow   = time >= btStart and time <= btEnd
+
+// ─────────────────────────── ② 模式 2 · RSI 14 / 28 可買區 / 可賣區 (狀態) — 與主策略 ④c 的設定必須一致 ───────────────────────────
+gR2        = "② 模式 2 · RSI 14 可買區 / 可賣區 (與主策略 ④c 保持一致)"
+rsiFastLen = input.int(14, "RSI 長度 (R5 只用這一條 RSI14; RSI28 已刪除)", minval = 2, group = gR2, tooltip = "務必與主策略 ④c 的同名設定一致, 否則兩個副圖顯示的區間會對不上。", display = display.none)
+rsiBandMd  = input.string("動態: 最近 N 根 RSI14 的百分位", "下界 / 上界怎麼定", options = ["動態: 最近 N 根 RSI14 的百分位", "固定: 30 / 70"], group = gR2, display = display.none)
+rsiPctLen  = input.int(120, "動態: 取樣根數 N", minval = 20, maxval = 1000, group = gR2, display = display.none)
+rsiPctLo   = input.float(10, "動態: 下界 = 第幾百分位", minval = 1, maxval = 40, step = 1, group = gR2, display = display.none)
+rsiPctHi   = input.float(90, "動態: 上界 = 第幾百分位", minval = 60, maxval = 99, step = 1, group = gR2, display = display.none)
+rsiFixLo   = input.float(30, "固定: 下界", minval = 1, maxval = 50, step = 1, group = gR2, display = display.none)
+rsiFixHi   = input.float(70, "固定: 上界", minval = 50, maxval = 99, step = 1, group = gR2, display = display.none)
+m2Reach    = input.int(1, "轉勢前幾根內曾到達 / 超過該界才算 (1 = 轉勢那根的谷底 / 峰頂本身要在界外)", minval = 1, maxval = 10, group = gR2, display = display.none)
+m2ResetDay = input.bool(true, "每個交易日開始時清空區間 (與主策略 ④c 一致)", group = gR2, display = display.none)
+zoneEndMd  = input.string("RSI14 跌破進區時的谷底 (反彈失敗 = 昇不上)", "可買區何時結束 (可賣區用相反條件)", options = ["RSI14 跌破進區時的谷底 (反彈失敗 = 昇不上)", "RSI14 轉勢向下 (梯度轉負)", "RSI14 跌破 50, 或跌破進區谷底"], group = gR2, tooltip = "R5 只用 RSI14。可買區從進入那一根開始一直持續, 直到「昇不上」: 預設 = RSI14 跌破進區那一根的谷底 (反彈失敗); 另兩種: RSI14 轉勢向下 (區間最短, 一個小回落就結束), 或 RSI14 跌破 50 或跌破谷底。可賣區用相反條件 (升破峰頂 / 轉勢向上 / 升破 50 或升破峰頂)。進入另一區會直接取代現區; 區間可跨日, 預設每個交易日開始時清空。", display = display.none)
+// 全部 ta.* 在全域無條件計算 (Pine v6 的 and / or 是短路求值)
+rsiF       = ta.rsi(close, rsiFastLen)
+rsiPLo     = ta.percentile_linear_interpolation(rsiF, rsiPctLen, rsiPctLo)
+rsiPHi     = ta.percentile_linear_interpolation(rsiF, rsiPctLen, rsiPctHi)
+rsiLoBand  = rsiBandMd == "固定: 30 / 70" ? rsiFixLo : nz(rsiPLo, rsiFixLo)
+rsiHiBand  = rsiBandMd == "固定: 30 / 70" ? rsiFixHi : nz(rsiPHi, rsiFixHi)
+turnUpF    = rsiF > rsiF[1] and rsiF[1] <= rsiF[2]     // RSI14 梯度由 ≤0 轉 >0 (谷底在前一根, 本根收盤確認, 不重繪)
+turnDnF    = rsiF < rsiF[1] and rsiF[1] >= rsiF[2]     // RSI14 梯度由 ≥0 轉 <0 (峰頂在前一根)
+sinceLoF   = ta.barssince(rsiF <= rsiLoBand)           // 距上次 RSI14 到達 / 低於下界幾根
+sinceHiF   = ta.barssince(rsiF >= rsiHiBand)
+reachLoF   = nz(sinceLoF[1], 99999) < m2Reach          // 谷底那根 (或其前 m2Reach-1 根內) 曾到下界
+reachHiF   = nz(sinceHiF[1], 99999) < m2Reach
+m2BuyStart  = turnUpF and reachLoF                     // 進入可買區 (單根事件; R5 只看 RSI14: 轉勢向上且谷底到下界)
+m2SellStart = turnDnF and reachHiF                     // 進入可賣區 (單根事件)
+m2BuyOK    = true                                      // R5: 無快慢線過濾 (RSI28 已刪除)
+m2SellOK   = true
+endModeA   = zoneEndMd == "RSI14 跌破進區時的谷底 (反彈失敗 = 昇不上)"
+endModeB   = zoneEndMd == "RSI14 轉勢向下 (梯度轉負)"
+var int   m2State  = 0                                 // 1 = 可買區, -1 = 可賣區, 0 = 無
+var float m2Trough = na                                // 進入可買區那一根的谷底 (RSI14 值)
+var float m2Peak   = na                                // 進入可賣區那一根的峰頂
+buyEndRaw  = endModeA ? rsiF < m2Trough : endModeB ? turnDnF : (rsiF < 50 or rsiF < m2Trough)   // 「昇不上」
+sellEndRaw = endModeA ? rsiF > m2Peak   : endModeB ? turnUpF : (rsiF > 50 or rsiF > m2Peak)     // 相反: 「跌不下」
+newDay     = dayofmonth != dayofmonth[1]
+if m2ResetDay and newDay
+    m2State := 0
+m2Prev     = m2State
+if m2BuyStart                                          // 進入新區優先於現區結束
+    m2State  := 1
+    m2Trough := rsiF[1]
+else if m2SellStart
+    m2State := -1
+    m2Peak  := rsiF[1]
+else if m2State == 1 and buyEndRaw
+    m2State := 0
+else if m2State == -1 and sellEndRaw
+    m2State := 0
+m2InBuy    = m2State == 1                              // 模式 2 的輸出只有兩種狀態: 可買區 / 可賣區
+m2InSell   = m2State == -1
+m2BuyEnd   = m2Prev == 1 and not m2InBuy               // 可買區結束 (含直接轉入可賣區) → 持倉要平
+m2SellEnd  = m2Prev == -1 and not m2InSell
+m2BuyRaw   = turnUpF                                   // 未到界的轉勢 (只用來計數比較)
+m2SellRaw  = turnDnF
+m2Zone     = m2InBuy ? "可買區" : m2InSell ? "可賣區" : "無"
+
+// ─────────────────────────── ③ 顯示 ───────────────────────────
+gDS        = "③ 顯示"
+lwRsi      = input.int(3, "RSI14 線粗細", minval = 1, maxval = 6, group = gDS, display = display.none)
+showRaw    = input.bool(false, "顯示未到界的轉勢 (灰色小三角, 只供對照; 預設關)", group = gDS, display = display.none)
+showVL     = input.bool(true, "進入可買 / 可賣區那一根畫一條淺灰幼直線 (買 點線 / 賣 虛線)", group = gDS, display = display.none)
+vlTransp   = input.int(78, "直線淡化 (透明度 %; 越大越淡)", minval = 30, maxval = 95, step = 2, group = gDS, display = display.none)
+showBg     = input.bool(true, "區間底色 (可買區 淺藍 / 可賣區 淺紅) + 回測期間底色", group = gDS, display = display.none)
+showTbl    = input.bool(true, "右上顯示訊號統計", group = gDS, display = display.none)
+tblPos     = input.string("右上", "統計表位置", options = ["右上", "右下"], group = gDS, display = display.none)
+
+cBrown     = color.rgb(92, 51, 23)          // 模式 2: 深棕 (粗) = RSI14
+cBuyTri    = color.rgb(120, 180, 255)       // 進入可買區 ▲ 淺藍
+cSellTri   = color.rgb(255, 120, 120)       // 進入可賣區 ▼ 淺紅
+cBuyZone   = color.new(color.rgb(60, 140, 255), 85)
+cSellZone  = color.new(color.rgb(255, 80, 80), 88)
+
+plot(rsiF, "RSI14", color = cBrown, linewidth = lwRsi, display = display.pane + display.price_scale)
+pLo   = plot(rsiLoBand, "下界 (lower band)", color = color.new(color.green, 40), linewidth = 1, display = display.pane)
+pHi   = plot(rsiHiBand, "上界 (upper band)", color = color.new(color.red, 40), linewidth = 1, display = display.pane)
+p0    = plot(0, "0", color = color.new(color.gray, 90), display = display.pane)
+p100  = plot(100, "100", color = color.new(color.gray, 90), display = display.pane)
+fill(p0, pLo, color = color.new(color.green, 92), title = "下界以下")
+fill(pHi, p100, color = color.new(color.red, 92), title = "上界以上")
+bgcolor(showBg and m2InBuy ? cBuyZone : showBg and m2InSell ? cSellZone : na, title = "可買區 / 可賣區 底色")
+bgcolor(showBg and inWindow ? color.new(color.blue, 96) : na, title = "回測期間底色")
+
+// 進入區間那一根標在 RSI14 上: ▲ 淺藍 = 進入可買區 (到下界後轉勢向上); ▼ 淺紅 = 進入可賣區 (到上界後轉勢向下); 區間結束 = 小叉 (plotshape, 不佔 label 上限 500)
+if m2BuyStart and inWindow
+    label.new(bar_index, rsiF, "", style = label.style_triangleup,   color = cBuyTri,  size = size.small, yloc = yloc.price)
+if m2SellStart and inWindow
+    label.new(bar_index, rsiF, "", style = label.style_triangledown, color = cSellTri, size = size.small, yloc = yloc.price)
+plotshape(m2BuyEnd  and inWindow ? rsiF : na, "可買區結束 ×", style = shape.xcross, location = location.absolute, color = color.new(color.blue, 30), size = size.tiny, display = display.pane)
+plotshape(m2SellEnd and inWindow ? rsiF : na, "可賣區結束 ×", style = shape.xcross, location = location.absolute, color = color.new(color.red, 30),  size = size.tiny, display = display.pane)
+if showRaw and m2BuyRaw and not m2BuyStart and inWindow
+    label.new(bar_index, rsiF, "", style = label.style_triangleup,   color = color.new(color.gray, 55), size = size.tiny, yloc = yloc.price)
+if showRaw and m2SellRaw and not m2SellStart and inWindow
+    label.new(bar_index, rsiF, "", style = label.style_triangledown, color = color.new(color.gray, 55), size = size.tiny, yloc = yloc.price)
+
+// 淺灰幼直線: 與主策略同一個視覺語言 (買 點線 / 賣 虛線), 本副圖內貫通上下
+vlCol = color.new(color.gray, vlTransp)
+if showVL and inWindow and m2BuyStart
+    line.new(bar_index, 0.0, bar_index, 100.0, extend = extend.both, color = vlCol, width = 1, style = line.style_dotted)
+if showVL and inWindow and m2SellStart
+    line.new(bar_index, 0.0, bar_index, 100.0, extend = extend.both, color = vlCol, width = 1, style = line.style_dashed)
+
+// 左側線名標籤 (貼在可見範圍最左那根 K 的數值上)
+var float yF = na
+if time >= chart.left_visible_bar_time and na(yF)
+    yF := rsiF
+var label lbF = na
+if barstate.islast
+    label.delete(lbF)
+    lbF := label.new(chart.left_visible_bar_time, nz(yF, rsiF), "模式2 · RSI" + str.tostring(rsiFastLen) + " (R5 只用這一條) ▲進可買區=到下界後轉勢向上 ▼進可賣區=到上界後轉勢向下 · 底色=區間", xloc = xloc.bar_time, style = label.style_label_left, color = cBrown, textcolor = color.white, size = size.tiny)
+
+// 訊號統計 (靠右, 與主策略的表格同側)
+var int nB = 0
+var int nBr = 0
+var int nS = 0
+var int nSr = 0
+var int nBarB = 0
+var int nBarS = 0
+var int nBarAll = 0
+if inWindow
+    nB   += m2BuyStart ? 1 : 0
+    nBr  += m2BuyRaw ? 1 : 0
+    nS   += m2SellStart ? 1 : 0
+    nSr  += m2SellRaw ? 1 : 0
+    nBarB += m2InBuy ? 1 : 0
+    nBarS += m2InSell ? 1 : 0
+    nBarAll += 1
+posT = tblPos == "右下" ? position.bottom_right : position.top_right
+var table tb = table.new(posT, 2, 7, border_width = 1, frame_width = 1, frame_color = color.gray)
+if barstate.islast and showTbl
+    table.clear(tb, 0, 0, 1, 6)
+    hBg = color.new(color.gray, 70)
+    table.cell(tb, 0, 0, "模式 2 · RSI " + str.tostring(rsiFastLen) + " 可買區 / 可賣區 (R5 只用 RSI14)", text_size = size.tiny, text_color = color.white, bgcolor = cBrown)
+    table.cell(tb, 1, 0, "現況 " + m2Zone, text_size = size.tiny, text_color = color.white, bgcolor = m2InBuy ? color.rgb(40, 110, 220) : m2InSell ? color.rgb(200, 60, 60) : cBrown)
+    table.cell(tb, 0, 1, "RSI14", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 1, str.tostring(rsiF, "#.#"), text_size = size.tiny)
+    table.cell(tb, 0, 2, "下界 / 上界", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 2, str.tostring(rsiLoBand, "#.#") + " / " + str.tostring(rsiHiBand, "#.#") + (rsiBandMd == "固定: 30 / 70" ? " 固定" : " 動態 P" + str.tostring(rsiPctLo, "#") + "/P" + str.tostring(rsiPctHi, "#")), text_size = size.tiny)
+    table.cell(tb, 0, 3, "進可買區: 轉勢向上 → 到下界才算", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 3, str.tostring(nBr) + " → " + str.tostring(nB) + " 次", text_size = size.tiny, text_color = color.blue)
+    table.cell(tb, 0, 4, "進可賣區: 轉勢向下 → 到上界才算", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 4, str.tostring(nSr) + " → " + str.tostring(nS) + " 次", text_size = size.tiny, text_color = color.red)
+    table.cell(tb, 0, 5, "窗內 K 數: 可買區 / 可賣區 / 全部", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 5, str.tostring(nBarB) + " / " + str.tostring(nBarS) + " / " + str.tostring(nBarAll) + "  (可買區 " + str.tostring(nBarAll > 0 ? nBarB * 100.0 / nBarAll : 0.0, "#") + "%)", text_size = size.tiny)
+    table.cell(tb, 0, 6, "區間結束規則", text_size = size.tiny, bgcolor = hBg)
+    table.cell(tb, 1, 6, endModeA ? "跌破進區谷底" : endModeB ? "RSI14 轉勢向下" : "跌破 50 或谷底", text_size = size.tiny)
+// ═══ END OF FILE ═══ TV-1M-RSI-mode2_R8_mode2_4only_(09月27日; 00:58) · 全檔共 187 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+</script>
+<script>
+(function(){
+  var src = document.getElementById('pine-src').textContent;
+  // <script type="text/plain"> 內的換行原樣保留; 只去掉包裝時多出的首尾換行
+  src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
+  var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
+  var bytes = new TextEncoder().encode(src).length;
+  var name = "TV-1M-RSI-mode2_R8_mode2_4only_(09月27日; 00:58)";
+  document.getElementById('code').value = src;
+  document.getElementById('mLines').textContent = lines.length + ' 行';
+  document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';
+  document.getElementById('cLines').textContent = lines.length;
+  document.getElementById('cFirst').textContent = lines[0];
+  document.getElementById('cLast').textContent = lines[lines.length-1];
+  var st = document.getElementById('status');
+  function show(ok, msg){ st.className = 'status ' + (ok ? 'ok' : 'bad'); st.textContent = msg; }
+  function fallbackCopy(text){
+    var ta = document.getElementById('code');
+    if (text !== src) { ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); }
+    ta.focus(); ta.select(); ta.setSelectionRange(0, text.length);
+    var ok = false; try { ok = document.execCommand('copy'); } catch(e) { ok = false; }
+    if (ta !== document.getElementById('code')) document.body.removeChild(ta);
+    return ok;
+  }
+  function copy(text, label){
+    var done = function(){ show(true, '已複製 ' + label + ' ✓  → 到 Pine Editor 按 Ctrl+A 再 Ctrl+V, 然後檢查最後一行'); };
+    var fail = function(){ show(false, '瀏覽器擋住了自動複製。請點進下方程式碼框, 按 Ctrl+A 再 Ctrl+C (Mac 用 ⌘), 內容一樣完整。'); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function(){ fallbackCopy(text) ? done() : fail(); });
+    } else { fallbackCopy(text) ? done() : fail(); }
+  }
+  document.getElementById('copyAll').addEventListener('click', function(){ copy(src, '全部程式碼 (' + lines.length + ' 行, ' + bytes + ' bytes)'); });
+  document.getElementById('copyName').addEventListener('click', function(){ copy(name, '腳本名稱 ' + name); });
+  // 下載: 檔名用 .pine.txt (檢視器的下載白名單沒有 .pine); 在 claude.ai 檢視器內必須經由 downloads 能力儲存,
+  //       在一般瀏覽器 (本機開啟) 則直接用 Blob 下載。兩條路都不經過對話附件的預覽視窗。
+  var dlBtn = document.getElementById('dlFile');
+  var dlName = name.replace(/:/g, '.') + '.pine.txt';
+  var inViewer = !!(window.claude && typeof window.claude.use === 'function');
+  function afterSave(){ show(true, '已儲存 ' + dlName + ' (' + bytes + ' bytes) → 用記事本 / VS Code 開啟, Ctrl+A → Ctrl+C, 再貼到 Pine Editor'); }
+  function localDownload(){
+    var blob = new Blob([src], {type: 'text/plain;charset=utf-8'});
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = dlName;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+    afterSave();
+  }
+  if (inViewer) {
+    window.claude.use('downloads').then(function(ns){ if (!ns) dlBtn.hidden = true; });
+  }
+  dlBtn.addEventListener('click', function(){
+    if (!inViewer) { localDownload(); return; }
+    window.claude.use('downloads').then(function(ns){
+      if (!ns) { show(false, '這個檢視器不提供下載, 請改用【複製全部程式碼】。'); return; }
+      ns.save({filename: dlName, data: src}).then(afterSave, function(err){
+        var c = err && err.code;
+        if (c === 'declined') show(false, '已取消下載。要的話再按一次, 或改用【複製全部程式碼】。');
+        else if (c === 'rate_limited') show(false, '上一個下載提示還開著, 請先處理它再按。');
+        else show(false, '這個檢視器無法下載 (' + (c || '未知') + '), 請改用【複製全部程式碼】。');
+      });
+    });
+  });
+  // 貼上前自我檢查: 比對剪貼簿內容與本頁原始碼
+  var sc = document.getElementById('selfcheck'), scs = document.getElementById('scStatus');
+  function scShow(ok, msg){ scs.className = 'status ' + (ok ? 'ok' : 'bad'); scs.textContent = msg; }
+  function selfCheck(){
+    var t = sc.value.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    if (!t.trim()) { scs.className = 'status'; scs.textContent = ''; return; }
+    var tt = t.replace(/\n+$/, '') + '\n';
+    var tb = new TextEncoder().encode(tt).length, tl = tt.split('\n').length - 1;
+    var last = tt.replace(/\n$/, '').split('\n').pop();
+    if (tt === src) { scShow(true, '完整 ✓  ' + tl + ' 行 / ' + tb + ' bytes, 與本頁原始碼完全一致, 最後一行是 END OF FILE。可以去 Pine Editor 貼了。'); return; }
+    if (Math.abs(tb - 8192) <= 4) { scShow(false, '被截斷 ✗  剪貼簿只有 ' + tb + ' bytes (剛好 8 KB), ' + tl + ' 行 — 這就是 CE10244 的原因。請改按本頁的【複製全部程式碼】或【下載 .pine.txt 檔】。'); return; }
+    if (last.indexOf('END OF FILE') < 0) { scShow(false, '不完整 ✗  ' + tl + ' 行 / ' + tb + ' bytes (應為 ' + lines.length + ' 行 / ' + bytes + ' bytes), 最後一行不是 END OF FILE。'); return; }
+    scShow(false, '有 END OF FILE 但內容與本頁不完全一致 (' + tl + ' 行 / ' + tb + ' bytes, 應為 ' + lines.length + ' 行 / ' + bytes + ' bytes) — 可能是編輯器自動改了縮排或空白, 建議重新複製。');
+  }
+  sc.addEventListener('input', selfCheck); sc.addEventListener('paste', function(){ setTimeout(selfCheck, 0); });
+})();
+</script>
