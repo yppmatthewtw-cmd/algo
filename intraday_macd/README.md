@@ -695,3 +695,14 @@ R3 的「RSI14 升穿 RSI28」進區會在 RSI 中間位置產生很多 ▲ / �
 ## R8 · 只做多; 模式 1 / 3 刪除; 紅柱立即平倉 (TV-1M-*_R8_mode2_4only_, 2026-09-27 00:58)
 
 `tradingview/patch_r8_mode24.py` (`build_r8_mode24.py`), 在 R7 之上: ④f 的「加回模式 1 / 3」開關刪除 (程式內固定不參與), 賣法選項刪除「舊規則 (模式 1 賣訊)」; 模式 1 的上下界線 / ▲▼ / 直線與模式 3 的 DIF/DEA 線 / 金叉死叉標記預設全部關閉 (④ / ④d 可打開純對照, 不影響買賣)。只做多 (沒有任何 strategy.short)。買 = 模式 2 可買區 (RSI14 到下界後轉勢) + 模式 4 綠柱; 賣 = 買入後模式 4 第一根紅柱本根收盤價立即平倉 (M4紅柱) → 可買區結束 → 15:58 收市。
+
+---
+
+## R9 · 模式 1 / 3 程式碼全部刪除; RSI 副圖 + 模式 4 副圖合併 (R9_TV-1M-*_(mode 2,4)_, 2026-09-27 23:15)
+
+`tradingview/build_r9.py` 由 R8 的三支檔案重新組裝: 主策略 `R9_TV-1M-dashboard_(mode 2,4)_` 刪掉所有 MACD 模式 1 / 3 的程式碼 (輸入、計算、校準、畫線、計數、表格列), 改為 `overlay = true` 在主圖畫持倉框 / 成交標記 / 參數表 (預設左下) / 回測報告; 買賣決定只剩模式 2 (RSI14) + 模式 4 (EMA9 斜率 勝率帶), 規則同 R8 (買 = 可買區 + 綠柱; 賣 = 第一根紅柱本根收盤立即平倉 → 可買區結束 → 15:58)。副圖 `R9_TV-1M-RSI-winrate_(mode 2,4)_` 把原 TV-1M-RSI-mode2_ 與 TV-1M-winrate-mode4_ 合成一支: 上半 RSI14 與上下界, 下方 y = −14…−4 綠/紅色帶為模式 4, 表格 10 列。主圖 + 一個副圖即可對照全部訊號。
+
+| 腳本 | 貼上工具 |
+|:---|:---|
+| `R9_TV-1M-dashboard_(mode 2,4)_(09月27日; 23.15).pine` (629 行) | https://claude.ai/artifact/YHiBuzwixXwKs2S5ytpLrv |
+| `R9_TV-1M-RSI-winrate_(mode 2,4)_(09月27日; 23.15).pine` (208 行) | https://claude.ai/artifact/NSsL9NNgk7A4VzCNNiiHs2 |

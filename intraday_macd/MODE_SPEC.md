@@ -398,3 +398,15 @@ buySig  = m2InBuy and m4Up and (m2BuyStart or m4Start)           模式 2 可買
 持倉中 not m4Up → close("M4紅柱", immediately = true)               買入後第一根紅柱, 本根收盤價
 其餘出場: S-M4區&M2 (實際不會先於 M4紅柱) → M2區結束 → SL (預設關) → EOD 15:58 → 窗口結束
 ```
+
+---
+
+## 20. R9 變體 · 模式 1 / 3 程式碼全部刪除; 兩個副圖合併 (R9_TV-1M-*_(mode 2,4)_)
+
+在第 19 節 R8 之上, 由 `build_r9.py` 重新組裝 (不是 patch): 所有 MACD (模式 1 / 模式 3) 的輸入、計算、校準、段落統計、畫線、計數與表格列整支刪除; 主策略改為 `overlay = true` 直接畫在主圖 (持倉框 / 成交標記 / 參數表 / 回測報告), 沒有任何 MACD 副圖。買賣規則與 R8 完全相同:
+```
+buySig  = m2InBuy and m4Up and (m2BuyStart or m4Start)           模式 2 可買區 (RSI14 谷底 ≤ 下界後轉勢向上) + 模式 4 綠柱 (EMA9 斜率 > 0), 本根至少一個剛出現
+持倉中 not m4Up → close("M4紅柱", immediately = true)               買入後第一根紅柱, 本根收盤價
+其餘出場: M2區結束 (④c 結束規則) → SL (預設關) → EOD 15:58 → 窗口結束
+```
+副圖 `R9_TV-1M-RSI-winrate_(mode 2,4)_`: 上半 RSI14 + 上下界 + 可買/可賣區底色 (原 TV-1M-RSI-mode2_); 下方 y = −14…−4 色帶 = 模式 4 (綠 = 可買/可持倉, 紅 = 紅柱→平倉, 轉色那根有標籤); 表格 10 列 (0–6 模式 2, 7–9 模式 4)。掃描 (⑨) 81 組不變。
