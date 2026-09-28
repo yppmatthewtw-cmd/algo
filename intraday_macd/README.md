@@ -545,9 +545,9 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 
 | 腳本 | 貼上工具 |
 |:---|:---|
-| `TV-1M-dashboard_(mode 1-4)_(09月20日; 21.59).pine` (829 行) | https://claude.ai/artifact/KgJkRDEyys75bsjW3HerXu |
-| `TV-1M-RSI-mode2_(09月20日; 21.59).pine` (203 行) | https://claude.ai/artifact/GzebPs3jwTA9xgC31KTUCE |
-| `TV-1M-winrate-mode4_(09月20日; 21.59).pine` (80 行, 只換版本戳) | https://claude.ai/artifact/UBhypAstvwhcQkii6SKAuU |
+| `US_A_R1_strat_mode_1-4_(09月20日; 21.59).pine` (829 行) | https://claude.ai/artifact/KgJkRDEyys75bsjW3HerXu |
+| `US_A_R1_indict_mode_2_RSI_(09月20日; 21.59).pine` (203 行) | https://claude.ai/artifact/GzebPs3jwTA9xgC31KTUCE |
+| `US_A_R1_indict_mode_4_winrate_(09月20日; 21.59).pine` (80 行, 只換版本戳) | https://claude.ai/artifact/UBhypAstvwhcQkii6SKAuU |
 
 離線引擎 S14 / S15 / S16 同步: 模式 1 用第 75 百分位上下界 (`s14_depth_pct`, 面積可選), 模式 2 為 RSI 14/28 區間狀態機 (`m2_end` = cross / fast / slow), 可買區結束平倉 (`m2_exit_on_end`)。
 
@@ -632,9 +632,9 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 
 | 腳本 | 貼上工具 |
 |:---|:---|
-| `TV-1M-dashboard_(mode 1-4)_R2_mode2_4only_(09月26日; 17.40).pine` (907 行) | https://claude.ai/artifact/8tQgEoYh53Nc931j8y5LE7 |
-| `TV-1M-RSI-mode2_R2_mode2_4only_(09月26日; 17.40).pine` (204 行) | https://claude.ai/artifact/3zGZHFRNUyFK8VChFzwQwh |
-| `TV-1M-winrate-mode4_R2_mode2_4only_(09月26日; 17.40).pine` (80 行) | https://claude.ai/artifact/YZhJL5xpPNEXCi5RXDVxju |
+| `US_A_R2_strat_mode_1-4_(09月26日; 17.40).pine` (907 行) | https://claude.ai/artifact/8tQgEoYh53Nc931j8y5LE7 |
+| `US_A_R2_indict_mode_2_RSI_(09月26日; 17.40).pine` (204 行) | https://claude.ai/artifact/3zGZHFRNUyFK8VChFzwQwh |
+| `US_A_R2_indict_mode_4_winrate_(09月26日; 17.40).pine` (80 行) | https://claude.ai/artifact/YZhJL5xpPNEXCi5RXDVxju |
 
 ---
 
@@ -650,9 +650,9 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 
 | 腳本 | 貼上工具 |
 |:---|:---|
-| `TV-1M-dashboard_(mode 1-4)_R3_mode2_4only_(09月26日; 21.11).pine` (923 行) | https://claude.ai/artifact/SmcJKViFpe7Mb6eN3twgAB |
-| `TV-1M-RSI-mode2_R3_mode2_4only_(09月26日; 21.11).pine` (216 行) | https://claude.ai/artifact/4NnQNdYGkmu7vqxyuPS7Ef |
-| `TV-1M-winrate-mode4_R3_mode2_4only_(09月26日; 21.11).pine` (82 行) | https://claude.ai/artifact/5xJ8n9viddJmzrg2E1g5EB |
+| `US_A_R3_strat_mode_1-4_(09月26日; 21.11).pine` (923 行) | https://claude.ai/artifact/SmcJKViFpe7Mb6eN3twgAB |
+| `US_A_R3_indict_mode_2_RSI_(09月26日; 21.11).pine` (216 行) | https://claude.ai/artifact/4NnQNdYGkmu7vqxyuPS7Ef |
+| `US_A_R3_indict_mode_4_winrate_(09月26日; 21.11).pine` (82 行) | https://claude.ai/artifact/5xJ8n9viddJmzrg2E1g5EB |
 
 ---
 
@@ -662,9 +662,9 @@ R3 的「RSI14 升穿 RSI28」進區會在 RSI 中間位置產生很多 ▲ / �
 
 | 腳本 | 貼上工具 |
 |:---|:---|
-| `TV-1M-dashboard_(mode 1-4)_R4_mode2_4only_(09月26日; 21.33).pine` (940 行) | https://claude.ai/artifact/Su2PDsxZbLsnL7SrB5nmrY |
-| `TV-1M-RSI-mode2_R4_mode2_4only_(09月26日; 21.33).pine` (220 行) | https://claude.ai/artifact/64QMMKBJmFZbi5WRk51Vy8 |
-| `TV-1M-winrate-mode4_R4_mode2_4only_(09月26日; 21.33).pine` (82 行) | https://claude.ai/artifact/J4hZibPFBqQVximheBrrPS |
+| `US_A_R4_strat_mode_1-4_(09月26日; 21.33).pine` (940 行) | https://claude.ai/artifact/Su2PDsxZbLsnL7SrB5nmrY |
+| `US_A_R4_indict_mode_2_RSI_(09月26日; 21.33).pine` (220 行) | https://claude.ai/artifact/64QMMKBJmFZbi5WRk51Vy8 |
+| `US_A_R4_indict_mode_4_winrate_(09月26日; 21.33).pine` (82 行) | https://claude.ai/artifact/J4hZibPFBqQVximheBrrPS |
 
 ---
 
@@ -674,9 +674,9 @@ R3 的「RSI14 升穿 RSI28」進區會在 RSI 中間位置產生很多 ▲ / �
 
 | 腳本 | 貼上工具 |
 |:---|:---|
-| `TV-1M-dashboard_(mode 1-4)_R5_mode2_4only_(09月26日; 21.53).pine` (907 行) | https://claude.ai/artifact/So5eUtRx1aRd8cuoRwXtca |
-| `TV-1M-RSI-mode2_R5_mode2_4only_(09月26日; 21.53).pine` (187 行) | https://claude.ai/artifact/RwvQ3divDXrXakydpyp8Na |
-| `TV-1M-winrate-mode4_R5_mode2_4only_(09月26日; 21.53).pine` (82 行) | https://claude.ai/artifact/DdhsQPpFM71hHsuM8Y8CBS |
+| `US_A_R5_strat_mode_1-4_(09月26日; 21.53).pine` (907 行) | https://claude.ai/artifact/So5eUtRx1aRd8cuoRwXtca |
+| `US_A_R5_indict_mode_2_RSI_(09月26日; 21.53).pine` (187 行) | https://claude.ai/artifact/RwvQ3divDXrXakydpyp8Na |
+| `US_A_R5_indict_mode_4_winrate_(09月26日; 21.53).pine` (82 行) | https://claude.ai/artifact/DdhsQPpFM71hHsuM8Y8CBS |
 
 ---
 
@@ -704,8 +704,8 @@ R3 的「RSI14 升穿 RSI28」進區會在 RSI 中間位置產生很多 ▲ / �
 
 | 腳本 | 貼上工具 |
 |:---|:---|
-| `R9_TV-1M-dashboard_(mode 2,4)_(09月27日; 23.15).pine` (629 行) | https://claude.ai/artifact/YHiBuzwixXwKs2S5ytpLrv |
-| `R9_TV-1M-RSI-winrate_(mode 2,4)_(09月27日; 23.15).pine` (208 行) | https://claude.ai/artifact/NSsL9NNgk7A4VzCNNiiHs2 |
+| `US_A_R9_strat_mode_2-4_(09月27日; 23.15).pine` (629 行) | https://claude.ai/artifact/YHiBuzwixXwKs2S5ytpLrv |
+| `US_A_R9_indict_mode_2-4_RSI-winrate_(09月27日; 23.15).pine` (208 行) | https://claude.ai/artifact/NSsL9NNgk7A4VzCNNiiHs2 |
 
 ---
 
@@ -715,8 +715,8 @@ R3 的「RSI14 升穿 RSI28」進區會在 RSI 中間位置產生很多 ▲ / �
 
 | 腳本 | 貼上工具 |
 |:---|:---|
-| `R9.1_TV-1M-dashboard_(mode 2,4)_(09月28日; 09.34).pine` (629 行) | https://claude.ai/artifact/JWhKCoz2bEXPdJPeMzB1vA |
-| `R9.1_TV-1M-RSI-winrate_(mode 2,4)_(09月28日; 09.34).pine` (208 行) | https://claude.ai/artifact/6cxEV6KF1C1zGZBJS2eAUQ |
+| `US_A_R9.1_strat_mode_2-4_(09月28日; 09.34).pine` (629 行) | https://claude.ai/artifact/JWhKCoz2bEXPdJPeMzB1vA |
+| `US_A_R9.1_indict_mode_2-4_RSI-winrate_(09月28日; 09.34).pine` (208 行) | https://claude.ai/artifact/6cxEV6KF1C1zGZBJS2eAUQ |
 
 ---
 
@@ -726,8 +726,8 @@ R3 的「RSI14 升穿 RSI28」進區會在 RSI 中間位置產生很多 ▲ / �
 
 | 腳本 | 貼上工具 |
 |:---|:---|
-| `R9.2_TV-1M-dashboard_(mode 2,4)_(09月28日; 09.50).pine` (629 行) | https://claude.ai/artifact/PRX9FVAcu5H7cHHaGzPFFG |
-| `R9.2_TV-1M-RSI-winrate_(mode 2,4)_(09月28日; 09.50).pine` (208 行) | https://claude.ai/artifact/G2DyP23QaB78GjU3bLanYP |
+| `US_A_R9.2_strat_mode_2-4_(09月28日; 09.50).pine` (629 行) | https://claude.ai/artifact/PRX9FVAcu5H7cHHaGzPFFG |
+| `US_A_R9.2_indict_mode_2-4_RSI-winrate_(09月28日; 09.50).pine` (208 行) | https://claude.ai/artifact/G2DyP23QaB78GjU3bLanYP |
 
 ---
 
@@ -737,5 +737,5 @@ R3 的「RSI14 升穿 RSI28」進區會在 RSI 中間位置產生很多 ▲ / �
 
 | 腳本 | 貼上工具 |
 |:---|:---|
-| `R9.3_TV-1M-dashboard_(mode 2,4)_(09月28日; 10.10).pine` (663 行) | https://claude.ai/artifact/PXkSNWxr7E3SnnCRDdxjBJ |
-| `R9.3_TV-1M-RSI-winrate_(mode 2,4)_(09月28日; 10.10).pine` (217 行) | https://claude.ai/artifact/4apBJhvYev35uvchVdYpC4 |
+| `US_A_R9.3_strat_mode_2-4_(09月28日; 10.10).pine` (663 行) | https://claude.ai/artifact/PXkSNWxr7E3SnnCRDdxjBJ |
+| `US_A_R9.3_indict_mode_2-4_RSI-winrate_(09月28日; 10.10).pine` (217 行) | https://claude.ai/artifact/4apBJhvYev35uvchVdYpC4 |

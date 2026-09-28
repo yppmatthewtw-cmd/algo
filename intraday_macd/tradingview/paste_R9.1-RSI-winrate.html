@@ -68,7 +68,7 @@ textarea:focus-visible{outline:3px solid var(--accent)}
   <header class="hero">
     <div>
       <div class="eyebrow">TradingView · Pine Script v6 · R9.1 · 模式 2 + 模式 4 合併副圖 (純顯示; 三個月窗口)</div>
-      <h1 id="scriptName">R9.1_TV-1M-RSI-winrate_(mode 2,4)_(09月28日; 09:34)</h1>
+      <h1 id="scriptName">US_A_R9.1_indict_mode_2-4_RSI-winrate_(09月28日; 09:34)</h1>
       <p class="lead">這一頁把整份程式碼一次寫進剪貼簿。從對話附件的預覽視窗複製會在第 8192 個 byte 截斷, 前 8 KB 只有表頭與 Inputs, TradingView 會報 <span class="name">CE10244</span> (A strategy must contain at least one … plot …)。這裡不會截斷。</p>
     </div>
     <div class="card">
@@ -89,12 +89,12 @@ textarea:focus-visible{outline:3px solid var(--accent)}
       <li><span><b>按上面「複製全部程式碼」</b>。若瀏覽器擋住剪貼簿, 改點進下方黑色程式碼框 → Ctrl+A → Ctrl+C (Mac 用 ⌘)。</span></li>
       <li><span>打開 <b>Pine Editor</b>, 點進編輯區 → Ctrl+A 全選舊內容 → Ctrl+V 貼上。</span></li>
       <li><span><b>檢查最後一行</b>: 捲到最底, 行號要是 <span class="name" id="cLines">—</span>, 內容以 <span class="name">// ═══ END OF FILE ═══</span> 開頭。看不到這一行 = 貼上的內容被截斷, 回到第 2 步。</span></li>
-      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">R9.1_TV-1M-RSI-winrate_(mode 2,4)_(09月28日; 09:34)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
+      <li><span><b>Save</b> (Ctrl+S) → 名稱欄輸入 <span class="name" id="cName">US_A_R9.1_indict_mode_2-4_RSI-winrate_(09月28日; 09:34)</span>。TradingView 預填的名稱可能少了結尾的 <span class="name">)</span>, 請補上; 「複製腳本名稱」按鈕貼的就是完整名稱。</span></li>
       <li><span><b>Add to chart</b> → 打開 Strategy Tester 看交易清單; 圖上右上角有報表。</span></li>
     </ol>
     <div class="check">
       <div><span class="k">第 1 行</span><code id="cFirst">—</code></div>
-      <div><span class="k">第 9 行</span><code>indicator("R9.1_TV-1M-RSI-winrate_(mode 2,4)_(09月28日; 09:34)", shorttitle="R9.1_TV-1M-RSI-winrate_(mode 2,4)_(09月28日; 09:34)", …)</code></div>
+      <div><span class="k">第 9 行</span><code>indicator("US_A_R9.1_indict_mode_2-4_RSI-winrate_(09月28日; 09:34)", shorttitle="US_A_R9.1_indict_mode_2-4_RSI-winrate_(09月28日; 09:34)", …)</code></div>
       <div><span class="k">最後一行</span><code id="cLast">—</code></div>
     </div>
   </section>
@@ -128,14 +128,14 @@ textarea:focus-visible{outline:3px solid var(--accent)}
 
 <script type="text/plain" id="pine-src">
 // ═══════════════════════════════════════════════════════════════════════════════
-//  R9.1_TV-1M-RSI-winrate_(mode 2,4)_(09月28日; 09:34)  ·  R9.1 副圖 (回測期間預設三個月, 與主策略一致): 模式 2 (RSI14 可買區 / 可賣區) 與 模式 4 (EMA9 斜率色帶) 合併在同一個副圖 · 配合主策略 R9_TV-1M-dashboard_(mode 2,4) 一起掛 · 純顯示不下單
+//  US_A_R9.1_indict_mode_2-4_RSI-winrate_(09月28日; 09:34)  ·  R9.1 副圖 (回測期間預設三個月, 與主策略一致): 模式 2 (RSI14 可買區 / 可賣區) 與 模式 4 (EMA9 斜率色帶) 合併在同一個副圖 · 配合主策略 R9_TV-1M-dashboard_(mode 2,4) 一起掛 · 純顯示不下單
 //  上半 (0-100): 深棕粗線 RSI14 · 綠/紅細線 = 下界/上界 (最近 120 根 RSI14 的第 10/90 百分位) · 底色 淺藍 = 可買區 / 淺紅 = 可賣區 · ▲ 進可買區 (轉勢向上且谷底到下界) · ▼ 進可賣區 · × 區間結束
 //  底部 (0 以下) 一條色帶 = 模式 4: 綠 = EMA9 斜率 > 0 (可買 / 可持倉), 紅 = 斜率 ≤ 0 (不可持倉; 主策略持倉中出現紅柱那一根立即以收盤價平倉); 由紅轉綠標「可買」, 由綠轉紅標「紅柱→平倉」
 //  ② 的 RSI 長度 / 下上界方式 / 百分位 / 到界回看 / 結束規則 / 每日清空 必須與主策略 ④c 一致; ②b 的 EMA 長度 / 斜率根數必須與主策略 ④e 一致; 右上表 = 兩個模式的現況與統計
 //  四處必須一致: 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (結尾的 ")" 不可漏); 本檔共 208 行, 最後一行是 END OF FILE
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-indicator("R9.1_TV-1M-RSI-winrate_(mode 2,4)_(09月28日; 09:34)", shorttitle="R9.1_TV-1M-RSI-winrate_(mode 2,4)_(09月28日; 09:34)", overlay = false, max_labels_count = 500, max_lines_count = 500)
+indicator("US_A_R9.1_indict_mode_2-4_RSI-winrate_(09月28日; 09:34)", shorttitle="US_A_R9.1_indict_mode_2-4_RSI-winrate_(09月28日; 09:34)", overlay = false, max_labels_count = 500, max_lines_count = 500)
 
 // ─────────────────────────── ① 回測期間 (與主策略同一套設定, 只用來畫底色) ───────────────────────────
 gBT        = "① 回測期間 (與主策略對齊)"
@@ -334,7 +334,7 @@ if barstate.islast and showTbl
     table.cell(tb, 1, 8, str.tostring(nBarUp4) + " / " + str.tostring(nBarAll) + " · " + str.tostring(nBarAll > 0 ? nBarUp4 * 100.0 / nBarAll : 0.0, "#.#") + "%", text_size = size.tiny)
     table.cell(tb, 0, 9, "綠轉紅次數 (紅柱→平倉)", text_size = size.tiny, bgcolor = hBg)
     table.cell(tb, 1, 9, str.tostring(nDn4), text_size = size.tiny, text_color = color.red)
-// ═══ END OF FILE ═══ R9.1_TV-1M-RSI-winrate_(mode 2,4)_(09月28日; 09:34) · 全檔共 208 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ US_A_R9.1_indict_mode_2-4_RSI-winrate_(09月28日; 09:34) · 全檔共 208 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
 </script>
 <script>
 (function(){
@@ -343,7 +343,7 @@ if barstate.islast and showTbl
   src = src.replace(/^\n/, '').replace(/\n+$/, '') + '\n';
   var lines = src.split('\n'); if (lines[lines.length-1] === '') lines.pop();
   var bytes = new TextEncoder().encode(src).length;
-  var name = "R9.1_TV-1M-RSI-winrate_(mode 2,4)_(09月28日; 09:34)";
+  var name = "US_A_R9.1_indict_mode_2-4_RSI-winrate_(09月28日; 09:34)";
   document.getElementById('code').value = src;
   document.getElementById('mLines').textContent = lines.length + ' 行';
   document.getElementById('mBytes').textContent = (bytes/1024).toFixed(1) + ' KB';

@@ -10,9 +10,9 @@ from build_hist_cross_rsi import HEADER, END_TAG
 import patch_r2_mode24, patch_r3_mode24, patch_r4_mode24, patch_r5_mode24, patch_r6_mode24, patch_r7_mode24
 
 STAMP = os.environ['STAMP']
-SRC_MAIN = 'TV-1M-dashboard_(mode 1-4)_(09月20日; 21.59).pine'
-SRC_RSI  = 'TV-1M-RSI-mode2_(09月20日; 21.59).pine'
-SRC_M4   = 'TV-1M-winrate-mode4_(09月20日; 21.59).pine'
+SRC_MAIN = 'US_A_R1_strat_mode_1-4_(09月20日; 21.59).pine'
+SRC_RSI  = 'US_A_R1_indict_mode_2_RSI_(09月20日; 21.59).pine'
+SRC_M4   = 'US_A_R1_indict_mode_4_winrate_(09月20日; 21.59).pine'
 OLD_STAMP = '09月20日; 21:59'
 SUF = 'R7_mode2_4only_'
 BAR = '// ' + '═' * 79 + '\n'

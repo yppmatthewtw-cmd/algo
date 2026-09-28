@@ -1,6 +1,6 @@
 # TV-1M-dashboard_(mode 1-4) · 模式 1–4 完整規格 (每一項要求、參數、觸發點)
 
-對應版本: `TV-1M-dashboard_(mode 1-4)_(09月20日; 21.59)` / `TV-1M-RSI-mode2_(09月20日; 21.59)` / `TV-1M-winrate-mode4_(09月20日; 21.59)`。
+對應版本: `US_A_R1_strat_mode_1-4_(09月20日; 21.59)` / `US_A_R1_indict_mode_2_RSI_(09月20日; 21.59)` / `US_A_R1_indict_mode_4_winrate_(09月20日; 21.59)`。
 Inputs 的分節編號 (①②③④④c④d④e⑤⑥⑦⑧⑨) 就是 TradingView 設定視窗裡的群組名稱。所有 ta.* 都在全域無條件計算, 所有判斷都在 K 線收盤後確認, 訊號不重繪; 訂單一律在下一根開盤成交。
 
 ---
