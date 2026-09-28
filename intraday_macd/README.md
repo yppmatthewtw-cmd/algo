@@ -717,3 +717,14 @@ R3 的「RSI14 升穿 RSI28」進區會在 RSI 中間位置產生很多 ▲ / �
 |:---|:---|
 | `R9.1_TV-1M-dashboard_(mode 2,4)_(09月28日; 09.34).pine` (629 行) | https://claude.ai/artifact/JWhKCoz2bEXPdJPeMzB1vA |
 | `R9.1_TV-1M-RSI-winrate_(mode 2,4)_(09月28日; 09.34).pine` (208 行) | https://claude.ai/artifact/6cxEV6KF1C1zGZBJS2eAUQ |
+
+---
+
+## R9.2 · 回測周期改為十二個月 (R9.2_TV-1M-*_(mode 2,4)_, 2026-09-28 09:50)
+
+`tradingview/build_r92.py` 由 R9.1 兩支生成: 只改 ① 回測期間預設 (最近 N 個交易日 63 → 252, 上限放寬到 500, 往回數的保護上限 400 → 600 天; 最近 N 天 90 → 365 [預設方式]; 指定日期 2025-09-19 → 2026-09-19) 與版本標籤, 買賣規則 / 掃描 / 副圖與 R9 完全相同。十二個月 1 分 K 約 98,000 根, 任何 TradingView 方案的圖表都載不齊; 要跑滿請用 Deep Backtesting 指定日期範圍, 或「指定日期」分段。
+
+| 腳本 | 貼上工具 |
+|:---|:---|
+| `R9.2_TV-1M-dashboard_(mode 2,4)_(09月28日; 09.50).pine` (629 行) | https://claude.ai/artifact/PRX9FVAcu5H7cHHaGzPFFG |
+| `R9.2_TV-1M-RSI-winrate_(mode 2,4)_(09月28日; 09.50).pine` (208 行) | https://claude.ai/artifact/G2DyP23QaB78GjU3bLanYP |
