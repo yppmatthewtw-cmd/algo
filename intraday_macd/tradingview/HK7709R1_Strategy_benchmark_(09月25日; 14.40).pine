@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-//  HK7709R1_strat_benchmark_(09月25日; 14:40)  ·  港股 7709 · 多策略同場回測比較 · 1 分鐘 · 一個月 · TradingView Pine Script v6
+//  HK7709R1_Strategy_benchmark_(09月25日; 14:40)  ·  港股 7709 · 多策略同場回測比較 · 1 分鐘 · 一個月 · TradingView Pine Script v6
 //  四處必須一致: strategy() 標題 = shorttitle = 檔名 = TradingView 腳本名稱 (Save 時輸入; 結尾的 ")" 不可漏)
 //  本檔共 575 行; 最後一行是 "// ═══ END OF FILE ═══" → 貼上後若看不到那一行 = 內容被截斷 (檔案預覽視窗常只載入前 8KB)
 //  正確貼法: 用「貼上工具」網頁按【複製全部程式碼】, 或下載 .pine 後用純文字編輯器開啟 → Ctrl+A → Ctrl+C
@@ -26,7 +26,7 @@
 //  版本戳 HK7709-1m-benchmark_(MM月DD日; HH:MM), 括號內 = 建置時間 HKT; 檔名以 . 代替 : ; 本檔零延續行
 // ═══════════════════════════════════════════════════════════════════════════════
 //@version=6
-strategy("HK7709R1_strat_benchmark_(09月25日; 14:40)", shorttitle="HK7709R1_strat_benchmark_(09月25日; 14:40)", overlay = true, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.05, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_labels_count = 500, max_lines_count = 500, max_boxes_count = 500)
+strategy("HK7709R1_Strategy_benchmark_(09月25日; 14:40)", shorttitle="HK7709R1_Strategy_benchmark_(09月25日; 14:40)", overlay = true, initial_capital = 100000, margin_long = 0, margin_short = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, commission_value = 0.05, slippage = 2, process_orders_on_close = false, calc_on_every_tick = false, pyramiding = 0, max_labels_count = 500, max_lines_count = 500, max_boxes_count = 500)
 
 // ═══════════════════════════ ① 回測期間 (全部可在 Inputs 改, 預設一個月) ═══════════════════════════
 gBT        = "① 回測期間"
@@ -572,4 +572,4 @@ if barstate.islast and showRpt
     for c2 = 5 to 9
         table.cell(rpt, c2, bhRow, "—", text_size = szR, text_color = txt, bgcolor = hBg)
     table.cell(rpt, 10, bhRow, maxRise > 0 ? str.tostring(bhRet / maxRise * 100.0, "#.#") + "%" : "—", text_size = szR, text_color = txt, bgcolor = hBg)
-// ═══ END OF FILE ═══ HK7709R1_strat_benchmark_(09月25日; 14:40) · 全檔共 575 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══
+// ═══ END OF FILE ═══ HK7709R1_Strategy_benchmark_(09月25日; 14:40) · 全檔共 575 行 · 看不到這一行 = 貼上的內容被截斷, 請用「貼上工具」網頁的【複製全部程式碼】 ═══

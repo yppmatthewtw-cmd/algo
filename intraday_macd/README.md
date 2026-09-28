@@ -566,9 +566,9 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 
 | 腳本 | 貼上工具 |
 |:---|:---|
-| `HK7709R1_strat_mode_1-4_(09月25日; 14.04).pine` (835 行) | https://claude.ai/artifact/C9ku3ZKcnFkD1cRRGPf9fy |
-| `HK7709R1_indict_mode_2_RSI_(09月25日; 14.04).pine` (203 行) | https://claude.ai/artifact/JqpLYGNvUrwMmnYNgJA2cf |
-| `HK7709R1_indict_mode_4_winrate_(09月25日; 14.04).pine` (80 行) | https://claude.ai/artifact/MxgbsuzP6VsVdRuQN5WDKu |
+| `HK7709R1_Strategy_mode_1-4_(09月25日; 14.04).pine` (835 行) | https://claude.ai/artifact/C9ku3ZKcnFkD1cRRGPf9fy |
+| `HK7709R1_ID_模式2_RSI_(09月25日; 14.04).pine` (203 行) | https://claude.ai/artifact/JqpLYGNvUrwMmnYNgJA2cf |
+| `HK7709R1_ID_模式4_winrate_(09月25日; 14.04).pine` (80 行) | https://claude.ai/artifact/MxgbsuzP6VsVdRuQN5WDKu |
 
 三支一起在 HKEX:7709 · 1 分鐘圖 Add to chart; ① 預設最近 30 天。離線 Python 引擎仍為美股時段, 未做港股版。
 
@@ -576,7 +576,7 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 
 ## HK7709-mode5_1month-pattern · 模式 5 · 港股 7709 過去一個月「平均的一天」曲線 (2026-09-25 14:04)
 
-這裡沒有 7709 的行情資料 (行情主機全部不通), 所以平均化在 TradingView 圖上做: `tradingview/hk7709_pattern_src.pine` → `build_hk7709_pattern.py` 產出 `HK7709R1_indict_mode_5_pattern_(09月25日; 14.04).pine` (349 行, 純顯示副圖, 不參與四模式買賣)。
+這裡沒有 7709 的行情資料 (行情主機全部不通), 所以平均化在 TradingView 圖上做: `tradingview/hk7709_pattern_src.pine` → `build_hk7709_pattern.py` 產出 `HK7709R1_ID_模式5_pattern_(09月25日; 14.04).pine` (349 行, 純顯示副圖, 不參與四模式買賣)。
 
 - 每個交易日按港股時段切成固定格 (每格 = 圖表週期; 10 分鐘圖 = 15 + 18 格, 1 分鐘圖 = 150 + 180 格), 每格的開 / 高 / 低 / 收換成相對當日 09:30 開盤價的 %, 最近 21 個完整交易日同一格疊起來取 平均 / 中位 / 標準差 / 升日比例 (今日未收市不算入)。
 - 橙線 = 「平均的一天」曲線, 同一條 pattern 按對應時間格在每一個交易日重覆 (預設最近 60 日 + 今日; ① 可切滾動 = 每日只用之前 N 日, 無前視); 藍線 = 每日實際路徑。
@@ -599,10 +599,10 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 
 | 腳本 | 貼上工具 |
 |:---|:---|
-| `HK7709R1_strat_mode_1-4_(09月25日; 14.04).pine` (946 行) | https://claude.ai/artifact/C9ku3ZKcnFkD1cRRGPf9fy |
-| `HK7709R1_indict_mode_2_RSI_(09月25日; 14.04).pine` (203 行) | https://claude.ai/artifact/JqpLYGNvUrwMmnYNgJA2cf |
-| `HK7709R1_indict_mode_4_winrate_(09月25日; 14.04).pine` (80 行) | https://claude.ai/artifact/MxgbsuzP6VsVdRuQN5WDKu |
-| `HK7709R1_indict_mode_5_pattern_(09月25日; 14.04).pine` (349 行) | https://claude.ai/artifact/BMmXFRixBoqQttZmnWDFTE |
+| `HK7709R1_Strategy_mode_1-4_(09月25日; 14.04).pine` (946 行) | https://claude.ai/artifact/C9ku3ZKcnFkD1cRRGPf9fy |
+| `HK7709R1_ID_模式2_RSI_(09月25日; 14.04).pine` (203 行) | https://claude.ai/artifact/JqpLYGNvUrwMmnYNgJA2cf |
+| `HK7709R1_ID_模式4_winrate_(09月25日; 14.04).pine` (80 行) | https://claude.ai/artifact/MxgbsuzP6VsVdRuQN5WDKu |
+| `HK7709R1_ID_模式5_pattern_(09月25日; 14.04).pine` (349 行) | https://claude.ai/artifact/BMmXFRixBoqQttZmnWDFTE |
 
 規格見 [MODE_SPEC.md](MODE_SPEC.md) 第 12 節。真實回報仍要在 TradingView 上看; 若仍低, 掃描表會顯示 81 組全期排名, 可判斷是參數問題還是這一個月 7709 根本沒有適合四模式的走勢。
 
@@ -610,7 +610,7 @@ TradingView 匯出的 CSV **預設沒有盤前 K 線**。要有盤前: 圖表設
 
 ## HK7709-1m-benchmark · 我這 algo vs 公認高勝率 / 高回報日內策略 (2026-09-25 14:40)
 
-這裡沒有 7709 行情, 比較要在 TradingView 圖上做: `tradingview/build_hk7709_bench.py` 由 `TW-1M-MULTI` 產出 `HK7709R1_strat_benchmark_(09月25日; 14.40).pine` (575 行), 把 17 個只做多的日內策略放在同一窗口 / 同一成本 / 同一港股時段 (含 14:30 韓股收市後不開新倉, 可關) 下各跑一次, 主圖右上排名表比較 交易次數 / 勝率 / 總報酬 / 最大回撤 / 獲利因子 / 平均每筆 / 最佳最差 / 平均持倉 / 捕獲率, 附買入持有與期內最大昇幅。
+這裡沒有 7709 行情, 比較要在 TradingView 圖上做: `tradingview/build_hk7709_bench.py` 由 `TW-1M-MULTI` 產出 `HK7709R1_Strategy_benchmark_(09月25日; 14.40).pine` (575 行), 把 17 個只做多的日內策略放在同一窗口 / 同一成本 / 同一港股時段 (含 14:30 韓股收市後不開新倉, 可關) 下各跑一次, 主圖右上排名表比較 交易次數 / 勝率 / 總報酬 / 最大回撤 / 獲利因子 / 平均每筆 / 最佳最差 / 平均持倉 / 捕獲率, 附買入持有與期內最大昇幅。
 
 - S01–S13: MULTI 原有 13 個公認策略 (MACD 柱動能減弱、MACD 交叉、EMA 9/21、Supertrend、RSI 超賣、布林下軌、VWAP 偏離、開盤區間突破、動能突破+量能、三 EMA+ST、ATR MACD、MACD 背離、隨機進場安慰劑)。
 - S14 本專案四模式 (④d 的值 = dashboard 預設, 定義逐條相同); S15 四模式寬鬆版 (淺紅 1 根, k 0.5, 窗口 20)。
