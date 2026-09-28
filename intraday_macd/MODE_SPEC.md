@@ -431,3 +431,15 @@ buySig  = m2InBuy and m4Up and (m2BuyStart or m4Start)           模式 2 可買
 方式 B 最近 N 天 (日曆, 預設方式): 90 → 365        方式 C 指定日期: 2025-09-19 → 2026-09-19
 ```
 十二個月 1 分 K 約 98,000 根, 任何方案的圖表都載不齊; 直接掛圖只回測到最左一根 (報表標題顯示實際起始日)。跑滿請用 Strategy Tester 的 Deep Backtesting (Premium 以上) 指定日期範圍, 或用「指定日期」分 4–5 段各跑約 2 個半月再加總。
+
+---
+
+## 23. R9.3 變體 · 模式 4 綠轉紅敏感度調低約 10% (R9.3_TV-1M-*_(mode 2,4)_)
+
+在第 22 節 R9.2 之上, 由 `build_r93.py` 生成。模式 4 的綠 / 紅由「斜率 > 0 / ≤ 0」改為帶遲滯的狀態機 (④e 新增兩個輸入):
+```
+m4RedSens  = 90  (敏感度 %, 50–100; 100 = 同 R9.2)        m4AbsLen = 20 (平均斜率幅度取幾根)
+m4SlopeAvg = SMA(|m4Slope|, m4AbsLen)                     m4RedBand = (100 − m4RedSens)/100 × m4SlopeAvg   (預設 = 10% 平均幅度)
+紅→綠: m4Slope > 0 (不變)          綠→紅: m4Slope ≤ −m4RedBand (R9.2 是 ≤ 0)          其間 (−band < 斜率 ≤ 0) 維持綠柱, 不平倉
+```
+影響: 買入閘門 (m4OK)、紅柱立即平倉 (m4ExitNow)、m4Start / m4DnStart、掃描 81 組 (1 / 3 / 5 根各自套同一遲滯帶)、副圖色帶與表格全部同步; 參數表顯示減敏 % 與當前轉紅門檻。

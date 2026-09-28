@@ -728,3 +728,14 @@ R3 的「RSI14 升穿 RSI28」進區會在 RSI 中間位置產生很多 ▲ / �
 |:---|:---|
 | `R9.2_TV-1M-dashboard_(mode 2,4)_(09月28日; 09.50).pine` (629 行) | https://claude.ai/artifact/PRX9FVAcu5H7cHHaGzPFFG |
 | `R9.2_TV-1M-RSI-winrate_(mode 2,4)_(09月28日; 09.50).pine` (208 行) | https://claude.ai/artifact/G2DyP23QaB78GjU3bLanYP |
+
+---
+
+## R9.3 · 模式 4 綠轉紅敏感度調低約 10% (R9.3_TV-1M-*_(mode 2,4)_, 2026-09-28 10:10)
+
+`tradingview/build_r93.py` 由 R9.2 兩支生成: 模式 4 加入遲滯帶。紅轉綠仍是 EMA9 斜率 > 0; 綠轉紅由「斜率 ≤ 0」改為「斜率 ≤ −(100 − 敏感度)/100 × 最近 20 根平均斜率幅度」, 敏感度預設 90% (帶寬 = 10% 平均幅度), 100% 時與 R9.2 完全相同。斜率只是略為轉負時維持綠柱、不觸發 M4紅柱 平倉。主策略、掃描 81 組 (1 / 3 / 5 根各自遲滯)、副圖色帶三處同步; 參數表 / 副圖表格顯示減敏 % 與當前轉紅門檻。回測期間仍為十二個月。
+
+| 腳本 | 貼上工具 |
+|:---|:---|
+| `R9.3_TV-1M-dashboard_(mode 2,4)_(09月28日; 10.10).pine` (663 行) | https://claude.ai/artifact/PXkSNWxr7E3SnnCRDdxjBJ |
+| `R9.3_TV-1M-RSI-winrate_(mode 2,4)_(09月28日; 10.10).pine` (217 行) | https://claude.ai/artifact/4apBJhvYev35uvchVdYpC4 |
