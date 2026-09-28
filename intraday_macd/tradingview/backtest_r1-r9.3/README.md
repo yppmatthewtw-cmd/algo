@@ -17,37 +17,37 @@
 
 | 版本 | 角色 | 新檔名 | 舊檔名 (原始出處) |
 |---|---|---|---|
-| R1 | dashboard (mode 1-4, 原始基準) | `r1_dashboard_(mode 1-4)_(09月20日; 21.59).pine` | `US_A_R1_strat_mode_1-4_(09月20日; 21.59).pine` |
-| R1 | RSI 模式2 副圖 | `r1_RSI-mode2_(09月20日; 21.59).pine` | `US_A_R1_indict_mode_2_RSI_(09月20日; 21.59).pine` |
-| R1 | winrate 模式4 副圖 | `r1_winrate-mode4_(09月20日; 21.59).pine` | `US_A_R1_indict_mode_4_winrate_(09月20日; 21.59).pine` |
-| R2 | dashboard | `r2_dashboard_(mode 2,4)_(09月26日; 17.40).pine` | `US_A_R2_strat_mode_1-4_(09月26日; 17.40).pine` |
-| R2 | RSI 模式2 副圖 | `r2_RSI-mode2_(mode 2,4)_(09月26日; 17.40).pine` | `US_A_R2_indict_mode_2_RSI_(09月26日; 17.40).pine` |
-| R2 | winrate 模式4 副圖 | `r2_winrate-mode4_(mode 2,4)_(09月26日; 17.40).pine` | `US_A_R2_indict_mode_4_winrate_(09月26日; 17.40).pine` |
-| R3 | dashboard | `r3_dashboard_(mode 2,4)_(09月26日; 21.11).pine` | `US_A_R3_strat_mode_1-4_(09月26日; 21.11).pine` |
-| R3 | RSI 模式2 副圖 | `r3_RSI-mode2_(mode 2,4)_(09月26日; 21.11).pine` | `US_A_R3_indict_mode_2_RSI_(09月26日; 21.11).pine` |
-| R3 | winrate 模式4 副圖 | `r3_winrate-mode4_(mode 2,4)_(09月26日; 21.11).pine` | `US_A_R3_indict_mode_4_winrate_(09月26日; 21.11).pine` |
-| R4 | dashboard | `r4_dashboard_(mode 2,4)_(09月26日; 21.33).pine` | `US_A_R4_strat_mode_1-4_(09月26日; 21.33).pine` |
-| R4 | RSI 模式2 副圖 | `r4_RSI-mode2_(mode 2,4)_(09月26日; 21.33).pine` | `US_A_R4_indict_mode_2_RSI_(09月26日; 21.33).pine` |
-| R4 | winrate 模式4 副圖 | `r4_winrate-mode4_(mode 2,4)_(09月26日; 21.33).pine` | `US_A_R4_indict_mode_4_winrate_(09月26日; 21.33).pine` |
-| R5 | dashboard | `r5_dashboard_(mode 2,4)_(09月26日; 21.53).pine` | `US_A_R5_strat_mode_1-4_(09月26日; 21.53).pine` |
-| R5 | RSI 模式2 副圖 | `r5_RSI-mode2_(mode 2,4)_(09月26日; 21.53).pine` | `US_A_R5_indict_mode_2_RSI_(09月26日; 21.53).pine` |
-| R5 | winrate 模式4 副圖 | `r5_winrate-mode4_(mode 2,4)_(09月26日; 21.53).pine` | `US_A_R5_indict_mode_4_winrate_(09月26日; 21.53).pine` |
-| R6 | dashboard | `r6_dashboard_(mode 2,4)_(09月26日; 22.09).pine` | `US_A_R6_strat_mode_1-4_(09月26日; 22.09).pine` |
-| R6 | RSI 模式2 副圖 | `r6_RSI-mode2_(mode 2,4)_(09月26日; 22.09).pine` | `US_A_R6_indict_mode_2_RSI_(09月26日; 22.09).pine` |
-| R6 | winrate 模式4 副圖 | `r6_winrate-mode4_(mode 2,4)_(09月26日; 22.09).pine` | `US_A_R6_indict_mode_4_winrate_(09月26日; 22.09).pine` |
-| R7 | dashboard | `r7_dashboard_(mode 2,4)_(09月26日; 22.25).pine` | `US_A_R7_strat_mode_1-4_(09月26日; 22.25).pine` |
-| R7 | RSI 模式2 副圖 | `r7_RSI-mode2_(mode 2,4)_(09月26日; 22.25).pine` | `US_A_R7_indict_mode_2_RSI_(09月26日; 22.25).pine` |
-| R7 | winrate 模式4 副圖 | `r7_winrate-mode4_(mode 2,4)_(09月26日; 22.25).pine` | `US_A_R7_indict_mode_4_winrate_(09月26日; 22.25).pine` |
-| R8 | dashboard | `r8_dashboard_(mode 2,4)_(09月27日; 00.58).pine` | `US_A_R8_strat_mode_1-4_(09月27日; 00.58).pine` |
-| R8 | RSI 模式2 副圖 | `r8_RSI-mode2_(mode 2,4)_(09月27日; 00.58).pine` | `US_A_R8_indict_mode_2_RSI_(09月27日; 00.58).pine` |
-| R8 | winrate 模式4 副圖 | `r8_winrate-mode4_(mode 2,4)_(09月27日; 00.58).pine` | `US_A_R8_indict_mode_4_winrate_(09月27日; 00.58).pine` |
-| R9 | dashboard (overlay) | `r9_dashboard_(mode 2,4)_(09月27日; 23.15).pine` | `US_A_R9_strat_mode_2-4_(09月27日; 23.15).pine` |
-| R9 | RSI+winrate 合併副圖 | `r9_RSI-winrate_(mode 2,4)_(09月27日; 23.15).pine` | `US_A_R9_indict_mode_2-4_RSI-winrate_(09月27日; 23.15).pine` |
-| R9.1 | dashboard (3 個月回測) | `r9.1_dashboard_(mode 2,4)_(09月28日; 09.34).pine` | `US_A_R9.1_strat_mode_2-4_(09月28日; 09.34).pine` |
-| R9.1 | RSI+winrate 合併副圖 | `r9.1_RSI-winrate_(mode 2,4)_(09月28日; 09.34).pine` | `US_A_R9.1_indict_mode_2-4_RSI-winrate_(09月28日; 09.34).pine` |
-| R9.2 | dashboard (12 個月回測) | `r9.2_dashboard_(mode 2,4)_(09月28日; 09.50).pine` | `US_A_R9.2_strat_mode_2-4_(09月28日; 09.50).pine` |
-| R9.2 | RSI+winrate 合併副圖 | `r9.2_RSI-winrate_(mode 2,4)_(09月28日; 09.50).pine` | `US_A_R9.2_indict_mode_2-4_RSI-winrate_(09月28日; 09.50).pine` |
-| R9.3 | dashboard (模式4 減敏 10%) | `r9.3_dashboard_(mode 2,4)_(09月28日; 10.10).pine` | `US_A_R9.3_strat_mode_2-4_(09月28日; 10.10).pine` |
-| R9.3 | RSI+winrate 合併副圖 | `r9.3_RSI-winrate_(mode 2,4)_(09月28日; 10.10).pine` | `US_A_R9.3_indict_mode_2-4_RSI-winrate_(09月28日; 10.10).pine` |
+| R1 | dashboard (mode 1-4, 原始基準) | `r1_dashboard_(mode 1-4)_(09月20日; 21.59).pine` | `US_A_R1_Strategy_mode_1-4_(09月20日; 21.59).pine` |
+| R1 | RSI 模式2 副圖 | `r1_RSI-mode2_(09月20日; 21.59).pine` | `US_A_R1_ID_模式2_RSI_(09月20日; 21.59).pine` |
+| R1 | winrate 模式4 副圖 | `r1_winrate-mode4_(09月20日; 21.59).pine` | `US_A_R1_ID_模式4_winrate_(09月20日; 21.59).pine` |
+| R2 | dashboard | `r2_dashboard_(mode 2,4)_(09月26日; 17.40).pine` | `US_A_R2_Strategy_mode_1-4_(09月26日; 17.40).pine` |
+| R2 | RSI 模式2 副圖 | `r2_RSI-mode2_(mode 2,4)_(09月26日; 17.40).pine` | `US_A_R2_ID_模式2_RSI_(09月26日; 17.40).pine` |
+| R2 | winrate 模式4 副圖 | `r2_winrate-mode4_(mode 2,4)_(09月26日; 17.40).pine` | `US_A_R2_ID_模式4_winrate_(09月26日; 17.40).pine` |
+| R3 | dashboard | `r3_dashboard_(mode 2,4)_(09月26日; 21.11).pine` | `US_A_R3_Strategy_mode_1-4_(09月26日; 21.11).pine` |
+| R3 | RSI 模式2 副圖 | `r3_RSI-mode2_(mode 2,4)_(09月26日; 21.11).pine` | `US_A_R3_ID_模式2_RSI_(09月26日; 21.11).pine` |
+| R3 | winrate 模式4 副圖 | `r3_winrate-mode4_(mode 2,4)_(09月26日; 21.11).pine` | `US_A_R3_ID_模式4_winrate_(09月26日; 21.11).pine` |
+| R4 | dashboard | `r4_dashboard_(mode 2,4)_(09月26日; 21.33).pine` | `US_A_R4_Strategy_mode_1-4_(09月26日; 21.33).pine` |
+| R4 | RSI 模式2 副圖 | `r4_RSI-mode2_(mode 2,4)_(09月26日; 21.33).pine` | `US_A_R4_ID_模式2_RSI_(09月26日; 21.33).pine` |
+| R4 | winrate 模式4 副圖 | `r4_winrate-mode4_(mode 2,4)_(09月26日; 21.33).pine` | `US_A_R4_ID_模式4_winrate_(09月26日; 21.33).pine` |
+| R5 | dashboard | `r5_dashboard_(mode 2,4)_(09月26日; 21.53).pine` | `US_A_R5_Strategy_mode_1-4_(09月26日; 21.53).pine` |
+| R5 | RSI 模式2 副圖 | `r5_RSI-mode2_(mode 2,4)_(09月26日; 21.53).pine` | `US_A_R5_ID_模式2_RSI_(09月26日; 21.53).pine` |
+| R5 | winrate 模式4 副圖 | `r5_winrate-mode4_(mode 2,4)_(09月26日; 21.53).pine` | `US_A_R5_ID_模式4_winrate_(09月26日; 21.53).pine` |
+| R6 | dashboard | `r6_dashboard_(mode 2,4)_(09月26日; 22.09).pine` | `US_A_R6_Strategy_mode_1-4_(09月26日; 22.09).pine` |
+| R6 | RSI 模式2 副圖 | `r6_RSI-mode2_(mode 2,4)_(09月26日; 22.09).pine` | `US_A_R6_ID_模式2_RSI_(09月26日; 22.09).pine` |
+| R6 | winrate 模式4 副圖 | `r6_winrate-mode4_(mode 2,4)_(09月26日; 22.09).pine` | `US_A_R6_ID_模式4_winrate_(09月26日; 22.09).pine` |
+| R7 | dashboard | `r7_dashboard_(mode 2,4)_(09月26日; 22.25).pine` | `US_A_R7_Strategy_mode_1-4_(09月26日; 22.25).pine` |
+| R7 | RSI 模式2 副圖 | `r7_RSI-mode2_(mode 2,4)_(09月26日; 22.25).pine` | `US_A_R7_ID_模式2_RSI_(09月26日; 22.25).pine` |
+| R7 | winrate 模式4 副圖 | `r7_winrate-mode4_(mode 2,4)_(09月26日; 22.25).pine` | `US_A_R7_ID_模式4_winrate_(09月26日; 22.25).pine` |
+| R8 | dashboard | `r8_dashboard_(mode 2,4)_(09月27日; 00.58).pine` | `US_A_R8_Strategy_mode_1-4_(09月27日; 00.58).pine` |
+| R8 | RSI 模式2 副圖 | `r8_RSI-mode2_(mode 2,4)_(09月27日; 00.58).pine` | `US_A_R8_ID_模式2_RSI_(09月27日; 00.58).pine` |
+| R8 | winrate 模式4 副圖 | `r8_winrate-mode4_(mode 2,4)_(09月27日; 00.58).pine` | `US_A_R8_ID_模式4_winrate_(09月27日; 00.58).pine` |
+| R9 | dashboard (overlay) | `r9_dashboard_(mode 2,4)_(09月27日; 23.15).pine` | `US_A_R9_Strategy_mode_2-4_(09月27日; 23.15).pine` |
+| R9 | RSI+winrate 合併副圖 | `r9_RSI-winrate_(mode 2,4)_(09月27日; 23.15).pine` | `US_A_R9_ID_模式2-4_RSI-winrate_(09月27日; 23.15).pine` |
+| R9.1 | dashboard (3 個月回測) | `r9.1_dashboard_(mode 2,4)_(09月28日; 09.34).pine` | `US_A_R9.1_Strategy_mode_2-4_(09月28日; 09.34).pine` |
+| R9.1 | RSI+winrate 合併副圖 | `r9.1_RSI-winrate_(mode 2,4)_(09月28日; 09.34).pine` | `US_A_R9.1_ID_模式2-4_RSI-winrate_(09月28日; 09.34).pine` |
+| R9.2 | dashboard (12 個月回測) | `r9.2_dashboard_(mode 2,4)_(09月28日; 09.50).pine` | `US_A_R9.2_Strategy_mode_2-4_(09月28日; 09.50).pine` |
+| R9.2 | RSI+winrate 合併副圖 | `r9.2_RSI-winrate_(mode 2,4)_(09月28日; 09.50).pine` | `US_A_R9.2_ID_模式2-4_RSI-winrate_(09月28日; 09.50).pine` |
+| R9.3 | dashboard (模式4 減敏 10%) | `r9.3_dashboard_(mode 2,4)_(09月28日; 10.10).pine` | `US_A_R9.3_Strategy_mode_2-4_(09月28日; 10.10).pine` |
+| R9.3 | RSI+winrate 合併副圖 | `r9.3_RSI-winrate_(mode 2,4)_(09月28日; 10.10).pine` | `US_A_R9.3_ID_模式2-4_RSI-winrate_(09月28日; 10.10).pine` |
 
 備註: R2–R8 原始檔名裡的 `(mode 1-4)` 是從 R1 沿用下來的舊標籤 (其實 R2 開始已經只剩模式 2/4 在跑),這批重新命名時一併改標成準確的 `(mode 2,4)`,純粹是名稱更正,不影響任何程式邏輯。

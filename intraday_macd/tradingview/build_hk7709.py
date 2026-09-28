@@ -15,9 +15,9 @@ import make_paste_page
 from build_hist_cross_rsi import HEADER, END_TAG
 
 STAMP = os.environ['STAMP']
-SRC_MAIN = 'US_A_R1_strat_mode_1-4_(09月20日; 21.59).pine'
-SRC_RSI  = 'US_A_R1_indict_mode_2_RSI_(09月20日; 21.59).pine'
-SRC_M4   = 'US_A_R1_indict_mode_4_winrate_(09月20日; 21.59).pine'
+SRC_MAIN = 'US_A_R1_Strategy_mode_1-4_(09月20日; 21.59).pine'
+SRC_RSI  = 'US_A_R1_ID_模式2_RSI_(09月20日; 21.59).pine'
+SRC_M4   = 'US_A_R1_ID_模式4_winrate_(09月20日; 21.59).pine'
 OLD_STAMP = '09月20日; 21:59'
 BAR = '// ' + '═' * 79 + '\n'
 
